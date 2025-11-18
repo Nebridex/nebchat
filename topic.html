@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NebChat • Konu Detay</title>
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&display=swap');
+
+    body {
+      margin: 0;
+      font-family: 'Montserrat', sans-serif;
+      background: #080d1a;
+      color: #e0e4ff;
+    }
+
+    header {
+      background: rgba(15, 20, 40, 0.7);
+      padding: 18px 25px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(80, 100, 255, 0.25);
+      box-shadow: 0 0 18px rgba(0, 162, 255, 0.25);
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      backdrop-filter: blur(12px);
+    }
+
+    .logo-area {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .logo-area img {
+      height: 48px;
+      filter: drop-shadow(0 0 12px #6a5eff);
+    }
+
+    .logo-title {
+      font-size: 30px;
+      font-weight: 700;
+      color: #8ab4ff;
+      text-shadow: 0 0 10px rgba(121, 169, 255, 0.9);
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 40px auto;
+      padding: 0 20px;
+    }
+
+    /* TOPIC HEADER */
+    .topic-header {
+      margin-bottom: 30px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid rgba(120, 140, 255, 0.25);
+    }
+
+    .topic-title {
+      font-size: 28px;
+      font-weight: 700;
+      color: #bcd2ff;
+      text-shadow: 0 0 12px rgba(140, 160, 255, 0.5);
+    }
+
+    .topic-meta {
+      margin-top: 8px;
+      font-size: 14px;
+      opacity: 0.75;
+    }
+
+    /* MESSAGE CARD */
+    .message-card {
+      background: rgba(20, 25, 45, 0.55);
+      padding: 20px;
+      border-radius: 15px;
+      margin-bottom: 20px;
+      border: 2px solid rgba(108, 99, 255, 0.25);
+      box-shadow: 0 0 22px rgba(88, 80, 255, 0.25);
+      transition: 0.2s;
+    }
+
+    .message-card:hover {
+      border-color: rgba(108, 99, 255, 0.45);
+      box-shadow: 0 0 28px rgba(88, 80, 255, 0.4);
+    }
+
+    .msg-user {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .msg-avatar {
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
+      background: #6d6cff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 700;
+      font-size: 18px;
+      box-shadow: 0 0 10px rgba(120, 140, 255, 0.8);
+    }
+
+    .msg-username {
+      font-size: 16px;
+      font-weight: 600;
+      color: #cdd7ff;
+    }
+
+    .msg-text {
+      font-size: 15px;
+      line-height: 1.6;
+      color: #dbe2ff;
+      margin-top: 5px;
+    }
+
+    /* REPLY BOX */
+    .reply-box {
+      margin-top: 35px;
+      background: rgba(20, 25, 45, 0.55);
+      padding: 20px;
+      border-radius: 15px;
+      border: 2px solid rgba(108, 99, 255, 0.25);
+      box-shadow: 0 0 22px rgba(88, 80, 255, 0.25);
+    }
+
+    textarea {
+      width: 100%;
+      height: 130px;
+      border-radius: 12px;
+      border: 1px solid rgba(108, 99, 255, 0.35);
+      background: rgba(255, 255, 255, 0.08);
+      padding: 12px;
+      color: white;
+      outline: none;
+      font-size: 16px;
+      resize: none;
+      transition: 0.25s;
+    }
+
+    textarea:focus {
+      border-color: rgba(138, 127, 255, 0.9);
+      box-shadow: 0 0 15px rgba(138, 127, 255, 0.7);
+    }
+
+    .reply-button {
+      margin-top: 14px;
+      width: 100%;
+      padding: 12px;
+      background: rgba(108, 99, 255, 0.4);
+      border: 1px solid rgba(108, 99, 255, 0.7);
+      border-radius: 10px;
+      color: #e0e4ff;
+      font-size: 17px;
+      cursor: pointer;
+      transition: 0.25s;
+    }
+
+    .reply-button:hover {
+      background: rgba(108, 99, 255, 0.55);
+      box-shadow: 0 0 22px rgba(108, 99, 255, 0.75);
+    }
+
+  </style>
+</head>
+
+<body>
+
+<header>
+  <div class="logo-area">
+    <img src="logo nebchat.png" alt="NebChat Logo">
+    <div class="logo-title">NebChat</div>
+  </div>
+</header>
+
+<div class="container">
+
+  <div class="topic-header">
+    <div class="topic-title">Age of Empires Mobile Taktikleri</div>
+    <div class="topic-meta">Açan: Nebride • 12 saat önce • 24 yanıt</div>
+  </div>
+
+  <!-- MESSAGE 1 -->
+  <div class="message-card">
+    <div class="msg-user">
+      <div class="msg-avatar">N</div>
+      <div class="msg-username">Nebride</div>
+    </div>
+    <div class="msg-text">
+      Oyuna yeni başlayacaklar için en doğru kahraman dizilimini paylaşıyorum...
+    </div>
+  </div>
+
+  <!-- MESSAGE 2 -->
+  <div class="message-card">
+    <div class="msg-user">
+      <div class="msg-avatar">A</div>
+      <div class="msg-username">Alperen</div>
+    </div>
+    <div class="msg-text">
+      Savunma kurarken mutlaka 2 tank + 2 menzilli kullanın. İnanılmaz fark ediyor.
+    </div>
+  </div>
+
+  <!-- MESSAGE 3 -->
+  <div class="message-card">
+    <div class="msg-user">
+      <div class="msg-avatar">K</div>
+      <div class="msg-username">Kerem</div>
+    </div>
+    <div class="msg-text">
+      Yeni yamadan sonra okçular ciddi buff aldı, deneyebilirsiniz.
+    </div>
+  </div>
+
+  <!-- REPLY BOX -->
+  <div class="reply-box">
+    <textarea placeholder="Yanıtını yaz..."></textarea>
+    <button class="reply-button">Yanıt Gönder</button>
+  </div>
+
+</div>
+
+</body>
+</html>
