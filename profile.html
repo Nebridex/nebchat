@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NebChat • Profil</title>
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&display=swap');
+
+    body {
+      margin: 0;
+      font-family: 'Montserrat', sans-serif;
+      background: #080d1a;
+      color: #e0e4ff;
+    }
+
+    header {
+      background: rgba(15, 20, 40, 0.7);
+      padding: 18px 25px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(80, 100, 255, 0.25);
+      box-shadow: 0 0 18px rgba(0, 162, 255, 0.25);
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      backdrop-filter: blur(12px);
+    }
+
+    .logo-area {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .logo-area img {
+      height: 48px;
+      filter: drop-shadow(0 0 12px #6a5eff);
+    }
+
+    .logo-title {
+      font-size: 30px;
+      font-weight: 700;
+      color: #8ab4ff;
+      text-shadow: 0 0 10px rgba(121, 169, 255, 0.9);
+    }
+
+    /* PROFILE HEADER */
+    .profile-container {
+      max-width: 900px;
+      margin: 40px auto;
+      padding: 0 20px;
+      text-align: center;
+    }
+
+    .avatar {
+      width: 110px;
+      height: 110px;
+      border-radius: 50%;
+      background: #6d6cff;
+      margin: 0 auto;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 42px;
+      font-weight: 700;
+      color: white;
+      box-shadow: 0 0 25px rgba(120, 140, 255, 0.9);
+    }
+
+    .username {
+      margin-top: 15px;
+      font-size: 28px;
+      font-weight: 700;
+      color: #bcd2ff;
+      text-shadow: 0 0 12px rgba(140, 160, 255, 0.5);
+    }
+
+    .level {
+      font-size: 14px;
+      margin-top: 4px;
+      opacity: 0.8;
+      color: #8fa4ff;
+    }
+
+    /* ABOUT BOX */
+    .about-box {
+      margin-top: 25px;
+      background: rgba(20, 25, 45, 0.55);
+      padding: 20px;
+      border-radius: 15px;
+      border: 2px solid rgba(108, 99, 255, 0.25);
+      box-shadow: 0 0 22px rgba(88, 80, 255, 0.25);
+      text-align: left;
+    }
+
+    .about-title {
+      font-size: 20px;
+      margin-bottom: 10px;
+      color: #cdd7ff;
+      text-shadow: 0 0 10px rgba(120, 140, 255, 0.5);
+    }
+
+    .about-text {
+      font-size: 15px;
+      opacity: 0.85;
+      line-height: 1.6;
+      color: #dbe2ff;
+    }
+
+    /* STATS GRID */
+    .stats-grid {
+      margin-top: 25px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 18px;
+    }
+
+    .stat-card {
+      background: rgba(20, 25, 45, 0.55);
+      padding: 18px;
+      border-radius: 15px;
+      border: 2px solid rgba(108, 99, 255, 0.25);
+      box-shadow: 0 0 22px rgba(88, 80, 255, 0.25);
+      text-align: center;
+      transition: 0.2s;
+    }
+
+    .stat-card:hover {
+      border-color: rgba(108, 99, 255, 0.45);
+      box-shadow: 0 0 28px rgba(88, 80, 255, 0.4);
+    }
+
+    .stat-number {
+      font-size: 26px;
+      font-weight: 700;
+      color: #bcd2ff;
+    }
+
+    .stat-label {
+      margin-top: 5px;
+      opacity: 0.8;
+      font-size: 14px;
+    }
+
+    /* BADGES */
+    .badges-box {
+      margin-top: 30px;
+      padding: 20px;
+      background: rgba(20, 25, 45, 0.55);
+      border-radius: 15px;
+      border: 2px solid rgba(108, 99, 255, 0.25);
+      box-shadow: 0 0 22px rgba(88, 80, 255, 0.25);
+    }
+
+    .badges-title {
+      font-size: 20px;
+      color: #cdd7ff;
+      margin-bottom: 12px;
+    }
+
+    .badges-list {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .badge {
+      padding: 8px 15px;
+      border-radius: 12px;
+      background: rgba(108, 99, 255, 0.3);
+      border: 1px solid rgba(108, 99, 255, 0.5);
+      color: white;
+      font-size: 14px;
+      box-shadow: 0 0 12px rgba(108, 99, 255, 0.6);
+    }
+
+  </style>
+</head>
+
+<body>
+
+<header>
+  <div class="logo-area">
+    <img src="logo nebchat.png" alt="NebChat Logo">
+    <div class="logo-title">NebChat</div>
+  </div>
+</header>
+
+<div class="profile-container">
+
+  <div class="avatar">N</div>
+
+  <div class="username">Nebride</div>
+  <div class="level">Seviye 7 • Üst Düzey Üye</div>
+
+  <div class="about-box">
+    <div class="about-title">Hakkında</div>
+    <div class="about-text">
+      Oyun dünyasına meraklı, Age of Empires Mobile uzmanı, NebChat topluluğunun kurucusu.
+      Yeni teknolojiler ve gaming kültürü ile ilgileniyor.
+    </div>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-number">243</div>
+      <div class="stat-label">Mesaj</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number">58</div>
+      <div class="stat-label">Beğeni</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number">12</div>
+      <div class="stat-label">Konu</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number">2 yıl</div>
+      <div class="stat-label">Topluluk Yaşı</div>
+    </div>
+  </div>
+
+  <div class="badges-box">
+    <div class="badges-title">Rozetler</div>
+    <div class="badges-list">
+      <div class="badge">🔥 Aktif Üye</div>
+      <div class="badge">🎯 Strateji Ustası</div>
+      <div class="badge">💬 Topluluk Destekçisi</div>
+      <div class="badge">👑 Kurucu</div>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>
