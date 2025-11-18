@@ -6,7 +6,7 @@
   <title>NebChat • Giriş / Kayıt</title>
 
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&family=Pacifico&display=swap');
 
     body {
       margin: 0;
@@ -15,6 +15,7 @@
       color: #dfe4ff;
     }
 
+    /* ORTAK HEADER + MENÜ */
     header {
       background: rgba(15, 20, 40, 0.7);
       backdrop-filter: blur(10px);
@@ -35,16 +36,13 @@
       gap: 14px;
     }
 
-    .logo-area img {
-      height: 50px;
-      filter: drop-shadow(0 0 12px #6a5eff);
-    }
-
     .logo-title {
-      font-size: 30px;
-      font-weight: 700;
+      font-family: 'Pacifico', cursive;
+      font-size: 34px;
+      font-weight: 400;
       color: #8ab4ff;
       text-shadow: 0 0 10px rgba(121, 169, 255, 0.9);
+      letter-spacing: 0.5px;
     }
 
     .menu {
@@ -81,6 +79,7 @@
       }
     }
 
+    /* SAYFA ORTASI */
     .page-container {
       min-height: calc(100vh - 80px);
       display: flex;
@@ -110,15 +109,10 @@
       margin-bottom: 20px;
     }
 
-    .logo-area-small img {
-      height: 60px;
-      filter: drop-shadow(0 0 12px #6a5eff);
-    }
-
     .logo-text {
-      font-size: 24px;
-      font-weight: 700;
-      margin-top: 8px;
+      font-family: 'Pacifico', cursive;
+      font-size: 26px;
+      font-weight: 400;
       color: #9eb9ff;
       text-shadow: 0 0 12px rgba(121, 169, 255, 0.8);
     }
@@ -217,22 +211,6 @@
       display: none;
     }
   </style>
-
-  <script>
-    function showLogin() {
-      document.getElementById("login-form").style.display = "block";
-      document.getElementById("register-form").style.display = "none";
-      document.getElementById("loginBtn").classList.add("active");
-      document.getElementById("registerBtn").classList.remove("active");
-    }
-
-    function showRegister() {
-      document.getElementById("login-form").style.display = "none";
-      document.getElementById("register-form").style.display = "block";
-      document.getElementById("loginBtn").classList.remove("active");
-      document.getElementById("registerBtn").classList.add("active");
-    }
-  </script>
 </head>
 
 <body>
@@ -240,7 +218,6 @@
 <header>
   <div class="logo-area">
     <a href="index.html" style="display:flex;align-items:center;gap:14px;text-decoration:none;">
-      <img src="logo nebchat.png" alt="NebChat Logo">
       <div class="logo-title">NebChat</div>
     </a>
   </div>
@@ -256,7 +233,6 @@
 <div class="page-container">
   <div class="auth-box">
     <div class="logo-area-small">
-      <img src="logo nebchat.png" alt="NebChat Logo">
       <div class="logo-text">NebChat</div>
     </div>
 
@@ -266,45 +242,112 @@
     </div>
 
     <!-- GİRİŞ FORMU -->
-    <form id="login-form">
+    <form id="login-form" onsubmit="event.preventDefault(); girisYap();">
       <div class="input-group">
-        <label for="email">E-posta</label>
-        <input type="email" id="email" placeholder="ornek@mail.com">
+        <label for="login-email">E-posta</label>
+        <input type="email" id="login-email" placeholder="ornek@mail.com">
       </div>
 
       <div class="input-group">
-        <label for="password">Şifre</label>
-        <input type="password" id="password" placeholder="******">
+        <label for="login-password">Şifre</label>
+        <input type="password" id="login-password" placeholder="******">
       </div>
 
-      <button class="btn-main" type="button">Giriş Yap</button>
+      <button class="btn-main" type="submit">Giriş Yap</button>
 
       <div class="small-link">
-        Şifreni mi unuttun? <a href="#">Sıfırla</a>
+        Şifreni mi unuttun? <a href="#">(Şimdilik pasif)</a>
       </div>
     </form>
 
     <!-- KAYIT FORMU -->
-    <form id="register-form">
+    <form id="register-form" onsubmit="event.preventDefault(); kayitOl();">
       <div class="input-group">
-        <label>Kullanıcı Adı</label>
-        <input type="text" placeholder="Nebride">
+        <label for="register-username">Kullanıcı Adı</label>
+        <input type="text" id="register-username" placeholder="Nebride">
       </div>
 
       <div class="input-group">
-        <label>E-posta</label>
-        <input type="email" placeholder="ornek@mail.com">
+        <label for="register-email">E-posta</label>
+        <input type="email" id="register-email" placeholder="ornek@mail.com">
       </div>
 
       <div class="input-group">
-        <label>Şifre</label>
-        <input type="password" placeholder="******">
+        <label for="register-password">Şifre</label>
+        <input type="password" id="register-password" placeholder="******">
       </div>
 
-      <button class="btn-main" type="button">Kayıt Ol</button>
+      <button class="btn-main" type="submit">Kayıt Ol</button>
     </form>
   </div>
 </div>
+
+<!-- Firebase scriptleri (compat sürüm) -->
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+
+<script>
+  // Senin Firebase config'in (konsoldan aldığımız)
+  const firebaseConfig = {
+    apiKey: "AIzaSyAU7kASxtN07wzCL2LeCT4J_RfqQMhb3GM",
+    authDomain: "nebchat-fb0ed.firebaseapp.com",
+    projectId: "nebchat-fb0ed",
+    storageBucket: "nebchat-fb0ed.appspot.com",
+    messagingSenderId: "716197051910",
+    appId: "1:716197051910:web:95d85a53863c4b1f5e4d87",
+    measurementId: "G-MKED7N3Z92"
+  };
+
+  // Firebase'i başlat
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+
+  // Form görünümünü değiştiren fonksiyonlar
+  function showLogin() {
+    document.getElementById("login-form").style.display = "block";
+    document.getElementById("register-form").style.display = "none";
+    document.getElementById("loginBtn").classList.add("active");
+    document.getElementById("registerBtn").classList.remove("active");
+  }
+
+  function showRegister() {
+    document.getElementById("login-form").style.display = "none";
+    document.getElementById("register-form").style.display = "block";
+    document.getElementById("loginBtn").classList.remove("active");
+    document.getElementById("registerBtn").classList.add("active");
+  }
+
+  // Giriş fonksiyonu
+  function girisYap() {
+    const email = document.getElementById("login-email").value;
+    const password = document.getElementById("login-password").value;
+
+    auth.signInWithEmailAndPassword(email, password)
+      .then((userCredential) => {
+        alert("Giriş başarılı!");
+        // Şimdilik direkt profil sayfasına yönlendirelim
+        window.location.href = "profile.html";
+      })
+      .catch((error) => {
+        alert("Giriş hatası: " + error.message);
+      });
+  }
+
+  // Kayıt fonksiyonu
+  function kayitOl() {
+    const email = document.getElementById("register-email").value;
+    const password = document.getElementById("register-password").value;
+
+    auth.createUserWithEmailAndPassword(email, password)
+      .then((userCredential) => {
+        alert("Kayıt başarılı! Şimdi giriş yapabilirsin.");
+        showLogin();
+      })
+      .catch((error) => {
+        alert("Kayıt hatası: " + error.message);
+      });
+  }
+</script>
 
 </body>
 </html>
