@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>NebChat • Konu Detay</title>
+  <title>NebChat • Konu Detayı</title>
 
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&display=swap');
@@ -15,6 +15,7 @@
       color: #e0e4ff;
     }
 
+    /* ORTAK HEADER + MENÜ */
     header {
       background: rgba(15, 20, 40, 0.7);
       padding: 18px 25px;
@@ -26,7 +27,7 @@
       position: sticky;
       top: 0;
       z-index: 50;
-      backdrop-filter: blur(12px);
+      backdrop-filter: blur(10px);
     }
 
     .logo-area {
@@ -36,7 +37,7 @@
     }
 
     .logo-area img {
-      height: 48px;
+      height: 50px;
       filter: drop-shadow(0 0 12px #6a5eff);
     }
 
@@ -47,13 +48,47 @@
       text-shadow: 0 0 10px rgba(121, 169, 255, 0.9);
     }
 
+    .menu {
+      display: flex;
+      gap: 16px;
+    }
+
+    .menu a {
+      color: #a8b4ff;
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 14px;
+      padding: 8px 12px;
+      border-radius: 8px;
+      border: 1px solid rgba(108, 99, 255, 0.3);
+      background: rgba(255, 255, 255, 0.03);
+      transition: 0.25s;
+    }
+
+    .menu a:hover {
+      background: rgba(108, 99, 255, 0.25);
+      box-shadow: 0 0 14px rgba(108, 99, 255, 0.5);
+      color: #ffffff;
+    }
+
+    @media (max-width: 700px) {
+      header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+      }
+      .menu {
+        flex-wrap: wrap;
+      }
+    }
+
+    /* SAYFA İÇERİĞİ */
     .container {
       max-width: 900px;
       margin: 40px auto;
       padding: 0 20px;
     }
 
-    /* TOPIC HEADER */
     .topic-header {
       margin-bottom: 30px;
       padding-bottom: 20px;
@@ -61,7 +96,7 @@
     }
 
     .topic-title {
-      font-size: 28px;
+      font-size: 26px;
       font-weight: 700;
       color: #bcd2ff;
       text-shadow: 0 0 12px rgba(140, 160, 255, 0.5);
@@ -70,10 +105,10 @@
     .topic-meta {
       margin-top: 8px;
       font-size: 14px;
-      opacity: 0.75;
+      opacity: 0.8;
+      color: #a8b4ff;
     }
 
-    /* MESSAGE CARD */
     .message-card {
       background: rgba(20, 25, 45, 0.55);
       padding: 20px;
@@ -93,7 +128,7 @@
       display: flex;
       align-items: center;
       gap: 12px;
-      margin-bottom: 12px;
+      margin-bottom: 10px;
     }
 
     .msg-avatar {
@@ -120,10 +155,9 @@
       font-size: 15px;
       line-height: 1.6;
       color: #dbe2ff;
-      margin-top: 5px;
+      margin-top: 4px;
     }
 
-    /* REPLY BOX */
     .reply-box {
       margin-top: 35px;
       background: rgba(20, 25, 45, 0.55);
@@ -142,7 +176,7 @@
       padding: 12px;
       color: white;
       outline: none;
-      font-size: 16px;
+      font-size: 15px;
       resize: none;
       transition: 0.25s;
     }
@@ -155,12 +189,12 @@
     .reply-button {
       margin-top: 14px;
       width: 100%;
-      padding: 12px;
+      padding: 11px;
       background: rgba(108, 99, 255, 0.4);
       border: 1px solid rgba(108, 99, 255, 0.7);
       border-radius: 10px;
       color: #e0e4ff;
-      font-size: 17px;
+      font-size: 15px;
       cursor: pointer;
       transition: 0.25s;
     }
@@ -169,7 +203,6 @@
       background: rgba(108, 99, 255, 0.55);
       box-shadow: 0 0 22px rgba(108, 99, 255, 0.75);
     }
-
   </style>
 </head>
 
@@ -177,9 +210,18 @@
 
 <header>
   <div class="logo-area">
-    <img src="logo nebchat.png" alt="NebChat Logo">
-    <div class="logo-title">NebChat</div>
+    <a href="index.html" style="display:flex;align-items:center;gap:14px;text-decoration:none;">
+      <img src="logo nebchat.png" alt="NebChat Logo">
+      <div class="logo-title">NebChat</div>
+    </a>
   </div>
+
+  <nav class="menu">
+    <a href="index.html">Ana Sayfa</a>
+    <a href="forum.html">Forum</a>
+    <a href="login.html">Giriş Yap</a>
+    <a href="profile.html">Profilim</a>
+  </nav>
 </header>
 
 <div class="container">
@@ -189,40 +231,36 @@
     <div class="topic-meta">Açan: Nebride • 12 saat önce • 24 yanıt</div>
   </div>
 
-  <!-- MESSAGE 1 -->
   <div class="message-card">
     <div class="msg-user">
       <div class="msg-avatar">N</div>
       <div class="msg-username">Nebride</div>
     </div>
     <div class="msg-text">
-      Oyuna yeni başlayacaklar için en doğru kahraman dizilimini paylaşıyorum...
+      Oyuna yeni başlayacaklar için en mantıklı kahraman dizilimini paylaşıyorum. Savunma ve saldırı dengesini iyi kurarsanız kaynak kasmak çok daha kolay oluyor.
     </div>
   </div>
 
-  <!-- MESSAGE 2 -->
   <div class="message-card">
     <div class="msg-user">
       <div class="msg-avatar">A</div>
       <div class="msg-username">Alperen</div>
     </div>
     <div class="msg-text">
-      Savunma kurarken mutlaka 2 tank + 2 menzilli kullanın. İnanılmaz fark ediyor.
+      Ben de özellikle erken oyunda 2 tank + 2 menzilli kombinasyonunu kullanıyorum. Savunma hattını bozmak baya zor oluyor.
     </div>
   </div>
 
-  <!-- MESSAGE 3 -->
   <div class="message-card">
     <div class="msg-user">
       <div class="msg-avatar">K</div>
       <div class="msg-username">Kerem</div>
     </div>
     <div class="msg-text">
-      Yeni yamadan sonra okçular ciddi buff aldı, deneyebilirsiniz.
+      Son yamadan sonra okçular güçlendi, bir denemenizi tavsiye ederim. Özellikle kale savunmasında fark yaratıyor.
     </div>
   </div>
 
-  <!-- REPLY BOX -->
   <div class="reply-box">
     <textarea placeholder="Yanıtını yaz..."></textarea>
     <button class="reply-button">Yanıt Gönder</button>
