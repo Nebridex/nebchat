@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NebChat Forum</title>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: #f5f6fa;
+      color: #333;
+    }
+
+    /* HEADER */
+    header {
+      background: #ffffff;
+      padding: 15px 25px;
+      display: flex;
+      align-items: center;
+      border-bottom: 1px solid #e0e0e0;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo img {
+      height: 45px;
+    }
+
+    .logo-title {
+      font-size: 28px;
+      font-weight: bold;
+    }
+
+    /* CONTAINER */
+    .container {
+      max-width: 1100px;
+      margin: 30px auto;
+      padding: 0 15px;
+    }
+
+    /* CATEGORY CARD */
+    .category-card {
+      background: white;
+      padding: 18px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+      margin-bottom: 20px;
+      border: 1px solid #e3e3e3;
+    }
+
+    .category-title {
+      font-size: 20px;
+      font-weight: bold;
+      margin-bottom: 10px;
+      color: #2c3e50;
+    }
+
+    .topic-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 1px solid #f2f2f2;
+    }
+
+    .topic-item:last-child {
+      border-bottom: none;
+    }
+
+    .topic-title {
+      font-size: 16px;
+      font-weight: 500;
+    }
+
+    .topic-info {
+      font-size: 13px;
+      color: #777;
+      text-align: right;
+    }
+
+    /* FOOTER */
+    footer {
+      margin-top: 50px;
+      padding: 20px;
+      text-align: center;
+      color: #777;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <img src="logo.png" alt="NebChat Logo">
+    <div class="logo-title">NebChat</div>
+  </div>
+</header>
+
+<div class="container">
+
+  <div class="category-card">
+    <div class="category-title">⚡ Genel Sohbet</div>
+
+    <div class="topic-item">
+      <div class="topic-title">Hoş geldiniz! İlk mesajınızı yazın</div>
+      <div class="topic-info">Son mesaj • 2 saat önce</div>
+    </div>
+
+    <div class="topic-item">
+      <div class="topic-title">Tanışma konusu</div>
+      <div class="topic-info">Son mesaj • dün</div>
+    </div>
+  </div>
+
+  <div class="category-card">
+    <div class="category-title">🕹 Oyun Sohbeti</div>
+
+    <div class="topic-item">
+      <div class="topic-title">Age of Empires Mobile taktikleri</div>
+      <div class="topic-info">Son mesaj • 1 saat önce</div>
+    </div>
+
+    <div class="topic-item">
+      <div class="topic-title">PS5 mi Xbox mı?</div>
+      <div class="topic-info">Son mesaj • geçen hafta</div>
+    </div>
+  </div>
+
+  <div class="category-card">
+    <div class="category-title">📱 Tekn
