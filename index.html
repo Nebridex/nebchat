@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nebchat • Sohbet & Topluluk</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    body {
+      background: radial-gradient(circle at top, #1f2937 0, #020617 55%);
+      color: #f9fafb;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 1.5rem;
+      flex: 1;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 2rem;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+    }
+
+    .logo-icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #38bdf8, #a855f7);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+    }
+
+    nav {
+      display: flex;
+      gap: 1.2rem;
+      font-size: 0.95rem;
+      opacity: 0.85;
+    }
+
+    nav a:hover {
+      opacity: 1;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 3fr) minmax(0, 2.2fr);
+      gap: 2.5rem;
+      align-items: center;
+      margin-top: 1rem;
+      margin-bottom: 3rem;
+    }
+
+    @media (max-width: 820px) {
+      .hero {
+        grid-template-columns: 1fr;
+      }
+
+      header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+      }
+    }
+
+    .hero-title {
+      font-size: clamp(2.4rem, 4vw, 3.1rem);
+      font-weight: 800;
+      line-height: 1.1;
+      margin-bottom: 1rem;
+    }
+
+    .hero-title span {
+      background: linear-gradient(135deg, #38bdf8, #a855f7);
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+
+    .hero-subtitle {
+      color: #e5e7eb;
+      opacity: 0.9;
+      font-size: 1rem;
+      line-height: 1.6;
+      margin-bottom: 1.6rem;
+    }
+
+    .hero-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      margin-bottom: 1.6rem;
+    }
+
+    .badge {
+      padding: 0.25rem 0.7rem;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.4);
+      font-size: 0.78rem;
+      opacity: 0.9;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      align-items: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .btn-primary,
+    .btn-ghost {
+      border-radius: 999px;
+      padding: 0.7rem 1.3rem;
+      font-size: 0.95rem;
+      border: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      transition: transform 0.14s ease, box-shadow 0.14s ease, background 0.14s ease, opacity 0.14s ease;
+      text-decoration: none;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #38bdf8, #a855f7);
+      color: white;
+      box-shadow: 0 12px 35px rgba(56, 189, 248, 0.3);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 18px 45px rgba(56, 189, 248, 0.4);
+    }
+
+    .btn-ghost {
+      border: 1px solid rgba(148, 163, 184, 0.4);
+      background: rgba(15, 23, 42, 0.7);
+      color: #e5e7eb;
+    }
+
+    .btn-ghost:hover {
+      background: rgba(15, 23, 42, 0.9);
+      transform: translateY(-1px);
+    }
+
+    .hero-note {
+      font-size: 0.85rem;
+      color: #9ca3af;
+    }
+
+    .hero-card {
+      background: radial-gradient(circle at top left, rgba(56, 189, 248, 0.2), transparent 50%),
+                  radial-gradient(circle at bottom right, rgba(168, 85, 247, 0.15), transparent 55%),
+                  rgba(15, 23, 42, 0.9);
+      border-radius: 1.5rem;
+      padding: 1.6rem;
+      border: 1px solid rgba(148, 163, 184, 0.5);
+      box-shadow: 0 18px 50px rgba(15, 23, 42, 0.9);
+    }
+
+    .hero-card-title {
+      font-size: 1.05rem;
+      margin-bottom: 0.9rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .hero-card-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.8rem;
+      margin-bottom: 1rem;
+      font-size: 0.85rem;
+    }
+
+    @media (max-width: 480px) {
+      .hero-card-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .card-pill {
+      background: rgba(15, 23, 42, 0.85);
+      padding: 0.8rem;
+      border-radius: 0.9rem;
+      border: 1px solid rgba(148, 163, 184, 0.5);
+    }
+
+    .card-pill-title {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #9ca3af;
+      margin-bottom: 0.3rem;
+    }
+
+    .card-pill-value {
+      font-size: 0.9rem;
+    }
+
+    .card-footer {
+      border-top: 1px dashed rgba(148, 163, 184, 0.7);
+      padding-top: 0.7rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.75rem;
+      color: #9ca3af;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: #22c55e;
+      box-shadow: 0 0 14px rgba(34, 197, 94, 0.9);
+      margin-right: 0.4rem;
+      display: inline-block;
+    }
+
+    .features {
+      margin-bottom: 2.5rem;
+    }
+
+    .section-title {
+      font-size: 1.2rem;
+      margin-bottom: 1rem;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.3rem;
+    }
+
+    .feature-card {
+      background: rgba(15, 23, 42, 0.85);
+      border-radius: 1rem;
+      padding: 1rem;
+      border: 1px solid rgba(55, 65, 81, 0.8);
+      font-size: 0.88rem;
+    }
+
+    .feature-title {
+      font-weight: 600;
+      margin-bottom: 0.4rem;
+    }
+
+    footer {
+      border-top: 1px solid rgba(31, 41, 55, 0.9);
+      padding: 1rem 1.5rem 1.3rem;
+      font-size: 0.8rem;
+      color: #9ca3af;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      max-width: 1100px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    @media (max-width: 640px) {
+      footer {
+        flex-direction: column;
+        gap: 0.5rem;
+        align-items: flex-start;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="logo">
+        <div class="logo-icon">N</div>
+        <div>Nebchat</div>
+      </div>
+      <nav>
+        <a href="#features">Özellikler</a>
+        <a href="#community">Topluluk</a>
+        <a href="#contact">İletişim</a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div>
+          <h1 class="hero-title">
+            <span>Nebchat</span> ile kendi topluluğunu kur.
+          </h1>
+          <p class="hero-subtitle">
+            Forum mantığında, sade ama güçlü bir sohbet alanı. Arkadaşların, müşterilerin
+            veya topluluğun için özel bir alan oluştur.
+          </p>
+
+          <div class="hero-badges">
+            <div class="badge">🚀 Yakında yayında</div>
+            <div class="badge">💬 Forum & sohbet odaları</div>
+            <div class="badge">🧪 Beta kullanıcı kabulü</div>
+          </div>
+
+          <div class="hero-actions">
+            <a href="#contact" class="btn-primary">
+              Erken erişim iste
+              <span>→</span>
+            </a>
+            <a href="#features" class="btn-ghost">
+              Özelliklere göz at
+            </a>
+          </div>
+
+          <p class="hero-note">
+            Sitenin ilk versiyonu yayına alındıktan sonra, üyelik sistemi ve forum altyapısını
+            birlikte geliştireceğiz.
+          </p>
+        </div>
+
+        <aside class="hero-card">
+          <div class="hero-card-title">
+            🧩 Nebchat Kontrol Paneli (taslak)
+          </div>
+          <div class="hero-card-grid">
+            <div class="card-pill">
+              <div class="card-pill-title">Topluluk tipi</div>
+              <div class="card-pill-value">Forum & sohbet</div>
+            </div>
+            <div class="card-pill">
+              <div class="card-pill-title">Durum</div>
+              <div class="card-pill-value">Geliştirme aşamasında</div>
+            </div>
+            <div class="card-pill">
+              <div class="card-pill-title">Kurucu</div>
+              <div class="card-pill-value">Nebride (Cihat)</div>
+            </div>
+            <div class="card-pill">
+              <div class="card-pill-title">Plan</div>
+              <div class="card-pill-value">Önce web, sonra mobil</div>
+            </div>
+          </div>
+          <div class="card-footer">
+            <div>
+              <span class="status-dot"></span>
+              Sunucu aktif • nebchat.online
+            </div>
+            <div>v0.1 • sadece vitrin sayfası</div>
+          </div>
+        </aside>
+      </section>
+
+      <section id="features" class="features">
+        <h2 class="section-title">Neler planlıyoruz?</h2>
+        <div class="features-grid">
+          <div class="feature-card">
+            <div class="feature-title">🧵 Konu bazlı forum yapısı</div>
+            <p>Kategorilere ayrılmış başlıklar, cevaplar, beğeniler ve bildirim sistemi.</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-title">💬 Anlık sohbet odaları</div>
+            <p>Belirli başlıklar veya roller için gerçek zamanlı sohbet alanları.</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-title">🎯 Basit ama temiz arayüz</div>
+            <p>Telefon, tablet ve bilgisayarda modern ve sade bir tasarım.</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-title">🔐 Üyelik & rol sistemi</div>
+            <p>Yönetici, moderatör, üye rollerini sonradan birlikte kodlayacağız.</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="community" class="features">
+        <h2 class="section-title">Topluluğunu Nebchat'e taşı</h2>
+        <div class="feature-card">
+          <p>
+            İster arkadaş grubu, ister oyun topluluğu, ister müşteriler için destek alanı…
+            Nebchat’i tamamen senin ihtiyaçlarına göre şekillendireceğiz.
+          </p>
+        </div>
+      </section>
+
+      <section id="contact" class="features">
+        <h2 class="section-title">İletişim</h2>
+        <div class="feature-card">
+          <p>
+            Bu alanı daha sonra gerçek iletişim formu ve mail adresinle dolduracağız.
+            Şimdilik buraya basit bir metin ekliyoruz:
+          </p>
+          <p style="margin-top: 0.5rem; font-size: 0.9rem;">
+            📧 İletişim: <strong>info@nebchat.online</strong> (henüz örnek)
+          </p>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <footer>
+    <div>© <span id="year"></span> Nebchat • Tüm hakları saklıdır.</div>
+    <div>İlk versiyon GPT ile birlikte geliştirildi.</div>
+  </footer>
+
+  <script>
+    document.getElementById("year").textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
