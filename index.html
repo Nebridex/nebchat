@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>NebChat • Ana Sayfa</title>
+  <title>NebChat • Profil</title>
 
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&display=swap');
@@ -12,13 +12,11 @@
       margin: 0;
       font-family: 'Montserrat', sans-serif;
       background: #080d1a;
-      color: #dfe4ff;
+      color: #e0e4ff;
     }
 
-    /* HEADER */
     header {
       background: rgba(15, 20, 40, 0.7);
-      backdrop-filter: blur(10px);
       padding: 18px 25px;
       display: flex;
       align-items: center;
@@ -28,6 +26,7 @@
       position: sticky;
       top: 0;
       z-index: 50;
+      backdrop-filter: blur(12px);
     }
 
     .logo-area {
@@ -37,7 +36,7 @@
     }
 
     .logo-area img {
-      height: 50px;
+      height: 48px;
       filter: drop-shadow(0 0 12px #6a5eff);
     }
 
@@ -46,125 +45,138 @@
       font-weight: 700;
       color: #8ab4ff;
       text-shadow: 0 0 10px rgba(121, 169, 255, 0.9);
-      letter-spacing: 1px;
     }
 
-    .top-buttons button {
-      background: transparent;
-      border: 1px solid rgba(108, 99, 255, 0.5);
-      color: #a8b4ff;
-      padding: 8px 15px;
-      border-radius: 8px;
-      cursor: pointer;
+    /* PROFILE HEADER */
+    .profile-container {
+      max-width: 900px;
+      margin: 40px auto;
+      padding: 0 20px;
+      text-align: center;
+    }
+
+    .avatar {
+      width: 110px;
+      height: 110px;
+      border-radius: 50%;
+      background: #6d6cff;
+      margin: 0 auto;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 42px;
+      font-weight: 700;
+      color: white;
+      box-shadow: 0 0 25px rgba(120, 140, 255, 0.9);
+    }
+
+    .username {
+      margin-top: 15px;
+      font-size: 28px;
+      font-weight: 700;
+      color: #bcd2ff;
+      text-shadow: 0 0 12px rgba(140, 160, 255, 0.5);
+    }
+
+    .level {
       font-size: 14px;
+      margin-top: 4px;
+      opacity: 0.8;
+      color: #8fa4ff;
+    }
+
+    /* ABOUT BOX */
+    .about-box {
+      margin-top: 25px;
+      background: rgba(20, 25, 45, 0.55);
+      padding: 20px;
+      border-radius: 15px;
+      border: 2px solid rgba(108, 99, 255, 0.25);
+      box-shadow: 0 0 22px rgba(88, 80, 255, 0.25);
+      text-align: left;
+    }
+
+    .about-title {
+      font-size: 20px;
+      margin-bottom: 10px;
+      color: #cdd7ff;
+      text-shadow: 0 0 10px rgba(120, 140, 255, 0.5);
+    }
+
+    .about-text {
+      font-size: 15px;
+      opacity: 0.85;
+      line-height: 1.6;
+      color: #dbe2ff;
+    }
+
+    /* STATS GRID */
+    .stats-grid {
+      margin-top: 25px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 18px;
+    }
+
+    .stat-card {
+      background: rgba(20, 25, 45, 0.55);
+      padding: 18px;
+      border-radius: 15px;
+      border: 2px solid rgba(108, 99, 255, 0.25);
+      box-shadow: 0 0 22px rgba(88, 80, 255, 0.25);
+      text-align: center;
       transition: 0.2s;
     }
 
-    .top-buttons button:hover {
-      background: rgba(108, 99, 255, 0.3);
-      box-shadow: 0 0 12px rgba(108, 99, 255, 0.7);
+    .stat-card:hover {
+      border-color: rgba(108, 99, 255, 0.45);
+      box-shadow: 0 0 28px rgba(88, 80, 255, 0.4);
     }
 
-    /* HERO SECTION */
-    .hero {
-      text-align: center;
-      padding: 120px 20px 80px;
-      background: linear-gradient(180deg, rgba(20, 25, 45, 0.4), transparent);
-    }
-
-    .hero-title {
-      font-size: 48px;
+    .stat-number {
+      font-size: 26px;
       font-weight: 700;
       color: #bcd2ff;
-      text-shadow: 0 0 25px rgba(120, 140, 255, 0.8);
-      margin-bottom: 20px;
     }
 
-    .hero-subtitle {
-      font-size: 18px;
-      opacity: 0.85;
-      max-width: 700px;
-      margin: 0 auto;
-      line-height: 1.6;
-      margin-bottom: 35px;
-      color: #c3ccff;
-    }
-
-    .hero-buttons {
-      display: flex;
-      justify-content: center;
-      gap: 18px;
-      margin-top: 10px;
-    }
-
-    .btn {
-      padding: 12px 25px;
-      font-size: 16px;
-      border-radius: 10px;
-      border: 1px solid rgba(108, 99, 255, 0.5);
-      background: transparent;
-      color: #cdd7ff;
-      cursor: pointer;
-      transition: 0.25s;
-    }
-
-    .btn:hover {
-      background: rgba(108, 99, 255, 0.25);
-      box-shadow: 0 0 20px rgba(108, 99, 255, 0.6);
-    }
-
-    /* CATEGORY PREVIEW */
-    .section {
-      max-width: 1100px;
-      margin: 70px auto;
-      padding: 0 20px;
-    }
-
-    .section-title {
-      font-size: 26px;
-      font-weight: 600;
-      margin-bottom: 30px;
-      color: #9eb9ff;
-      text-shadow: 0 0 12px rgba(120, 140, 255, 0.8);
-    }
-
-    .preview-card {
-      background: rgba(20, 25, 45, 0.65);
-      padding: 20px;
-      border-radius: 18px;
-      margin-bottom: 25px;
-      border: 2px solid rgba(108, 99, 255, 0.25);
-      box-shadow: 0 0 25px rgba(88, 80, 255, 0.25);
-      transition: 0.25s;
-    }
-
-    .preview-card:hover {
-      border-color: rgba(108, 99, 255, 0.55);
-      box-shadow: 0 0 35px rgba(88, 80, 255, 0.4);
-    }
-
-    .preview-title {
-      font-size: 20px;
-      margin-bottom: 10px;
-      color: #c9d6ff;
-    }
-
-    .preview-text {
-      font-size: 15px;
+    .stat-label {
+      margin-top: 5px;
       opacity: 0.8;
-      line-height: 1.6;
-      color: #d4dcff;
+      font-size: 14px;
     }
 
-    /* FOOTER */
-    footer {
-      margin-top: 60px;
-      padding: 30px;
-      text-align: center;
-      color: #7d88c7;
-      font-size: 15px;
-      border-top: 1px solid rgba(80, 100, 255, 0.25);
+    /* BADGES */
+    .badges-box {
+      margin-top: 30px;
+      padding: 20px;
+      background: rgba(20, 25, 45, 0.55);
+      border-radius: 15px;
+      border: 2px solid rgba(108, 99, 255, 0.25);
+      box-shadow: 0 0 22px rgba(88, 80, 255, 0.25);
     }
+
+    .badges-title {
+      font-size: 20px;
+      color: #cdd7ff;
+      margin-bottom: 12px;
+    }
+
+    .badges-list {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .badge {
+      padding: 8px 15px;
+      border-radius: 12px;
+      background: rgba(108, 99, 255, 0.3);
+      border: 1px solid rgba(108, 99, 255, 0.5);
+      color: white;
+      font-size: 14px;
+      box-shadow: 0 0 12px rgba(108, 99, 255, 0.6);
+    }
+
   </style>
 </head>
 
@@ -175,48 +187,53 @@
     <img src="logo nebchat.png" alt="NebChat Logo">
     <div class="logo-title">NebChat</div>
   </div>
-
-  <div class="top-buttons">
-    <button>Giriş Yap</button>
-    <button>Kayıt Ol</button>
-  </div>
 </header>
 
-<section class="hero">
-  <h1 class="hero-title">NebChat’e Hoş Geldin</h1>
-  <p class="hero-subtitle">
-    Modern, karanlık neon temalı topluluk platformu.  
-    Oyun sohbetleri, teknoloji, gündem ve daha fazlası — hepsi tek bir noktada.
-  </p>
+<div class="profile-container">
 
-  <div class="hero-buttons">
-    <a href="forum.html"><button class="btn">Foruma Git</button></a>
-    <button class="btn">Topluluğa Katıl</button>
-  </div>
-</section>
+  <div class="avatar">N</div>
 
-<section class="section">
-  <div class="section-title">Öne Çıkan Kategoriler</div>
+  <div class="username">Nebride</div>
+  <div class="level">Seviye 7 • Üst Düzey Üye</div>
 
-  <div class="preview-card">
-    <div class="preview-title">⚡ Genel Sohbet</div>
-    <div class="preview-text">Topluluk üyelerinin gündelik sohbetleri, mizah, öneriler ve tanışma alanı.</div>
+  <div class="about-box">
+    <div class="about-title">Hakkında</div>
+    <div class="about-text">
+      Oyun dünyasına meraklı, Age of Empires Mobile uzmanı, NebChat topluluğunun kurucusu.
+      Yeni teknolojiler ve gaming kültürü ile ilgileniyor.
+    </div>
   </div>
 
-  <div class="preview-card">
-    <div class="preview-title">🎮 Oyun Sohbeti</div>
-    <div class="preview-text">Age of Empires Mobile, PS5, PC oyunları… En iyi taktikler burada.</div>
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-number">243</div>
+      <div class="stat-label">Mesaj</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number">58</div>
+      <div class="stat-label">Beğeni</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number">12</div>
+      <div class="stat-label">Konu</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number">2 yıl</div>
+      <div class="stat-label">Topluluk Yaşı</div>
+    </div>
   </div>
 
-  <div class="preview-card">
-    <div class="preview-title">💡 Teknoloji Dünyası</div>
-    <div class="preview-text">iPhone 16 deneyimleri, donanım önerileri, yazılım sohbetleri.</div>
+  <div class="badges-box">
+    <div class="badges-title">Rozetler</div>
+    <div class="badges-list">
+      <div class="badge">🔥 Aktif Üye</div>
+      <div class="badge">🎯 Strateji Ustası</div>
+      <div class="badge">💬 Topluluk Destekçisi</div>
+      <div class="badge">👑 Kurucu</div>
+    </div>
   </div>
-</section>
 
-<footer>
-  © 2025 NebChat • Neon Gamer Theme
-</footer>
+</div>
 
 </body>
 </html>
