@@ -330,16 +330,18 @@
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
   import {
-    getFirestore,
-    doc,
-    getDoc,
-    collection,
-    addDoc,
-    serverTimestamp,
-    query,
-    orderBy,
-    onSnapshot
-  } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
+  getFirestore,
+  collection,
+  addDoc,
+  doc,
+  updateDoc,
+  increment,
+  serverTimestamp,
+  query,
+  orderBy,
+  onSnapshot
+} from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
+
 
   const firebaseConfig = {
     apiKey: "AIzaSyBAwFSe0pud59OXpx1G5hQO9opA1f7Eg9Y",
