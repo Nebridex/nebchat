@@ -15,7 +15,6 @@
       color: #dfe4ff;
     }
 
-    /* HEADER + MENÜ */
     header {
       background: rgba(15, 20, 40, 0.7);
       backdrop-filter: blur(10px);
@@ -62,24 +61,6 @@
       transition: 0.25s;
     }
 
-    .menu a:hover {
-      background: rgba(108, 99, 255, 0.25);
-      box-shadow: 0 0 14px rgba(108, 99, 255, 0.5);
-      color: #ffffff;
-    }
-
-    @media (max-width: 700px) {
-      header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 10px;
-      }
-      .menu {
-        flex-wrap: wrap;
-      }
-    }
-
-    /* SAYFA */
     .page {
       max-width: 1100px;
       margin: 30px auto 60px;
@@ -101,7 +82,6 @@
       margin-bottom: 24px;
     }
 
-    /* YENİ KONU FORMU */
     .new-topic-box {
       background: rgba(20, 25, 50, 0.7);
       border-radius: 18px;
@@ -111,13 +91,6 @@
       margin-bottom: 26px;
     }
 
-    .new-topic-title {
-      font-size: 16px;
-      font-weight: 600;
-      margin-bottom: 10px;
-      color: #d6e0ff;
-    }
-
     .form-row {
       display: flex;
       gap: 10px;
@@ -125,7 +98,7 @@
       margin-bottom: 10px;
     }
 
-    .form-row input {
+    .form-row input, .select-category {
       flex: 1;
       min-width: 160px;
       padding: 9px;
@@ -133,26 +106,18 @@
       border: 1px solid rgba(108, 99, 255, 0.4);
       background: rgba(255, 255, 255, 0.08);
       color: #ffffff;
-      outline: none;
       font-size: 13px;
-    }
-
-    .form-row input:focus,
-    textarea:focus {
-      border-color: rgba(138, 127, 255, 0.9);
-      box-shadow: 0 0 15px rgba(138, 127, 255, 0.7);
+      outline: none;
     }
 
     textarea {
       width: 100%;
       min-height: 90px;
-      max-height: 220px;
       border-radius: 12px;
       border: 1px solid rgba(108, 99, 255, 0.35);
       background: rgba(255, 255, 255, 0.08);
       padding: 10px;
       color: white;
-      outline: none;
       font-size: 14px;
       resize: vertical;
       margin-bottom: 8px;
@@ -166,29 +131,14 @@
       color: #e0e4ff;
       font-size: 14px;
       cursor: pointer;
-      transition: 0.25s;
     }
 
-    .btn-main:hover {
-      background: rgba(108, 99, 255, 0.7);
-      box-shadow: 0 0 20px rgba(108, 99, 255, 0.85);
-    }
-
-    .info-text {
-      font-size: 11px;
-      color: #a7b1f0;
-      margin-top: 6px;
-    }
-
-    /* KONU LİSTESİ */
-    .topics-list {
-      margin-top: 20px;
-    }
-
-    .topic-link {
-      text-decoration: none;
-      color: inherit;
-      display: block;
+    footer {
+      margin-top: 40px;
+      padding: 20px;
+      text-align: center;
+      font-size: 13px;
+      color: #8189c4;
     }
 
     .topic-item {
@@ -198,68 +148,8 @@
       margin-bottom: 10px;
       border: 1px solid rgba(108, 99, 255, 0.3);
       box-shadow: 0 0 18px rgba(88, 80, 255, 0.25);
-      transition: 0.25s;
       cursor: pointer;
-    }
-
-    .topic-item:hover {
-      border-color: rgba(108, 99, 255, 0.7);
-      box-shadow: 0 0 24px rgba(88, 80, 255, 0.4);
-      transform: translateY(-1px);
-    }
-
-    .topic-header-row {
-      display: flex;
-      justify-content: space-between;
-      gap: 10px;
-      margin-bottom: 4px;
-      align-items: center;
-    }
-
-    .topic-title {
-      font-size: 15px;
-      font-weight: 600;
-      color: #dfe4ff;
-    }
-
-    .topic-nick {
-      font-size: 12px;
-      color: #aeb7ff;
-    }
-
-    .topic-time {
-      font-size: 11px;
-      color: #8f9ae0;
-      text-align: right;
-    }
-
-    .topic-message {
-      font-size: 13px;
-      color: #cfd7ff;
-      margin-top: 4px;
-      white-space: pre-wrap;
-    }
-
-    .topic-meta-line {
-      margin-top: 6px;
-      font-size: 11px;
-      color: #9ea7f0;
-      opacity: 0.95;
-    }
-
-    .no-topics {
-      font-size: 13px;
-      color: #9da5dd;
-      margin-top: 10px;
-    }
-
-    footer {
-      margin-top: 40px;
-      padding: 20px;
-      text-align: center;
-      font-size: 13px;
-      color: #8189c4;
-      border-top: 1px solid rgba(80, 100, 255, 0.25);
+      transition: 0.25s;
     }
   </style>
 </head>
@@ -268,9 +158,7 @@
 
 <header>
   <div class="logo-area">
-    <a href="index.html" style="display:flex;align-items:center;gap:14px;text-decoration:none;">
-      <div class="logo-title">NebChat</div>
-    </a>
+    <a href="index.html"><div class="logo-title">NebChat</div></a>
   </div>
 
   <nav class="menu">
@@ -282,10 +170,10 @@
 </header>
 
 <main class="page">
-  <h1 class="page-title">NebChat Anonim Forum</h1>
+
+  <h1 class="page-title" id="categoryTitle">Son Konular</h1>
   <p class="page-subtitle">
-    Giriş yapmak zorunlu değil. Bir takma ad (nick) seç, başlığını ve mesajını yaz, gönder.
-    Herkes bu sayfadan yazılanları görebilir.
+    Giriş yapmak zorunlu değil. Bir takma ad (nick) seç, başlığını ve mesajını yaz.
   </p>
 
   <!-- YENİ KONU FORMU -->
@@ -297,43 +185,35 @@
       <input type="text" id="titleInput" placeholder="Konu başlığı">
     </div>
 
+    <div class="form-row">
+      <select id="categoryInput" class="select-category">
+        <option value="genel">⚡ Genel Sohbet</option>
+        <option value="oyun">🎮 Oyun Sohbeti</option>
+        <option value="teknoloji">💡 Teknoloji Köşesi</option>
+      </select>
+    </div>
+
     <textarea id="messageInput" placeholder="Mesajını yaz..."></textarea>
 
     <button class="btn-main" id="sendBtn">Konuyu Gönder</button>
-
-    <div class="info-text">
-      Lütfen kişisel bilgilerini paylaşma. Bu forum tamamen anonimdir. Mesajlar Firebase Firestore’da saklanır
-      ve herkes tarafından görülebilir.
-    </div>
   </section>
 
-  <!-- KONU LİSTESİ -->
   <section class="topics-list">
-    <h2 style="font-size:18px;margin-bottom:10px;color:#c8d2ff;">Son Konular</h2>
-    <div id="topicsContainer">
-      <p class="no-topics">Henüz konu açılmamış. İlk konuyu sen aç 🎉</p>
-    </div>
+    <div id="topicsContainer"></div>
   </section>
 
-  <footer>
-    NebChat anonim forum • Bu sayfa deneme aşamasındadır. İçerik tamamen kullanıcıların sorumluluğundadır.
-  </footer>
 </main>
 
-<!-- Firebase + Firestore (modüler) -->
+<footer>NebChat anonim forum • İçerik kullanıcıların sorumluluğundadır.</footer>
+
+<!-- FIREBASE -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
   import {
-    getFirestore,
-    collection,
-    addDoc,
-    serverTimestamp,
-    query,
-    orderBy,
-    onSnapshot
+    getFirestore, collection, addDoc, serverTimestamp,
+    query, orderBy, onSnapshot, where
   } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
 
-  // nebchat2 projenin config'i
   const firebaseConfig = {
     apiKey: "AIzaSyBAwFSe0pud59OXpx1G5hQO9opA1f7Eg9Y",
     authDomain: "nebchat2.firebaseapp.com",
@@ -346,126 +226,87 @@
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
 
+  const params = new URLSearchParams(window.location.search);
+  const selectedCat = params.get("cat");
+
+  const categoryMap = {
+    genel: "⚡ Genel Sohbet",
+    oyun: "🎮 Oyun Sohbeti",
+    teknoloji: "💡 Teknoloji Köşesi"
+  };
+
+  const categoryTitle = document.getElementById("categoryTitle");
+  if (selectedCat && categoryMap[selectedCat]) {
+    categoryTitle.textContent = categoryMap[selectedCat];
+  }
+
   const nickInput = document.getElementById("nickInput");
   const titleInput = document.getElementById("titleInput");
   const messageInput = document.getElementById("messageInput");
+  const categoryInput = document.getElementById("categoryInput");
   const sendBtn = document.getElementById("sendBtn");
   const topicsContainer = document.getElementById("topicsContainer");
 
-  // Yeni konu gönderme
   sendBtn.addEventListener("click", async () => {
     const nick = nickInput.value.trim();
     const title = titleInput.value.trim();
     const message = messageInput.value.trim();
+    const category = categoryInput.value;
 
     if (!nick || !title || !message) {
-      alert("Lütfen nick, başlık ve mesajı doldur.");
+      alert("Lütfen tüm alanları doldurun.");
       return;
     }
 
-    try {
-      await addDoc(collection(db, "posts"), {
-        nick,
-        title,
-        message,
-        createdAt: serverTimestamp(),
-        replyCount: 0,
-        lastReplyAt: null
-      });
+    await addDoc(collection(db, "posts"), {
+      nick, title, message,
+      category,
+      createdAt: serverTimestamp(),
+      replyCount: 0,
+      lastReplyAt: null
+    });
 
-      // temizle
-      messageInput.value = "";
-      titleInput.value = "";
-      // nick'i temizlemiyoruz
-    } catch (e) {
-      console.error("Konu eklenirken hata:", e);
-      alert("Konu eklenirken bir hata oluştu.");
-    }
+    messageInput.value = "";
+    titleInput.value = "";
   });
 
-  // Konuları Firestore'dan canlı olarak dinle
-  const q = query(collection(db, "posts"), orderBy("createdAt", "desc"));
+  let q;
+  if (selectedCat) {
+    q = query(
+      collection(db, "posts"),
+      where("category", "==", selectedCat),
+      orderBy("createdAt", "desc")
+    );
+  } else {
+    q = query(collection(db, "posts"), orderBy("createdAt", "desc"));
+  }
 
   onSnapshot(q, (snapshot) => {
+    topicsContainer.innerHTML = "";
+
     if (snapshot.empty) {
-      topicsContainer.innerHTML = '<p class="no-topics">Henüz konu açılmamış. İlk konuyu sen aç 🎉</p>';
+      topicsContainer.innerHTML =
+        '<p class="no-topics">Bu kategoride henüz konu yok.</p>';
       return;
     }
-
-    topicsContainer.innerHTML = "";
 
     snapshot.forEach((docSnap) => {
       const data = docSnap.data();
       const postId = docSnap.id;
 
       const item = document.createElement("a");
-      item.className = "topic-link";
-      item.href = `topic.html?id=${encodeURIComponent(postId)}`;
+      item.className = "topic-item";
+      item.href = `topic.html?id=${postId}`;
 
-      const wrapper = document.createElement("div");
-      wrapper.className = "topic-item";
-
-      const headerRow = document.createElement("div");
-      headerRow.className = "topic-header-row";
-
-      const left = document.createElement("div");
-      left.innerHTML = `
-        <div class="topic-title">${data.title || "Başlıksız"}</div>
-        <div class="topic-nick">Yazan: ${data.nick || "Anonim"}</div>
+      item.innerHTML = `
+        <div class="topic-title">${data.title}</div>
+        <div class="topic-nick">Yazan: ${data.nick}</div>
+        <div class="topic-message">${data.message}</div>
+        <div class="topic-meta-line">
+          ${data.replyCount || 0} yorum
+        </div>
       `;
 
-      const right = document.createElement("div");
-      right.className = "topic-time";
-
-      let timeText = "";
-      if (data.createdAt && data.createdAt.toDate) {
-        const d = data.createdAt.toDate();
-        timeText = d.toLocaleString("tr-TR", {
-          day: "2-digit",
-          month: "2-digit",
-          hour: "2-digit",
-          minute: "2-digit"
-        });
-      }
-
-      right.textContent = timeText || "";
-
-      headerRow.appendChild(left);
-      headerRow.appendChild(right);
-
-      const msg = document.createElement("div");
-      msg.className = "topic-message";
-      msg.textContent = data.message || "";
-
-      const metaLine = document.createElement("div");
-      metaLine.className = "topic-meta-line";
-
-      const replyCount = typeof data.replyCount === "number" ? data.replyCount : 0;
-      const baseTime = data.lastReplyAt && data.lastReplyAt.toDate
-        ? data.lastReplyAt.toDate()
-        : (data.createdAt && data.createdAt.toDate ? data.createdAt.toDate() : null);
-
-      let lastText = "";
-      if (baseTime) {
-        lastText = baseTime.toLocaleString("tr-TR", {
-          day: "2-digit",
-          month: "2-digit",
-          hour: "2-digit",
-          minute: "2-digit"
-        });
-      }
-
-      if (replyCount === 0) {
-        metaLine.textContent = "Henüz yorum yok";
-      } else {
-        metaLine.textContent = `${replyCount} yorum • Son yorum: ${lastText}`;
-      }
-
-      wrapper.appendChild(headerRow);
-      wrapper.appendChild(msg);
-      wrapper.appendChild(metaLine);
-
-      item.appendChild(wrapper);
       topicsContainer.appendChild(item);
     });
   });
