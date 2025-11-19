@@ -6,15 +6,16 @@
   <title>NebChat • Forum</title>
 
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&family=Pacifico&display=swap');
 
     body {
       margin: 0;
       font-family: 'Montserrat', sans-serif;
-      background: #0a0f1f;
-      color: #e4e8f5;
+      background: #080d1a;
+      color: #dfe4ff;
     }
 
+    /* HEADER + MENÜ */
     header {
       background: rgba(15, 20, 40, 0.7);
       backdrop-filter: blur(10px);
@@ -35,16 +36,13 @@
       gap: 14px;
     }
 
-    .logo-area img {
-      height: 50px;
-      filter: drop-shadow(0 0 12px #6a5eff);
-    }
-
     .logo-title {
-      font-size: 30px;
-      font-weight: 700;
+      font-family: 'Pacifico', cursive;
+      font-size: 34px;
+      font-weight: 400;
       color: #8ab4ff;
       text-shadow: 0 0 10px rgba(121, 169, 255, 0.9);
+      letter-spacing: 0.5px;
     }
 
     .menu {
@@ -81,76 +79,174 @@
       }
     }
 
-    .container {
+    /* ANA İÇERİK */
+    .page {
       max-width: 1100px;
-      margin: 30px auto;
-      padding: 0 15px;
+      margin: 30px auto 50px;
+      padding: 0 16px;
+    }
+
+    .page-title {
+      font-size: 26px;
+      font-weight: 600;
+      color: #bcd2ff;
+      text-shadow: 0 0 18px rgba(120, 140, 255, 0.8);
+      margin-bottom: 6px;
+    }
+
+    .page-subtitle {
+      font-size: 14px;
+      color: #a3aedf;
+      opacity: 0.9;
+      margin-bottom: 24px;
+    }
+
+    /* KATEGORİ KARTLARI */
+    .category-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 18px;
+      margin-bottom: 30px;
     }
 
     .category-card {
-      background: rgba(20, 25, 45, 0.65);
-      backdrop-filter: blur(16px);
-      padding: 22px;
-      border-radius: 18px;
-      margin-bottom: 30px;
-      border: 2px solid rgba(108, 99, 255, 0.25);
-      box-shadow: 0 0 25px rgba(88, 80, 255, 0.25);
+      background: rgba(20, 25, 50, 0.7);
+      border-radius: 16px;
+      padding: 16px 15px;
+      border: 1px solid rgba(108, 99, 255, 0.3);
+      box-shadow: 0 0 18px rgba(88, 80, 255, 0.25);
+      cursor: default;
       transition: 0.25s;
     }
 
     .category-card:hover {
-      border-color: rgba(108, 99, 255, 0.55);
-      box-shadow: 0 0 35px rgba(88, 80, 255, 0.4);
+      border-color: rgba(108, 99, 255, 0.7);
+      box-shadow: 0 0 26px rgba(88, 80, 255, 0.4);
+      transform: translateY(-2px);
     }
 
-    .category-title {
-      font-size: 22px;
+    .cat-title {
+      font-size: 16px;
       font-weight: 600;
-      margin-bottom: 10px;
-      color: #9eb9ff;
-      text-shadow: 0 0 10px rgba(120, 150, 255, 0.8);
+      margin-bottom: 6px;
+      color: #d2dcff;
     }
 
-    .topic-item {
-      background: rgba(255, 255, 255, 0.03);
+    .cat-desc {
+      font-size: 13px;
+      color: #aeb7e8;
+      opacity: 0.95;
+      margin-bottom: 6px;
+    }
+
+    .cat-meta {
+      font-size: 11px;
+      color: #8d97d0;
+      margin-top: 4px;
+    }
+
+    /* BAŞLIK TABLOSU */
+    .topics-box {
+      background: rgba(15, 20, 45, 0.85);
+      border-radius: 18px;
+      border: 1px solid rgba(108, 99, 255, 0.35);
+      box-shadow: 0 0 30px rgba(80, 70, 230, 0.45);
+      overflow: hidden;
+    }
+
+    .topics-header {
       padding: 14px 18px;
-      border-radius: 12px;
-      margin-top: 12px;
+      border-bottom: 1px solid rgba(108, 99, 255, 0.35);
       display: flex;
       justify-content: space-between;
-      border: 1px solid rgba(80, 100, 255, 0.15);
-      transition: 0.2s;
+      align-items: center;
+      background: radial-gradient(circle at top, rgba(88, 80, 255, 0.35), rgba(15, 20, 45, 0.95));
     }
 
-    .topic-item:hover {
-      border-color: rgba(120, 140, 255, 0.8);
-      box-shadow: 0 0 12px rgba(120, 140, 255, 0.8);
-    }
-
-    .topic-title a {
-      color: #e4e8f5;
-      text-decoration: none;
+    .topics-header-title {
       font-size: 16px;
+      font-weight: 600;
+      color: #d6e0ff;
+    }
+
+    .topics-header-right {
+      font-size: 12px;
+      color: #aab4ff;
+    }
+
+    .topics-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .topics-table th,
+    .topics-table td {
+      font-size: 13px;
+      padding: 10px 14px;
+    }
+
+    .topics-table th {
+      text-align: left;
+      background: rgba(20, 26, 60, 0.9);
+      color: #9fb1ff;
+      border-bottom: 1px solid rgba(108, 99, 255, 0.35);
+    }
+
+    .topics-table tr:nth-child(even) {
+      background: rgba(14, 18, 40, 0.9);
+    }
+
+    .topics-table tr:nth-child(odd) {
+      background: rgba(10, 14, 32, 0.9);
+    }
+
+    .topics-table tr:hover {
+      background: rgba(50, 60, 120, 0.7);
+    }
+
+    .topic-title {
+      color: #dfe4ff;
+      text-decoration: none;
       font-weight: 500;
     }
 
-    .topic-title a:hover {
+    .topic-title:hover {
       text-decoration: underline;
     }
 
-    .topic-info {
-      font-size: 13px;
-      color: #a4b2ff;
-      opacity: 0.85;
-      text-align: right;
+    .topic-tag {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 11px;
+      margin-left: 6px;
+      background: rgba(120, 200, 255, 0.18);
+      border: 1px solid rgba(120, 200, 255, 0.6);
+      color: #cbe7ff;
+    }
+
+    .topic-meta {
+      font-size: 11px;
+      color: #a3aedf;
+    }
+
+    .topic-count {
+      font-size: 12px;
+      text-align: center;
+      color: #c2ccff;
+    }
+
+    .topic-last {
+      font-size: 11px;
+      color: #b0b8ff;
     }
 
     footer {
       margin-top: 40px;
       padding: 20px;
       text-align: center;
-      color: #7d88c7;
-      font-size: 14px;
+      font-size: 13px;
+      color: #8189c4;
       border-top: 1px solid rgba(80, 100, 255, 0.25);
     }
   </style>
@@ -161,7 +257,6 @@
 <header>
   <div class="logo-area">
     <a href="index.html" style="display:flex;align-items:center;gap:14px;text-decoration:none;">
-      <img src="logo nebchat.png" alt="NebChat Logo">
       <div class="logo-title">NebChat</div>
     </a>
   </div>
@@ -169,73 +264,125 @@
   <nav class="menu">
     <a href="index.html">Ana Sayfa</a>
     <a href="forum.html">Forum</a>
-   <a href="login.html">Giriş Yap</a>
+    <a href="login.html">Giriş Yap</a>
     <a href="profile.html">Profilim</a>
   </nav>
 </header>
 
-<div class="container">
+<main class="page">
+  <h1 class="page-title">Forum</h1>
+  <p class="page-subtitle">
+    NebChat topluluğunun buluşma noktası. Aşağıdan ilgi alanına göre bir başlık seçebilir
+    veya giriş yaptıktan sonra kendi konunu açabilirsin.
+  </p>
 
-  <div class="category-card">
-    <div class="category-title">⚡ Genel Sohbet</div>
+  <!-- KATEGORİLER -->
+  <section class="category-grid">
+    <article class="category-card">
+      <div class="cat-title">⚡ Genel Sohbet</div>
+      <div class="cat-desc">Gündelik muhabbet, tanışma, geyik, her şey burada.</div>
+      <div class="cat-meta">Son mesaj: 5 dk önce • 128 konu</div>
+    </article>
 
-    <div class="topic-item">
-      <div class="topic-title">
-        <a href="topic.html">Hoş geldiniz! İlk mesajınızı yazın</a>
-      </div>
-      <div class="topic-info">Son mesaj • 2 saat önce</div>
+    <article class="category-card">
+      <div class="cat-title">🎮 Oyun & AOE Mobile</div>
+      <div class="cat-desc">Age of Empires Mobile ve diğer oyunlar için taktikler, sorular ve ekip arayanlar.</div>
+      <div class="cat-meta">Son mesaj: 1 saat önce • 64 konu</div>
+    </article>
+
+    <article class="category-card">
+      <div class="cat-title">💻 Teknoloji & Donanım</div>
+      <div class="cat-desc">Telefonlar, bilgisayarlar, network, güvenlik ve yazılım muhabbetleri.</div>
+      <div class="cat-meta">Son mesaj: bugün • 42 konu</div>
+    </article>
+
+    <article class="category-card">
+      <div class="cat-title">🌍 Gündem & Sohbet</div>
+      <div class="cat-desc">Güncel olaylar, haberler ve fikir alışverişi.</div>
+      <div class="cat-meta">Son mesaj: dün • 23 konu</div>
+    </article>
+  </section>
+
+  <!-- BAŞLIK LİSTESİ -->
+  <section class="topics-box">
+    <div class="topics-header">
+      <div class="topics-header-title">Son Açılan Konular</div>
+      <div class="topics-header-right">Örnek veri – gerçek üyelik sistemi daha sonra eklenecek</div>
     </div>
 
-    <div class="topic-item">
-      <div class="topic-title">
-        <a href="topic.html">Tanışma konusu</a>
-      </div>
-      <div class="topic-info">Son mesaj • dün</div>
-    </div>
-  </div>
+    <table class="topics-table">
+      <thead>
+        <tr>
+          <th>Konu</th>
+          <th>Başlatan</th>
+          <th>Cevaplar</th>
+          <th>Son Mesaj</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>
+            <a class="topic-title" href="topic.html">Age of Empires Mobile - Doruk Arenası taktikleri</a>
+            <span class="topic-tag">Oyun</span>
+            <div class="topic-meta">Kategori: Oyun & AOE Mobile</div>
+          </td>
+          <td class="topic-meta">Nebride</td>
+          <td class="topic-count">24</td>
+          <td class="topic-last">Bugün • 22:14<br>Son cevap: gamer42</td>
+        </tr>
 
-  <div class="category-card">
-    <div class="category-title">🎮 Oyun Sohbeti</div>
+        <tr>
+          <td>
+            <a class="topic-title" href="topic.html">Yeni telefon alacağım, iPhone 16 kullananlar yorum?</a>
+            <span class="topic-tag">Teknoloji</span>
+            <div class="topic-meta">Kategori: Teknoloji & Donanım</div>
+          </td>
+          <td class="topic-meta">TechTalk</td>
+          <td class="topic-count">15</td>
+          <td class="topic-last">Bugün • 19:02<br>Son cevap: cihat_oz</td>
+        </tr>
 
-    <div class="topic-item">
-      <div class="topic-title">
-        <a href="topic.html">Age of Empires Mobile taktikleri</a>
-      </div>
-      <div class="topic-info">Son mesaj • 1 saat önce</div>
-    </div>
+        <tr>
+          <td>
+            <a class="topic-title" href="topic.html">Gece geç saat NebChat tayfası buraya</a>
+            <span class="topic-tag">Sohbet</span>
+            <div class="topic-meta">Kategori: Genel Sohbet</div>
+          </td>
+          <td class="topic-meta">NightOwl</td>
+          <td class="topic-count">53</td>
+          <td class="topic-last">Bugün • 01:12<br>Son cevap: sleepyuser</td>
+        </tr>
 
-    <div class="topic-item">
-      <div class="topic-title">
-        <a href="topic.html">PS5 mi Xbox mı?</a>
-      </div>
-      <div class="topic-info">Son mesaj • geçen hafta</div>
-    </div>
-  </div>
+        <tr>
+          <td>
+            <a class="topic-title" href="topic.html">Evden çalışanlar için verimlilik önerileri</a>
+            <span class="topic-tag">Hayat</span>
+            <div class="topic-meta">Kategori: Gündem & Sohbet</div>
+          </td>
+          <td class="topic-meta">FocusMode</td>
+          <td class="topic-count">8</td>
+          <td class="topic-last">Dün • 17:45<br>Son cevap: coffee_addict</td>
+        </tr>
 
-  <div class="category-card">
-    <div class="category-title">💡 Teknoloji</div>
+        <tr>
+          <td>
+            <a class="topic-title" href="topic.html">Konsol mu, PC mi? 2025’te hangisi mantıklı?</a>
+            <span class="topic-tag">Oyun</span>
+            <div class="topic-meta">Kategori: Oyun & AOE Mobile</div>
+          </td>
+          <td class="topic-meta">ConsoleHunter</td>
+          <td class="topic-count">31</td>
+          <td class="topic-last">Dün • 23:20<br>Son cevap: pc_master</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
 
-    <div class="topic-item">
-      <div class="topic-title">
-        <a href="topic.html">iPhone 16 kullanıcı deneyimleri</a>
-      </div>
-      <div class="topic-info">Son mesaj • bugün</div>
-    </div>
-
-    <div class="topic-item">
-      <div class="topic-title">
-        <a href="topic.html">Android cihaz önerileri</a>
-      </div>
-      <div class="topic-info">Son mesaj • 2 gün önce</div>
-    </div>
-  </div>
-
-</div>
-
-<footer>
-  © 2025 NebChat Forum • Neon Tema
-</footer>
+  <footer>
+    NebChat forum şu an geliştirme aşamasında. Gerçek üyelik ve mesaj sistemi giriş/kayıt
+    tamamlandıktan sonra aktif edilecek.
+  </footer>
+</main>
 
 </body>
 </html>
-
