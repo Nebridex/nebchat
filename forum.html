@@ -79,10 +79,10 @@
       }
     }
 
-    /* ANA İÇERİK */
+    /* SAYFA */
     .page {
       max-width: 1100px;
-      margin: 30px auto 50px;
+      margin: 30px auto 60px;
       padding: 0 16px;
     }
 
@@ -101,144 +101,142 @@
       margin-bottom: 24px;
     }
 
-    /* KATEGORİ KARTLARI */
-    .category-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
-      gap: 18px;
-      margin-bottom: 30px;
-    }
-
-    .category-card {
+    /* YENİ KONU FORMU */
+    .new-topic-box {
       background: rgba(20, 25, 50, 0.7);
-      border-radius: 16px;
-      padding: 16px 15px;
-      border: 1px solid rgba(108, 99, 255, 0.3);
-      box-shadow: 0 0 18px rgba(88, 80, 255, 0.25);
-      cursor: default;
-      transition: 0.25s;
-    }
-
-    .category-card:hover {
-      border-color: rgba(108, 99, 255, 0.7);
-      box-shadow: 0 0 26px rgba(88, 80, 255, 0.4);
-      transform: translateY(-2px);
-    }
-
-    .cat-title {
-      font-size: 16px;
-      font-weight: 600;
-      margin-bottom: 6px;
-      color: #d2dcff;
-    }
-
-    .cat-desc {
-      font-size: 13px;
-      color: #aeb7e8;
-      opacity: 0.95;
-      margin-bottom: 6px;
-    }
-
-    .cat-meta {
-      font-size: 11px;
-      color: #8d97d0;
-      margin-top: 4px;
-    }
-
-    /* BAŞLIK TABLOSU */
-    .topics-box {
-      background: rgba(15, 20, 45, 0.85);
       border-radius: 18px;
+      padding: 18px 16px;
       border: 1px solid rgba(108, 99, 255, 0.35);
-      box-shadow: 0 0 30px rgba(80, 70, 230, 0.45);
-      overflow: hidden;
+      box-shadow: 0 0 22px rgba(80, 70, 230, 0.5);
+      margin-bottom: 26px;
     }
 
-    .topics-header {
-      padding: 14px 18px;
-      border-bottom: 1px solid rgba(108, 99, 255, 0.35);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      background: radial-gradient(circle at top, rgba(88, 80, 255, 0.35), rgba(15, 20, 45, 0.95));
-    }
-
-    .topics-header-title {
+    .new-topic-title {
       font-size: 16px;
       font-weight: 600;
+      margin-bottom: 10px;
       color: #d6e0ff;
     }
 
-    .topics-header-right {
-      font-size: 12px;
-      color: #aab4ff;
+    .form-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 10px;
     }
 
-    .topics-table {
-      width: 100%;
-      border-collapse: collapse;
-    }
-
-    .topics-table th,
-    .topics-table td {
+    .form-row input {
+      flex: 1;
+      min-width: 160px;
+      padding: 9px;
+      border-radius: 10px;
+      border: 1px solid rgba(108, 99, 255, 0.4);
+      background: rgba(255, 255, 255, 0.08);
+      color: #ffffff;
+      outline: none;
       font-size: 13px;
-      padding: 10px 14px;
     }
 
-    .topics-table th {
-      text-align: left;
-      background: rgba(20, 26, 60, 0.9);
-      color: #9fb1ff;
-      border-bottom: 1px solid rgba(108, 99, 255, 0.35);
+    .form-row input:focus,
+    textarea:focus {
+      border-color: rgba(138, 127, 255, 0.9);
+      box-shadow: 0 0 15px rgba(138, 127, 255, 0.7);
     }
 
-    .topics-table tr:nth-child(even) {
-      background: rgba(14, 18, 40, 0.9);
+    textarea {
+      width: 100%;
+      min-height: 90px;
+      max-height: 220px;
+      border-radius: 12px;
+      border: 1px solid rgba(108, 99, 255, 0.35);
+      background: rgba(255, 255, 255, 0.08);
+      padding: 10px;
+      color: white;
+      outline: none;
+      font-size: 14px;
+      resize: vertical;
+      margin-bottom: 8px;
     }
 
-    .topics-table tr:nth-child(odd) {
-      background: rgba(10, 14, 32, 0.9);
+    .btn-main {
+      padding: 9px 18px;
+      border-radius: 10px;
+      border: 1px solid rgba(108, 99, 255, 0.7);
+      background: rgba(108, 99, 255, 0.5);
+      color: #e0e4ff;
+      font-size: 14px;
+      cursor: pointer;
+      transition: 0.25s;
     }
 
-    .topics-table tr:hover {
-      background: rgba(50, 60, 120, 0.7);
+    .btn-main:hover {
+      background: rgba(108, 99, 255, 0.7);
+      box-shadow: 0 0 20px rgba(108, 99, 255, 0.85);
+    }
+
+    .info-text {
+      font-size: 11px;
+      color: #a7b1f0;
+      margin-top: 6px;
+    }
+
+    /* KONU LİSTESİ */
+    .topics-list {
+      margin-top: 20px;
+    }
+
+    .topic-item {
+      background: rgba(14, 18, 40, 0.95);
+      border-radius: 16px;
+      padding: 14px 13px;
+      margin-bottom: 10px;
+      border: 1px solid rgba(108, 99, 255, 0.3);
+      box-shadow: 0 0 18px rgba(88, 80, 255, 0.25);
+      transition: 0.25s;
+    }
+
+    .topic-item:hover {
+      border-color: rgba(108, 99, 255, 0.7);
+      box-shadow: 0 0 24px rgba(88, 80, 255, 0.4);
+      transform: translateY(-1px);
+    }
+
+    .topic-header-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 4px;
+      align-items: center;
     }
 
     .topic-title {
+      font-size: 15px;
+      font-weight: 600;
       color: #dfe4ff;
-      text-decoration: none;
-      font-weight: 500;
     }
 
-    .topic-title:hover {
-      text-decoration: underline;
-    }
-
-    .topic-tag {
-      display: inline-block;
-      padding: 2px 8px;
-      border-radius: 999px;
-      font-size: 11px;
-      margin-left: 6px;
-      background: rgba(120, 200, 255, 0.18);
-      border: 1px solid rgba(120, 200, 255, 0.6);
-      color: #cbe7ff;
-    }
-
-    .topic-meta {
-      font-size: 11px;
-      color: #a3aedf;
-    }
-
-    .topic-count {
+    .topic-nick {
       font-size: 12px;
-      text-align: center;
-      color: #c2ccff;
+      color: #aeb7ff;
     }
 
-    .topic-last {
+    .topic-time {
       font-size: 11px;
-      color: #b0b8ff;
+      color: #8f9ae0;
+      text-align: right;
+    }
+
+    .topic-message {
+      font-size: 13px;
+      color: #cfd7ff;
+      margin-top: 4px;
+      white-space: pre-wrap;
+    }
+
+    .no-topics {
+      font-size: 13px;
+      color: #9da5dd;
+      margin-top: 10px;
     }
 
     footer {
@@ -270,119 +268,161 @@
 </header>
 
 <main class="page">
-  <h1 class="page-title">Forum</h1>
+  <h1 class="page-title">NebChat Anonim Forum</h1>
   <p class="page-subtitle">
-    NebChat topluluğunun buluşma noktası. Aşağıdan ilgi alanına göre bir başlık seçebilir
-    veya giriş yaptıktan sonra kendi konunu açabilirsin.
+    Giriş yapmak zorunlu değil. Bir takma ad (nick) seç, başlığını ve mesajını yaz, gönder.
+    Herkes bu sayfadan yazılanları görebilir.
   </p>
 
-  <!-- KATEGORİLER -->
-  <section class="category-grid">
-    <article class="category-card">
-      <div class="cat-title">⚡ Genel Sohbet</div>
-      <div class="cat-desc">Gündelik muhabbet, tanışma, geyik, her şey burada.</div>
-      <div class="cat-meta">Son mesaj: 5 dk önce • 128 konu</div>
-    </article>
+  <!-- YENİ KONU FORMU -->
+  <section class="new-topic-box">
+    <div class="new-topic-title">Yeni Konu Aç</div>
 
-    <article class="category-card">
-      <div class="cat-title">🎮 Oyun & AOE Mobile</div>
-      <div class="cat-desc">Age of Empires Mobile ve diğer oyunlar için taktikler, sorular ve ekip arayanlar.</div>
-      <div class="cat-meta">Son mesaj: 1 saat önce • 64 konu</div>
-    </article>
-
-    <article class="category-card">
-      <div class="cat-title">💻 Teknoloji & Donanım</div>
-      <div class="cat-desc">Telefonlar, bilgisayarlar, network, güvenlik ve yazılım muhabbetleri.</div>
-      <div class="cat-meta">Son mesaj: bugün • 42 konu</div>
-    </article>
-
-    <article class="category-card">
-      <div class="cat-title">🌍 Gündem & Sohbet</div>
-      <div class="cat-desc">Güncel olaylar, haberler ve fikir alışverişi.</div>
-      <div class="cat-meta">Son mesaj: dün • 23 konu</div>
-    </article>
-  </section>
-
-  <!-- BAŞLIK LİSTESİ -->
-  <section class="topics-box">
-    <div class="topics-header">
-      <div class="topics-header-title">Son Açılan Konular</div>
-      <div class="topics-header-right">Örnek veri – gerçek üyelik sistemi daha sonra eklenecek</div>
+    <div class="form-row">
+      <input type="text" id="nickInput" placeholder="Takma adın (ör: Nebride)">
+      <input type="text" id="titleInput" placeholder="Konu başlığı">
     </div>
 
-    <table class="topics-table">
-      <thead>
-        <tr>
-          <th>Konu</th>
-          <th>Başlatan</th>
-          <th>Cevaplar</th>
-          <th>Son Mesaj</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>
-            <a class="topic-title" href="topic.html">Age of Empires Mobile - Doruk Arenası taktikleri</a>
-            <span class="topic-tag">Oyun</span>
-            <div class="topic-meta">Kategori: Oyun & AOE Mobile</div>
-          </td>
-          <td class="topic-meta">Nebride</td>
-          <td class="topic-count">24</td>
-          <td class="topic-last">Bugün • 22:14<br>Son cevap: gamer42</td>
-        </tr>
+    <textarea id="messageInput" placeholder="Mesajını yaz..."></textarea>
 
-        <tr>
-          <td>
-            <a class="topic-title" href="topic.html">Yeni telefon alacağım, iPhone 16 kullananlar yorum?</a>
-            <span class="topic-tag">Teknoloji</span>
-            <div class="topic-meta">Kategori: Teknoloji & Donanım</div>
-          </td>
-          <td class="topic-meta">TechTalk</td>
-          <td class="topic-count">15</td>
-          <td class="topic-last">Bugün • 19:02<br>Son cevap: cihat_oz</td>
-        </tr>
+    <button class="btn-main" id="sendBtn">Konuyu Gönder</button>
 
-        <tr>
-          <td>
-            <a class="topic-title" href="topic.html">Gece geç saat NebChat tayfası buraya</a>
-            <span class="topic-tag">Sohbet</span>
-            <div class="topic-meta">Kategori: Genel Sohbet</div>
-          </td>
-          <td class="topic-meta">NightOwl</td>
-          <td class="topic-count">53</td>
-          <td class="topic-last">Bugün • 01:12<br>Son cevap: sleepyuser</td>
-        </tr>
+    <div class="info-text">
+      Lütfen kişisel bilgilerini paylaşma. Bu forum tamamen anonimdir. Mesajlar Firebase Firestore’da saklanır
+      ve herkes tarafından görülebilir.
+    </div>
+  </section>
 
-        <tr>
-          <td>
-            <a class="topic-title" href="topic.html">Evden çalışanlar için verimlilik önerileri</a>
-            <span class="topic-tag">Hayat</span>
-            <div class="topic-meta">Kategori: Gündem & Sohbet</div>
-          </td>
-          <td class="topic-meta">FocusMode</td>
-          <td class="topic-count">8</td>
-          <td class="topic-last">Dün • 17:45<br>Son cevap: coffee_addict</td>
-        </tr>
-
-        <tr>
-          <td>
-            <a class="topic-title" href="topic.html">Konsol mu, PC mi? 2025’te hangisi mantıklı?</a>
-            <span class="topic-tag">Oyun</span>
-            <div class="topic-meta">Kategori: Oyun & AOE Mobile</div>
-          </td>
-          <td class="topic-meta">ConsoleHunter</td>
-          <td class="topic-count">31</td>
-          <td class="topic-last">Dün • 23:20<br>Son cevap: pc_master</td>
-        </tr>
-      </tbody>
-    </table>
+  <!-- KONU LİSTESİ -->
+  <section class="topics-list">
+    <h2 style="font-size:18px;margin-bottom:10px;color:#c8d2ff;">Son Konular</h2>
+    <div id="topicsContainer">
+      <p class="no-topics">Henüz konu açılmamış. İlk konuyu sen aç 🎉</p>
+    </div>
   </section>
 
   <footer>
-    NebChat forum şu an geliştirme aşamasında. Gerçek üyelik ve mesaj sistemi giriş/kayıt
-    tamamlandıktan sonra aktif edilecek.
+    NebChat anonim forum • Bu sayfa deneme aşamasındadır. İçerik tamamen kullanıcıların sorumluluğundadır.
   </footer>
 </main>
+
+<!-- Firebase + Firestore (modüler) -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
+  import {
+    getFirestore,
+    collection,
+    addDoc,
+    serverTimestamp,
+    query,
+    orderBy,
+    onSnapshot
+  } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
+
+  // nebchat2 projenin config'i
+  const firebaseConfig = {
+    apiKey: "AIzaSyBAwFSe0pud59OXpx1G5hQO9opA1f7Eg9Y",
+    authDomain: "nebchat2.firebaseapp.com",
+    projectId: "nebchat2",
+    storageBucket: "nebchat2.firebasestorage.app",
+    messagingSenderId: "46979426016",
+    appId: "1:46979426016:web:fd1fbe341fff6970ae9285"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  const nickInput = document.getElementById("nickInput");
+  const titleInput = document.getElementById("titleInput");
+  const messageInput = document.getElementById("messageInput");
+  const sendBtn = document.getElementById("sendBtn");
+  const topicsContainer = document.getElementById("topicsContainer");
+
+  // Yeni konu gönderme
+  sendBtn.addEventListener("click", async () => {
+    const nick = nickInput.value.trim();
+    const title = titleInput.value.trim();
+    const message = messageInput.value.trim();
+
+    if (!nick || !title || !message) {
+      alert("Lütfen nick, başlık ve mesajı doldur.");
+      return;
+    }
+
+    try {
+      await addDoc(collection(db, "posts"), {
+        nick,
+        title,
+        message,
+        createdAt: serverTimestamp()
+      });
+
+      // temizle
+      messageInput.value = "";
+      titleInput.value = "";
+      // nick'i temizlemiyoruz, tekrar tekrar kullanabilsin
+    } catch (e) {
+      console.error("Konu eklenirken hata:", e);
+      alert("Konu eklenirken bir hata oluştu.");
+    }
+  });
+
+  // Konuları Firestore'dan canlı olarak dinle
+  const q = query(collection(db, "posts"), orderBy("createdAt", "desc"));
+
+  onSnapshot(q, (snapshot) => {
+    if (snapshot.empty) {
+      topicsContainer.innerHTML = '<p class="no-topics">Henüz konu açılmamış. İlk konuyu sen aç 🎉</p>';
+      return;
+    }
+
+    topicsContainer.innerHTML = "";
+
+    snapshot.forEach((doc) => {
+      const data = doc.data();
+
+      const item = document.createElement("div");
+      item.className = "topic-item";
+
+      const headerRow = document.createElement("div");
+      headerRow.className = "topic-header-row";
+
+      const left = document.createElement("div");
+      left.innerHTML = `
+        <div class="topic-title">${data.title || "Başlıksız"}</div>
+        <div class="topic-nick">Yazan: ${data.nick || "Anonim"}</div>
+      `;
+
+      const right = document.createElement("div");
+      right.className = "topic-time";
+
+      let timeText = "";
+      if (data.createdAt && data.createdAt.toDate) {
+        const d = data.createdAt.toDate();
+        timeText = d.toLocaleString("tr-TR", {
+          day: "2-digit",
+          month: "2-digit",
+          hour: "2-digit",
+          minute: "2-digit"
+        });
+      }
+
+      right.textContent = timeText || "";
+
+      headerRow.appendChild(left);
+      headerRow.appendChild(right);
+
+      const msg = document.createElement("div");
+      msg.className = "topic-message";
+      msg.textContent = data.message || "";
+
+      item.appendChild(headerRow);
+      item.appendChild(msg);
+
+      topicsContainer.appendChild(item);
+    });
+  });
+</script>
 
 </body>
 </html>
