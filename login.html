@@ -282,33 +282,30 @@
   </div>
 </div>
 
-<!-- Firebase v12 modüler SDK - type="module" -->
+<!-- Firebase v12 modüler SDK -->
 <script type="module">
-  // Firebase SDK'lardan gerekli fonksiyonları çek
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
-  import { 
-    getAuth, 
-    createUserWithEmailAndPassword, 
-    signInWithEmailAndPassword 
+  import {
+    getAuth,
+    createUserWithEmailAndPassword,
+    signInWithEmailAndPassword
   } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
 
-  // Senin Firebase config'in
+  // Yeni Firebase projen (nebchat2) için config
   const firebaseConfig = {
-    apiKey: "AIzaSyAU7kASxtN07wzCL2LeCT4J_RfqQMhb3GM",
-    authDomain: "nebchat-fb0ed.firebaseapp.com",
-    projectId: "nebchat-fb0ed",
-    storageBucket: "nebchat-fb0ed.appspot.com",
-    messagingSenderId: "716197051910",
-    appId: "1:716197051910:web:95d85a53863c4b1f5e4d87",
-    measurementId: "G-MKED7N3Z92"
-};
-
+    apiKey: "AIzaSyBAwFSe0pud59OXpx1G5hQO9opA1f7Eg9Y",
+    authDomain: "nebchat2.firebaseapp.com",
+    projectId: "nebchat2",
+    storageBucket: "nebchat2.firebasestorage.app",
+    messagingSenderId: "46979426016",
+    appId: "1:46979426016:web:fd1fbe341fff6970ae9285"
+  };
 
   // Firebase'i başlat
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
 
-  // Form görünümünü değiştiren fonksiyonlar (window'a ekliyoruz ki HTML'den çağrılabilsin)
+  // Form görünümünü değiştiren fonksiyonlar
   window.showLogin = function () {
     document.getElementById("login-form").style.display = "block";
     document.getElementById("register-form").style.display = "none";
