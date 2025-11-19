@@ -61,6 +61,12 @@
       transition: 0.25s;
     }
 
+    .menu a:hover {
+      background: rgba(108, 99, 255, 0.25);
+      box-shadow: 0 0 14px rgba(108, 99, 255, 0.5);
+      color: #ffffff;
+    }
+
     .page {
       max-width: 1100px;
       margin: 30px auto 60px;
@@ -82,6 +88,16 @@
       margin-bottom: 24px;
     }
 
+    .category-title {
+      font-size: 22px;
+      font-weight: 600;
+      margin-top: 40px;
+      margin-bottom: 12px;
+      color: #dfe4ff;
+      text-shadow: 0 0 10px rgba(120, 140, 255, 0.8);
+    }
+
+    /* YENİ KONU FORMU */
     .new-topic-box {
       background: rgba(20, 25, 50, 0.7);
       border-radius: 18px;
@@ -95,6 +111,7 @@
       font-size: 16px;
       font-weight: 600;
       margin-bottom: 10px;
+      color: #d6e0ff;
     }
 
     .form-row {
@@ -137,18 +154,27 @@
       color: #e0e4ff;
       font-size: 14px;
       cursor: pointer;
+      transition: 0.25s;
     }
 
-    /* KONU KARTI */
+    .btn-main:hover {
+      background: rgba(108, 99, 255, 0.7);
+      box-shadow: 0 0 20px rgba(108, 99, 255, 0.85);
+    }
+
+    .topic-list {
+      margin-bottom: 25px;
+    }
+
     .topic-item {
       background: rgba(14, 18, 40, 0.95);
       border-radius: 16px;
       padding: 14px 13px;
-      margin-bottom: 14px;
+      margin-bottom: 10px;
       border: 1px solid rgba(108, 99, 255, 0.3);
       box-shadow: 0 0 18px rgba(88, 80, 255, 0.25);
       transition: 0.25s;
-      display: block;
+      cursor: pointer;
       text-decoration: none;
       color: inherit;
     }
@@ -156,33 +182,43 @@
     .topic-item:hover {
       border-color: rgba(108, 99, 255, 0.7);
       box-shadow: 0 0 24px rgba(88, 80, 255, 0.4);
-      transform: translateY(-2px);
+      transform: translateY(-1px);
     }
 
     .topic-title {
-      font-size: 17px;
+      font-size: 15px;
       font-weight: 600;
       color: #dfe4ff;
-      margin-bottom: 4px;
     }
 
     .topic-nick {
       font-size: 12px;
       color: #aeb7ff;
-      margin-bottom: 8px;
     }
 
     .topic-message {
       font-size: 13px;
       color: #cfd7ff;
+      margin-top: 4px;
       white-space: pre-wrap;
-      margin-bottom: 10px;
     }
 
     .topic-meta-line {
-      font-size: 12px;
+      margin-top: 6px;
+      font-size: 11px;
       color: #9ea7f0;
-      opacity: 0.9;
+      opacity: 0.95;
+    }
+
+    .see-more {
+      font-size: 13px;
+      margin-bottom: 25px;
+      color: #8aa0ff;
+      text-decoration: none;
+    }
+
+    .see-more:hover {
+      text-decoration: underline;
     }
 
     footer {
@@ -213,12 +249,12 @@
 
 <main class="page">
 
-  <h1 class="page-title" id="categoryTitle">Son Konular</h1>
+  <h1 class="page-title" id="pageTitle">Son Konular</h1>
   <p class="page-subtitle">
     Giriş yapmak zorunlu değil. Bir takma ad (nick) seç, başlığını ve mesajını yaz.
   </p>
 
-  <!-- YENİ KONU AÇMA -->
+  <!-- YENİ KONU FORMU -->
   <section class="new-topic-box">
     <div class="new-topic-title">Yeni Konu Aç</div>
 
@@ -240,22 +276,18 @@
     <button class="btn-main" id="sendBtn">Konuyu Gönder</button>
   </section>
 
-  <!-- KONU LİSTESİ -->
-  <section class="topics-list">
-    <div id="topicsContainer"></div>
-  </section>
+  <div id="forumContent"></div>
 
 </main>
 
-<footer>
-  NebChat anonim forum • İçerik kullanıcıların sorumluluğundadır.
-</footer>
+<footer>NebChat anonim forum • İçerik kullanıcıların sorumluluğundadır.</footer>
 
+<!-- FIREBASE -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
   import {
     getFirestore, collection, addDoc, serverTimestamp,
-    query, orderBy, onSnapshot, where
+    query, orderBy, onSnapshot, where, limit
   } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
 
   const firebaseConfig = {
@@ -270,27 +302,25 @@
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
 
-  const params = new URLSearchParams(window.location.search);
-  const selectedCat = params.get("cat");
-
   const categoryMap = {
     genel: "⚡ Genel Sohbet",
     oyun: "🎮 Oyun Sohbeti",
     teknoloji: "💡 Teknoloji Köşesi"
   };
 
-  const categoryTitle = document.getElementById("categoryTitle");
-  if (selectedCat && categoryMap[selectedCat]) {
-    categoryTitle.textContent = categoryMap[selectedCat];
-  }
+  const params = new URLSearchParams(window.location.search);
+  const selectedCat = params.get("cat");
+
+  const pageTitle = document.getElementById("pageTitle");
+  const forumContent = document.getElementById("forumContent");
 
   const nickInput = document.getElementById("nickInput");
   const titleInput = document.getElementById("titleInput");
   const messageInput = document.getElementById("messageInput");
   const categoryInput = document.getElementById("categoryInput");
   const sendBtn = document.getElementById("sendBtn");
-  const topicsContainer = document.getElementById("topicsContainer");
 
+  // Yeni konu gönderme
   sendBtn.addEventListener("click", async () => {
     const nick = nickInput.value.trim();
     const title = titleInput.value.trim();
@@ -313,85 +343,128 @@
     titleInput.value = "";
   });
 
-  let q;
-  if (selectedCat) {
-    q = query(
-      collection(db, "posts"),
-      where("category", "==", selectedCat),
-      orderBy("createdAt", "desc")
-    );
-  } else {
-    q = query(collection(db, "posts"), orderBy("createdAt", "desc"));
-  }
+  // ------------- ANA FORUM SAYFASI - KATEGORİ ÖNİZLEME -------------
+  async function renderCategoryPreview() {
+    forumContent.innerHTML = "";
 
-  onSnapshot(q, (snapshot) => {
-    topicsContainer.innerHTML = "";
+    for (const cat of ["genel", "oyun", "teknoloji"]) {
+      const label = categoryMap[cat];
 
-    if (snapshot.empty) {
-      topicsContainer.innerHTML = '<p class="no-topics">Bu kategoride henüz konu yok.</p>';
-      return;
-    }
+      const section = document.createElement("div");
 
-    snapshot.forEach((docSnap) => {
-      const data = docSnap.data();
-      const postId = docSnap.id;
+      section.innerHTML = `
+        <div class="category-title">${label}</div>
+        <div id="list-${cat}" class="topic-list"></div>
+        <a class="see-more" href="forum.html?cat=${cat}">Tümünü gör →</a>
+      `;
 
-      const item = document.createElement("a");
-      item.className = "topic-item";
-      item.href = `topic.html?id=${postId}`;
+      forumContent.appendChild(section);
 
-      const lastTime = data.lastReplyAt?.toDate?.() || data.createdAt?.toDate?.();
+      const qCat = query(
+        collection(db, "posts"),
+        where("category", "==", cat),
+        orderBy("createdAt", "desc"),
+        limit(2)
+      );
 
-      const timeStr = lastTime
-        ? lastTime.toLocaleString("tr-TR", {
-            day: "2-digit",
-            month: "2-digit",
-            hour: "2-digit",
-            minute: "2-digit"
-          })
-        : "";
+      const listDiv = section.querySelector(`#list-${cat}`);
 
-const categoryMap = {
-  genel: "⚡ Genel Sohbet",
-  oyun: "🎮 Oyun Sohbeti",
-  teknoloji: "💡 Teknoloji Köşesi"
-};
+      onSnapshot(qCat, (snapshot) => {
+        listDiv.innerHTML = "";
 
-const categoryLabel = categoryMap[data.category] || "❔ Kategorisiz";
+        snapshot.forEach((docSnap) => {
+          const d = docSnap.data();
+          const id = docSnap.id;
 
-item.innerHTML = `
-  <div class="topic-header-row">
-    <div class="topic-title">${categoryLabel} — ${data.title}</div>
-    <div class="topic-nick">Yazan: ${data.nick}</div>
-  </div>
-  <div class="topic-message">${data.message}</div>
-  <div class="topic-meta-line">
-    ${data.replyCount || 0} yorum • Son yorum: ${
-      data.lastReplyAt && data.lastReplyAt.toDate
-        ? data.lastReplyAt.toDate().toLocaleString("tr-TR", {
-            day: "2-digit",
-            month: "2-digit",
-            hour: "2-digit",
-            minute: "2-digit"
-          })
-        : (data.createdAt && data.createdAt.toDate
-            ? data.createdAt.toDate().toLocaleString("tr-TR", {
+          const item = document.createElement("a");
+          item.className = "topic-item";
+          item.href = `topic.html?id=${id}`;
+
+          const lastTime = d.lastReplyAt?.toDate?.()
+            ? d.lastReplyAt.toDate()
+            : d.createdAt?.toDate?.();
+
+          const formattedTime = lastTime
+            ? lastTime.toLocaleString("tr-TR", {
                 day: "2-digit",
                 month: "2-digit",
                 hour: "2-digit",
                 minute: "2-digit"
               })
-            : "")
+            : "";
+
+          item.innerHTML = `
+            <div class="topic-title">${label} — ${d.title}</div>
+            <div class="topic-nick">Yazan: ${d.nick}</div>
+            <div class="topic-message">${d.message}</div>
+            <div class="topic-meta-line">
+              ${d.replyCount || 0} yorum • Son yorum: ${formattedTime}
+            </div>
+          `;
+
+          listDiv.appendChild(item);
+        });
+      });
     }
-  </div>
-`;
+  }
 
+  // ------------- KATEGORİ LİSTESİ SAYFASI -------------
+  function renderCategoryPage(cat) {
+    const label = categoryMap[cat];
+    pageTitle.textContent = label;
 
-      topicsContainer.appendChild(item);
+    const q = query(
+      collection(db, "posts"),
+      where("category", "==", cat),
+      orderBy("createdAt", "desc")
+    );
+
+    onSnapshot(q, (snapshot) => {
+      forumContent.innerHTML = "";
+
+      snapshot.forEach((docSnap) => {
+        const d = docSnap.data();
+        const id = docSnap.id;
+
+        const item = document.createElement("a");
+        item.className = "topic-item";
+        item.href = `topic.html?id=${id}`;
+
+        const lastTime = d.lastReplyAt?.toDate?.()
+          ? d.lastReplyAt.toDate()
+          : d.createdAt?.toDate?.();
+
+        const formattedTime = lastTime
+          ? lastTime.toLocaleString("tr-TR", {
+              day: "2-digit",
+              month: "2-digit",
+              hour: "2-digit",
+              minute: "2-digit"
+            })
+          : "";
+
+        item.innerHTML = `
+          <div class="topic-title">${label} — ${d.title}</div>
+          <div class="topic-nick">Yazan: ${d.nick}</div>
+          <div class="topic-message">${d.message}</div>
+          <div class="topic-meta-line">
+            ${d.replyCount || 0} yorum • Son yorum: ${formattedTime}
+          </div>
+        `;
+
+        forumContent.appendChild(item);
+      });
     });
-  });
+  }
+
+  // ------------- SAYFAYI BAŞLAT -------------
+  if (!selectedCat) {
+    renderCategoryPreview();
+  } else {
+    renderCategoryPage(selectedCat);
+  }
+
 </script>
 
 </body>
 </html>
-
