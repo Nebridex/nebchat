@@ -240,6 +240,13 @@
       white-space: pre-wrap;
     }
 
+    .topic-meta-line {
+      margin-top: 6px;
+      font-size: 11px;
+      color: #9ea7f0;
+      opacity: 0.95;
+    }
+
     .no-topics {
       font-size: 13px;
       color: #9da5dd;
@@ -361,7 +368,9 @@
         nick,
         title,
         message,
-        createdAt: serverTimestamp()
+        createdAt: serverTimestamp(),
+        replyCount: 0,
+        lastReplyAt: null
       });
 
       // temizle
@@ -428,8 +437,34 @@
       msg.className = "topic-message";
       msg.textContent = data.message || "";
 
+      const metaLine = document.createElement("div");
+      metaLine.className = "topic-meta-line";
+
+      const replyCount = typeof data.replyCount === "number" ? data.replyCount : 0;
+      const baseTime = data.lastReplyAt && data.lastReplyAt.toDate
+        ? data.lastReplyAt.toDate()
+        : (data.createdAt && data.createdAt.toDate ? data.createdAt.toDate() : null);
+
+      let lastText = "";
+      if (baseTime) {
+        lastText = baseTime.toLocaleString("tr-TR", {
+          day: "2-digit",
+          month: "2-digit",
+          hour: "2-digit",
+          minute: "2-digit"
+        });
+      }
+
+      if (replyCount === 0) {
+        metaLine.textContent = "Henüz yorum yok";
+      } else {
+        metaLine.textContent = `${replyCount} yorum • Son yorum: ${lastText}`;
+      }
+
       wrapper.appendChild(headerRow);
       wrapper.appendChild(msg);
+      wrapper.appendChild(metaLine);
+
       item.appendChild(wrapper);
       topicsContainer.appendChild(item);
     });
