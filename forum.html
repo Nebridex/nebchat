@@ -91,6 +91,12 @@
       margin-bottom: 26px;
     }
 
+    .new-topic-title {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+
     .form-row {
       display: flex;
       gap: 10px;
@@ -133,23 +139,59 @@
       cursor: pointer;
     }
 
+    /* KONU KARTI */
+    .topic-item {
+      background: rgba(14, 18, 40, 0.95);
+      border-radius: 16px;
+      padding: 14px 13px;
+      margin-bottom: 14px;
+      border: 1px solid rgba(108, 99, 255, 0.3);
+      box-shadow: 0 0 18px rgba(88, 80, 255, 0.25);
+      transition: 0.25s;
+      display: block;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .topic-item:hover {
+      border-color: rgba(108, 99, 255, 0.7);
+      box-shadow: 0 0 24px rgba(88, 80, 255, 0.4);
+      transform: translateY(-2px);
+    }
+
+    .topic-title {
+      font-size: 17px;
+      font-weight: 600;
+      color: #dfe4ff;
+      margin-bottom: 4px;
+    }
+
+    .topic-nick {
+      font-size: 12px;
+      color: #aeb7ff;
+      margin-bottom: 8px;
+    }
+
+    .topic-message {
+      font-size: 13px;
+      color: #cfd7ff;
+      white-space: pre-wrap;
+      margin-bottom: 10px;
+    }
+
+    .topic-meta-line {
+      font-size: 12px;
+      color: #9ea7f0;
+      opacity: 0.9;
+    }
+
     footer {
       margin-top: 40px;
       padding: 20px;
       text-align: center;
       font-size: 13px;
       color: #8189c4;
-    }
-
-    .topic-item {
-      background: rgba(14, 18, 40, 0.95);
-      border-radius: 16px;
-      padding: 14px 13px;
-      margin-bottom: 10px;
-      border: 1px solid rgba(108, 99, 255, 0.3);
-      box-shadow: 0 0 18px rgba(88, 80, 255, 0.25);
-      cursor: pointer;
-      transition: 0.25s;
+      border-top: 1px solid rgba(80, 100, 255, 0.25);
     }
   </style>
 </head>
@@ -176,7 +218,7 @@
     Giriş yapmak zorunlu değil. Bir takma ad (nick) seç, başlığını ve mesajını yaz.
   </p>
 
-  <!-- YENİ KONU FORMU -->
+  <!-- YENİ KONU AÇMA -->
   <section class="new-topic-box">
     <div class="new-topic-title">Yeni Konu Aç</div>
 
@@ -198,15 +240,17 @@
     <button class="btn-main" id="sendBtn">Konuyu Gönder</button>
   </section>
 
+  <!-- KONU LİSTESİ -->
   <section class="topics-list">
     <div id="topicsContainer"></div>
   </section>
 
 </main>
 
-<footer>NebChat anonim forum • İçerik kullanıcıların sorumluluğundadır.</footer>
+<footer>
+  NebChat anonim forum • İçerik kullanıcıların sorumluluğundadır.
+</footer>
 
-<!-- FIREBASE -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
   import {
@@ -259,8 +303,7 @@
     }
 
     await addDoc(collection(db, "posts"), {
-      nick, title, message,
-      category,
+      nick, title, message, category,
       createdAt: serverTimestamp(),
       replyCount: 0,
       lastReplyAt: null
@@ -285,8 +328,7 @@
     topicsContainer.innerHTML = "";
 
     if (snapshot.empty) {
-      topicsContainer.innerHTML =
-        '<p class="no-topics">Bu kategoride henüz konu yok.</p>';
+      topicsContainer.innerHTML = '<p class="no-topics">Bu kategoride henüz konu yok.</p>';
       return;
     }
 
@@ -298,12 +340,23 @@
       item.className = "topic-item";
       item.href = `topic.html?id=${postId}`;
 
+      const lastTime = data.lastReplyAt?.toDate?.() || data.createdAt?.toDate?.();
+
+      const timeStr = lastTime
+        ? lastTime.toLocaleString("tr-TR", {
+            day: "2-digit",
+            month: "2-digit",
+            hour: "2-digit",
+            minute: "2-digit"
+          })
+        : "";
+
       item.innerHTML = `
         <div class="topic-title">${data.title}</div>
         <div class="topic-nick">Yazan: ${data.nick}</div>
         <div class="topic-message">${data.message}</div>
         <div class="topic-meta-line">
-          ${data.replyCount || 0} yorum
+          ${data.replyCount || 0} yorum • Son yorum: ${timeStr}
         </div>
       `;
 
