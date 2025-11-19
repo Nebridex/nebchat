@@ -6,7 +6,7 @@
   <title>NebChat • Konu Detayı</title>
 
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&family=Pacifico&display=swap');
 
     body {
       margin: 0;
@@ -15,7 +15,7 @@
       color: #e0e4ff;
     }
 
-    /* ORTAK HEADER + MENÜ */
+    /* HEADER + MENÜ */
     header {
       background: rgba(15, 20, 40, 0.7);
       padding: 18px 25px;
@@ -36,16 +36,13 @@
       gap: 14px;
     }
 
-    .logo-area img {
-      height: 50px;
-      filter: drop-shadow(0 0 12px #6a5eff);
-    }
-
     .logo-title {
-      font-size: 30px;
-      font-weight: 700;
+      font-family: 'Pacifico', cursive;
+      font-size: 34px;
+      font-weight: 400;
       color: #8ab4ff;
       text-shadow: 0 0 10px rgba(121, 169, 255, 0.9);
+      letter-spacing: 0.5px;
     }
 
     .menu {
@@ -85,55 +82,82 @@
     /* SAYFA İÇERİĞİ */
     .container {
       max-width: 900px;
-      margin: 40px auto;
-      padding: 0 20px;
+      margin: 30px auto 60px;
+      padding: 0 16px;
     }
 
     .topic-header {
-      margin-bottom: 30px;
-      padding-bottom: 20px;
+      margin-bottom: 24px;
+      padding-bottom: 16px;
       border-bottom: 1px solid rgba(120, 140, 255, 0.25);
     }
 
     .topic-title {
-      font-size: 26px;
+      font-size: 24px;
       font-weight: 700;
       color: #bcd2ff;
       text-shadow: 0 0 12px rgba(140, 160, 255, 0.5);
+      margin-bottom: 6px;
     }
 
     .topic-meta {
-      margin-top: 8px;
-      font-size: 14px;
-      opacity: 0.8;
+      font-size: 13px;
+      opacity: 0.85;
       color: #a8b4ff;
+      margin-bottom: 10px;
+    }
+
+    .topic-message {
+      font-size: 14px;
+      line-height: 1.6;
+      color: #dde4ff;
+      white-space: pre-wrap;
+      background: rgba(20, 25, 45, 0.7);
+      padding: 14px;
+      border-radius: 14px;
+      border: 1px solid rgba(108, 99, 255, 0.3);
+      box-shadow: 0 0 18px rgba(90, 80, 250, 0.35);
+    }
+
+    .back-link {
+      font-size: 13px;
+      margin-bottom: 8px;
+    }
+
+    .back-link a {
+      color: #9fb4ff;
+      text-decoration: none;
+    }
+
+    .back-link a:hover {
+      text-decoration: underline;
     }
 
     .message-card {
-      background: rgba(20, 25, 45, 0.55);
-      padding: 20px;
+      background: rgba(20, 25, 45, 0.65);
+      padding: 16px;
       border-radius: 15px;
-      margin-bottom: 20px;
-      border: 2px solid rgba(108, 99, 255, 0.25);
-      box-shadow: 0 0 22px rgba(88, 80, 255, 0.25);
+      margin-bottom: 14px;
+      border: 1px solid rgba(108, 99, 255, 0.25);
+      box-shadow: 0 0 18px rgba(88, 80, 255, 0.25);
       transition: 0.2s;
     }
 
     .message-card:hover {
       border-color: rgba(108, 99, 255, 0.45);
-      box-shadow: 0 0 28px rgba(88, 80, 255, 0.4);
+      box-shadow: 0 0 24px rgba(88, 80, 255, 0.4);
     }
 
     .msg-user {
       display: flex;
       align-items: center;
-      gap: 12px;
-      margin-bottom: 10px;
+      gap: 10px;
+      margin-bottom: 6px;
     }
 
     .msg-avatar {
-      width: 45px;
-      height: 45px;
+      width: 38px;
+      height: 38px;
       border-radius: 50%;
       background: #6d6cff;
       display: flex;
@@ -141,55 +165,89 @@
       justify-content: center;
       color: white;
       font-weight: 700;
-      font-size: 18px;
+      font-size: 17px;
       box-shadow: 0 0 10px rgba(120, 140, 255, 0.8);
     }
 
     .msg-username {
-      font-size: 16px;
+      font-size: 14px;
       font-weight: 600;
       color: #cdd7ff;
     }
 
+    .msg-time {
+      font-size: 11px;
+      color: #9ea8e0;
+      opacity: 0.9;
+    }
+
     .msg-text {
-      font-size: 15px;
-      line-height: 1.6;
+      font-size: 14px;
+      line-height: 1.5;
       color: #dbe2ff;
       margin-top: 4px;
+      white-space: pre-wrap;
     }
 
     .reply-box {
-      margin-top: 35px;
-      background: rgba(20, 25, 45, 0.55);
-      padding: 20px;
+      margin-top: 30px;
+      background: rgba(20, 25, 45, 0.7);
+      padding: 16px;
       border-radius: 15px;
-      border: 2px solid rgba(108, 99, 255, 0.25);
+      border: 1px solid rgba(108, 99, 255, 0.35);
       box-shadow: 0 0 22px rgba(88, 80, 255, 0.25);
+    }
+
+    .reply-title {
+      font-size: 16px;
+      margin-bottom: 10px;
+      color: #cdd7ff;
+      text-shadow: 0 0 8px rgba(140, 160, 255, 0.6);
+    }
+
+    .input-row {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+    }
+
+    .input-row input {
+      flex: 1;
+      min-width: 140px;
+      padding: 9px;
+      border-radius: 10px;
+      border: 1px solid rgba(108, 99, 255, 0.4);
+      background: rgba(255, 255, 255, 0.07);
+      color: #ffffff;
+      outline: none;
+      font-size: 13px;
     }
 
     textarea {
       width: 100%;
-      height: 130px;
+      height: 120px;
       border-radius: 12px;
       border: 1px solid rgba(108, 99, 255, 0.35);
       background: rgba(255, 255, 255, 0.08);
-      padding: 12px;
+      padding: 10px;
       color: white;
       outline: none;
-      font-size: 15px;
-      resize: none;
+      font-size: 14px;
+      resize: vertical;
       transition: 0.25s;
     }
 
-    textarea:focus {
+    textarea:focus,
+    .input-row input:focus {
       border-color: rgba(138, 127, 255, 0.9);
       box-shadow: 0 0 15px rgba(138, 127, 255, 0.7);
     }
 
     .reply-button {
-      margin-top: 14px;
+      margin-top: 10px;
       width: 100%;
-      padding: 11px;
+      padding: 10px;
       background: rgba(108, 99, 255, 0.4);
       border: 1px solid rgba(108, 99, 255, 0.7);
       border-radius: 10px;
@@ -203,6 +261,19 @@
       background: rgba(108, 99, 255, 0.55);
       box-shadow: 0 0 22px rgba(108, 99, 255, 0.75);
     }
+
+    .info-text {
+      font-size: 11px;
+      margin-top: 6px;
+      color: #a4aedf;
+      opacity: 0.85;
+    }
+
+    .no-comment {
+      font-size: 13px;
+      color: #969fdd;
+      margin-top: 8px;
+    }
   </style>
 </head>
 
@@ -211,7 +282,6 @@
 <header>
   <div class="logo-area">
     <a href="index.html" style="display:flex;align-items:center;gap:14px;text-decoration:none;">
-      <img src="logo nebchat.png" alt="NebChat Logo">
       <div class="logo-title">NebChat</div>
     </a>
   </div>
@@ -225,48 +295,212 @@
 </header>
 
 <div class="container">
-
-  <div class="topic-header">
-    <div class="topic-title">Age of Empires Mobile Taktikleri</div>
-    <div class="topic-meta">Açan: Nebride • 12 saat önce • 24 yanıt</div>
+  <div class="back-link">
+    <a href="forum.html">&larr; Foruma geri dön</a>
   </div>
 
-  <div class="message-card">
-    <div class="msg-user">
-      <div class="msg-avatar">N</div>
-      <div class="msg-username">Nebride</div>
-    </div>
-    <div class="msg-text">
-      Oyuna yeni başlayacaklar için en mantıklı kahraman dizilimini paylaşıyorum. Savunma ve saldırı dengesini iyi kurarsanız kaynak kasmak çok daha kolay oluyor.
-    </div>
+  <div class="topic-header" id="topicHeader">
+    <div class="topic-title" id="topicTitle">Konu yükleniyor...</div>
+    <div class="topic-meta" id="topicMeta"></div>
+    <div class="topic-message" id="topicMessage"></div>
   </div>
 
-  <div class="message-card">
-    <div class="msg-user">
-      <div class="msg-avatar">A</div>
-      <div class="msg-username">Alperen</div>
-    </div>
-    <div class="msg-text">
-      Ben de özellikle erken oyunda 2 tank + 2 menzilli kombinasyonunu kullanıyorum. Savunma hattını bozmak baya zor oluyor.
-    </div>
-  </div>
-
-  <div class="message-card">
-    <div class="msg-user">
-      <div class="msg-avatar">K</div>
-      <div class="msg-username">Kerem</div>
-    </div>
-    <div class="msg-text">
-      Son yamadan sonra okçular güçlendi, bir denemenizi tavsiye ederim. Özellikle kale savunmasında fark yaratıyor.
-    </div>
+  <h2 style="font-size:18px;margin-bottom:10px;color:#c8d2ff;">Yorumlar</h2>
+  <div id="messages-list">
+    <!-- Yorum kartları buraya gelecek -->
   </div>
 
   <div class="reply-box">
-    <textarea placeholder="Yanıtını yaz..."></textarea>
-    <button class="reply-button">Yanıt Gönder</button>
-  </div>
+    <div class="reply-title">Yorum Yaz</div>
 
+    <div class="input-row">
+      <input type="text" id="nickname" placeholder="Takma adın (ör: Nebride)">
+    </div>
+
+    <textarea id="message" placeholder="Yorumunu yaz..."></textarea>
+
+    <button class="reply-button" id="replyBtn">Yorumu Gönder</button>
+
+    <div class="info-text">
+      Yorumlar anonimdir ve Firebase Firestore’da saklanır. Lütfen kişisel bilgilerini paylaşma.
+    </div>
+  </div>
 </div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
+  import {
+    getFirestore,
+    doc,
+    getDoc,
+    collection,
+    addDoc,
+    serverTimestamp,
+    query,
+    orderBy,
+    onSnapshot
+  } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyBAwFSe0pud59OXpx1G5hQO9opA1f7Eg9Y",
+    authDomain: "nebchat2.firebaseapp.com",
+    projectId: "nebchat2",
+    storageBucket: "nebchat2.firebasestorage.app",
+    messagingSenderId: "46979426016",
+    appId: "1:46979426016:web:fd1fbe341fff6970ae9285"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  const params = new URLSearchParams(window.location.search);
+  const postId = params.get("id");
+
+  const topicTitleEl = document.getElementById("topicTitle");
+  const topicMetaEl = document.getElementById("topicMeta");
+  const topicMessageEl = document.getElementById("topicMessage");
+  const messagesListEl = document.getElementById("messages-list");
+  const nicknameInput = document.getElementById("nickname");
+  const messageInput = document.getElementById("message");
+  const replyBtn = document.getElementById("replyBtn");
+
+  if (!postId) {
+    topicTitleEl.textContent = "Konu bulunamadı";
+    topicMetaEl.textContent = "Geçersiz bağlantı.";
+  } else {
+    loadTopic(postId);
+    listenReplies(postId);
+  }
+
+  async function loadTopic(id) {
+    try {
+      const ref = doc(db, "posts", id);
+      const snap = await getDoc(ref);
+
+      if (!snap.exists()) {
+        topicTitleEl.textContent = "Konu bulunamadı";
+        topicMetaEl.textContent = "";
+        topicMessageEl.textContent = "";
+        return;
+      }
+
+      const data = snap.data();
+      topicTitleEl.textContent = data.title || "Başlıksız Konu";
+
+      let timeText = "";
+      if (data.createdAt && data.createdAt.toDate) {
+        const d = data.createdAt.toDate();
+        timeText = d.toLocaleString("tr-TR", {
+          day: "2-digit",
+          month: "2-digit",
+          hour: "2-digit",
+          minute: "2-digit"
+        });
+      }
+
+      topicMetaEl.textContent = `Açan: ${data.nick || "Anonim"} • ${timeText || ""}`;
+      topicMessageEl.textContent = data.message || "";
+    } catch (e) {
+      console.error("Konu yüklenirken hata:", e);
+      topicTitleEl.textContent = "Konu yüklenirken hata oluştu";
+    }
+  }
+
+  function listenReplies(id) {
+    const repliesRef = collection(db, "posts", id, "replies");
+    const q = query(repliesRef, orderBy("createdAt", "asc"));
+
+    onSnapshot(q, (snapshot) => {
+      messagesListEl.innerHTML = "";
+
+      if (snapshot.empty) {
+        const p = document.createElement("p");
+        p.className = "no-comment";
+        p.textContent = "Henüz yorum yok. İlk yorumu sen yaz 😊";
+        messagesListEl.appendChild(p);
+        return;
+      }
+
+      snapshot.forEach((docSnap) => {
+        const data = docSnap.data();
+
+        const card = document.createElement("div");
+        card.className = "message-card";
+
+        const userRow = document.createElement("div");
+        userRow.className = "msg-user";
+
+        const avatar = document.createElement("div");
+        avatar.className = "msg-avatar";
+        avatar.textContent = (data.nick || "?").charAt(0).toUpperCase();
+
+        const nameBlock = document.createElement("div");
+        const name = document.createElement("div");
+        name.className = "msg-username";
+        name.textContent = data.nick || "Anonim";
+
+        const time = document.createElement("div");
+        time.className = "msg-time";
+
+        let t = "";
+        if (data.createdAt && data.createdAt.toDate) {
+          const d = data.createdAt.toDate();
+          t = d.toLocaleString("tr-TR", {
+            day: "2-digit",
+            month: "2-digit",
+            hour: "2-digit",
+            minute: "2-digit"
+          });
+        }
+        time.textContent = t || "";
+
+        nameBlock.appendChild(name);
+        nameBlock.appendChild(time);
+
+        userRow.appendChild(avatar);
+        userRow.appendChild(nameBlock);
+
+        const text = document.createElement("div");
+        text.className = "msg-text";
+        text.textContent = data.message || "";
+
+        card.appendChild(userRow);
+        card.appendChild(text);
+
+        messagesListEl.appendChild(card);
+      });
+    });
+  }
+
+  replyBtn.addEventListener("click", async () => {
+    if (!postId) {
+      alert("Geçersiz konu.");
+      return;
+    }
+
+    const nick = nicknameInput.value.trim();
+    const text = messageInput.value.trim();
+
+    if (!nick || !text) {
+      alert("Lütfen hem nick hem de yorumu doldur.");
+      return;
+    }
+
+    try {
+      const repliesRef = collection(db, "posts", postId, "replies");
+      await addDoc(repliesRef, {
+        nick,
+        message: text,
+        createdAt: serverTimestamp()
+      });
+
+      messageInput.value = "";
+    } catch (e) {
+      console.error("Yorum eklenirken hata:", e);
+      alert("Yorum eklenirken bir hata oluştu.");
+    }
+  });
+</script>
 
 </body>
 </html>
