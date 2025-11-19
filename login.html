@@ -282,12 +282,17 @@
   </div>
 </div>
 
-<!-- Firebase scriptleri (compat sürüm) -->
-<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+<!-- Firebase v12 modüler SDK - type="module" -->
+<script type="module">
+  // Firebase SDK'lardan gerekli fonksiyonları çek
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
+  import { 
+    getAuth, 
+    createUserWithEmailAndPassword, 
+    signInWithEmailAndPassword 
+  } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
 
-<script>
-  // Senin Firebase config'in (konsoldan aldığımız)
+  // Senin Firebase config'in
   const firebaseConfig = {
     apiKey: "AIzaSyAU7kASxtN07wzCL2LeCT4J_RfqQMhb3GM",
     authDomain: "nebchat-fb0ed.firebaseapp.com",
@@ -299,18 +304,18 @@
   };
 
   // Firebase'i başlat
-  firebase.initializeApp(firebaseConfig);
-  const auth = firebase.auth();
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
 
-  // Form görünümünü değiştiren fonksiyonlar
-  function showLogin() {
+  // Form görünümünü değiştiren fonksiyonlar (window'a ekliyoruz ki HTML'den çağrılabilsin)
+  window.showLogin = function () {
     document.getElementById("login-form").style.display = "block";
     document.getElementById("register-form").style.display = "none";
     document.getElementById("loginBtn").classList.add("active");
     document.getElementById("registerBtn").classList.remove("active");
   }
 
-  function showRegister() {
+  window.showRegister = function () {
     document.getElementById("login-form").style.display = "none";
     document.getElementById("register-form").style.display = "block";
     document.getElementById("loginBtn").classList.remove("active");
@@ -318,14 +323,18 @@
   }
 
   // Giriş fonksiyonu
-  function girisYap() {
+  window.girisYap = function () {
     const email = document.getElementById("login-email").value;
     const password = document.getElementById("login-password").value;
 
-    auth.signInWithEmailAndPassword(email, password)
+    if (!email || !password) {
+      alert("Lütfen e-posta ve şifreyi doldur.");
+      return;
+    }
+
+    signInWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
         alert("Giriş başarılı!");
-        // Şimdilik direkt profil sayfasına yönlendirelim
         window.location.href = "profile.html";
       })
       .catch((error) => {
@@ -334,14 +343,19 @@
   }
 
   // Kayıt fonksiyonu
-  function kayitOl() {
+  window.kayitOl = function () {
     const email = document.getElementById("register-email").value;
     const password = document.getElementById("register-password").value;
 
-    auth.createUserWithEmailAndPassword(email, password)
+    if (!email || !password) {
+      alert("Lütfen e-posta ve şifreyi doldur.");
+      return;
+    }
+
+    createUserWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
         alert("Kayıt başarılı! Şimdi giriş yapabilirsin.");
-        showLogin();
+        window.showLogin();
       })
       .catch((error) => {
         alert("Kayıt hatası: " + error.message);
