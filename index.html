@@ -98,9 +98,8 @@
       font-size: 17px;
       opacity: 0.9;
       max-width: 700px;
-      margin: 0 auto;
+      margin: 0 auto 30px;
       line-height: 1.6;
-      margin-bottom: 30px;
       color: #c3ccff;
     }
 
@@ -147,6 +146,12 @@
       text-shadow: 0 0 12px rgba(120, 140, 255, 0.8);
     }
 
+    .category-link {
+      text-decoration: none;
+      color: inherit;
+      display: block;
+    }
+
     .preview-card {
       background: rgba(20, 25, 45, 0.65);
       padding: 20px;
@@ -155,6 +160,7 @@
       border: 2px solid rgba(108, 99, 255, 0.25);
       box-shadow: 0 0 25px rgba(88, 80, 255, 0.25);
       transition: 0.25s;
+      cursor: pointer;
     }
 
     .preview-card:hover {
@@ -190,7 +196,7 @@
 
 <header>
   <div class="logo-area">
-    <a href="index.html" style="display:flex;align-items:center;gap:14px;text-decoration:none;">
+    <a href="index.html" style="text-decoration:none;">
       <div class="logo-title">NebChat</div>
     </a>
   </div>
@@ -219,26 +225,36 @@
 <section class="section">
   <div class="section-title">Öne Çıkan Alanlar</div>
 
-  <div class="preview-card">
-    <div class="preview-title">⚡ Genel Sohbet</div>
-    <div class="preview-text">
-      Topluluk üyelerinin günlük sohbetleri, tanışma ve serbest muhabbet alanı.
+  <!-- GENEL -->
+  <a class="category-link" href="forum.html?cat=genel">
+    <div class="preview-card">
+      <div class="preview-title">⚡ Genel Sohbet</div>
+      <div class="preview-text">
+        Topluluk üyelerinin günlük sohbetleri, tanışma ve serbest muhabbet alanı.
+      </div>
     </div>
-  </div>
+  </a>
 
-  <div class="preview-card">
-    <div class="preview-title">🎮 Oyun Sohbeti</div>
-    <div class="preview-text">
-      Age of Empires Mobile, konsol ve PC oyunları için taktikler ve öneriler.
+  <!-- OYUN -->
+  <a class="category-link" href="forum.html?cat=oyun">
+    <div class="preview-card">
+      <div class="preview-title">🎮 Oyun Sohbeti</div>
+      <div class="preview-text">
+        Age of Empires Mobile, konsol ve PC oyunları için taktikler ve öneriler.
+      </div>
     </div>
-  </div>
+  </a>
 
-  <div class="preview-card">
-    <div class="preview-title">💡 Teknoloji Köşesi</div>
-    <div class="preview-text">
-      Telefonlar, donanım, yazılım ve teknoloji gündemi hakkında konuşma alanı.
+  <!-- TEKNOLOJİ -->
+  <a class="category-link" href="forum.html?cat=teknoloji">
+    <div class="preview-card">
+      <div class="preview-title">💡 Teknoloji Köşesi</div>
+      <div class="preview-text">
+        Telefonlar, donanım, yazılım ve teknoloji gündemi hakkında konuşma alanı.
+      </div>
     </div>
-  </div>
+  </a>
+
 </section>
 
 <footer>
