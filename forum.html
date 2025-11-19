@@ -185,6 +185,12 @@
       margin-top: 20px;
     }
 
+    .topic-link {
+      text-decoration: none;
+      color: inherit;
+      display: block;
+    }
+
     .topic-item {
       background: rgba(14, 18, 40, 0.95);
       border-radius: 16px;
@@ -193,6 +199,7 @@
       border: 1px solid rgba(108, 99, 255, 0.3);
       box-shadow: 0 0 18px rgba(88, 80, 255, 0.25);
       transition: 0.25s;
+      cursor: pointer;
     }
 
     .topic-item:hover {
@@ -360,7 +367,7 @@
       // temizle
       messageInput.value = "";
       titleInput.value = "";
-      // nick'i temizlemiyoruz, tekrar tekrar kullanabilsin
+      // nick'i temizlemiyoruz
     } catch (e) {
       console.error("Konu eklenirken hata:", e);
       alert("Konu eklenirken bir hata oluştu.");
@@ -378,11 +385,16 @@
 
     topicsContainer.innerHTML = "";
 
-    snapshot.forEach((doc) => {
-      const data = doc.data();
+    snapshot.forEach((docSnap) => {
+      const data = docSnap.data();
+      const postId = docSnap.id;
 
-      const item = document.createElement("div");
-      item.className = "topic-item";
+      const item = document.createElement("a");
+      item.className = "topic-link";
+      item.href = `topic.html?id=${encodeURIComponent(postId)}`;
+
+      const wrapper = document.createElement("div");
+      wrapper.className = "topic-item";
 
       const headerRow = document.createElement("div");
       headerRow.className = "topic-header-row";
@@ -416,9 +428,9 @@
       msg.className = "topic-message";
       msg.textContent = data.message || "";
 
-      item.appendChild(headerRow);
-      item.appendChild(msg);
-
+      wrapper.appendChild(headerRow);
+      wrapper.appendChild(msg);
+      item.appendChild(wrapper);
       topicsContainer.appendChild(item);
     });
   });
