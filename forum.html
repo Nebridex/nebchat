@@ -351,14 +351,41 @@
           })
         : "";
 
-      item.innerHTML = `
-        <div class="topic-title">${data.title}</div>
-        <div class="topic-nick">Yazan: ${data.nick}</div>
-        <div class="topic-message">${data.message}</div>
-        <div class="topic-meta-line">
-          ${data.replyCount || 0} yorum • Son yorum: ${timeStr}
-        </div>
-      `;
+const categoryMap = {
+  genel: "⚡ Genel Sohbet",
+  oyun: "🎮 Oyun Sohbeti",
+  teknoloji: "💡 Teknoloji Köşesi"
+};
+
+const categoryLabel = categoryMap[data.category] || "❔ Kategorisiz";
+
+item.innerHTML = `
+  <div class="topic-header-row">
+    <div class="topic-title">${categoryLabel} — ${data.title}</div>
+    <div class="topic-nick">Yazan: ${data.nick}</div>
+  </div>
+  <div class="topic-message">${data.message}</div>
+  <div class="topic-meta-line">
+    ${data.replyCount || 0} yorum • Son yorum: ${
+      data.lastReplyAt && data.lastReplyAt.toDate
+        ? data.lastReplyAt.toDate().toLocaleString("tr-TR", {
+            day: "2-digit",
+            month: "2-digit",
+            hour: "2-digit",
+            minute: "2-digit"
+          })
+        : (data.createdAt && data.createdAt.toDate
+            ? data.createdAt.toDate().toLocaleString("tr-TR", {
+                day: "2-digit",
+                month: "2-digit",
+                hour: "2-digit",
+                minute: "2-digit"
+              })
+            : "")
+    }
+  </div>
+`;
+
 
       topicsContainer.appendChild(item);
     });
@@ -367,3 +394,4 @@
 
 </body>
 </html>
+
