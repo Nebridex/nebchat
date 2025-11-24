@@ -1,21 +1,20 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>NebChat • Profilim</title>
 
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&display=swap');
+    @import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&display=swap");
 
     body {
       margin: 0;
-      font-family: 'Montserrat', sans-serif;
+      font-family: "Montserrat", sans-serif;
       background: #080d1a;
       color: #e0e4ff;
     }
 
-    /* ORTAK HEADER + MENÜ */
     header {
       background: rgba(15, 20, 40, 0.7);
       padding: 18px 25px;
@@ -69,17 +68,6 @@
       background: rgba(108, 99, 255, 0.25);
       box-shadow: 0 0 14px rgba(108, 99, 255, 0.5);
       color: #ffffff;
-    }
-
-    @media (max-width: 700px) {
-      header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 10px;
-      }
-      .menu {
-        flex-wrap: wrap;
-      }
     }
 
     .profile-container {
@@ -176,43 +164,10 @@
       opacity: 0.85;
       font-size: 14px;
     }
-
-    .badges-box {
-      margin-top: 30px;
-      padding: 20px;
-      background: rgba(20, 25, 45, 0.55);
-      border-radius: 15px;
-      border: 2px solid rgba(108, 99, 255, 0.25);
-      box-shadow: 0 0 22px rgba(88, 80, 255, 0.25);
-      text-align: left;
-    }
-
-    .badges-title {
-      font-size: 20px;
-      color: #cdd7ff;
-      margin-bottom: 12px;
-    }
-
-    .badges-list {
-      display: flex;
-      gap: 12px;
-      flex-wrap: wrap;
-    }
-
-    .badge {
-      padding: 8px 15px;
-      border-radius: 12px;
-      background: rgba(108, 99, 255, 0.3);
-      border: 1px solid rgba(108, 99, 255, 0.5);
-      color: white;
-      font-size: 13px;
-      box-shadow: 0 0 12px rgba(108, 99, 255, 0.6);
-    }
   </style>
 </head>
 
 <body>
-
 <header>
   <div class="logo-area">
     <a href="index.html" style="display:flex;align-items:center;gap:14px;text-decoration:none;">
@@ -230,50 +185,90 @@
 </header>
 
 <div class="profile-container">
-
   <div class="avatar">N</div>
-
   <div class="username">Nebride</div>
-  <div class="level">Seviye 7 • Üst düzey üye</div>
-
-  <div class="about-box">
-    <div class="about-title">Hakkında</div>
-    <div class="about-text">
-      Oyunlara ve teknolojiye meraklı, Age of Empires Mobile tarafında strateji üretmeyi seven,
-      NebChat topluluğunun kurucusu. Yeni sistemler denemeyi ve insanlarla bilgi paylaşmayı seviyor.
-    </div>
-  </div>
+  <div class="level">Seviye 1</div>
 
   <div class="stats-grid">
     <div class="stat-card">
-      <div class="stat-number">243</div>
+      <div class="stat-number" id="statMessages">0</div>
       <div class="stat-label">Mesaj</div>
     </div>
     <div class="stat-card">
-      <div class="stat-number">58</div>
+      <div class="stat-number" id="statLikes">0</div>
       <div class="stat-label">Beğeni</div>
     </div>
     <div class="stat-card">
-      <div class="stat-number">12</div>
+      <div class="stat-number" id="statTopics">0</div>
       <div class="stat-label">Açılan Konu</div>
     </div>
     <div class="stat-card">
-      <div class="stat-number">2 yıl</div>
-      <div class="stat-label">Toplulukta Geçen Süre</div>
+      <div class="stat-number" id="statYears">0 yıl</div>
+      <div class="stat-label">Toplulukta Süre</div>
     </div>
   </div>
-
-  <div class="badges-box">
-    <div class="badges-title">Rozetler</div>
-    <div class="badges-list">
-      <div class="badge">🔥 Aktif Üye</div>
-      <div class="badge">🎯 Strateji Ustası</div>
-      <div class="badge">💬 Topluluk Destekçisi</div>
-      <div class="badge">👑 Kurucu</div>
-    </div>
-  </div>
-
 </div>
+
+<!-- FIREBASE PROFIL JS -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
+  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
+  import { 
+    getFirestore, doc, getDoc 
+  } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyBAwFSe0pud59OXpx1G5hQO9opA1f7Eg9Y",
+    authDomain: "nebchat2.firebaseapp.com",
+    projectId: "nebchat2",
+    storageBucket: "nebchat2.firebasestorage.app",
+    messagingSenderId: "46979426016",
+    appId: "1:46979426016:web:fd1fbe341fff6970ae9285"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+
+  const avatarDiv = document.querySelector(".avatar");
+  const usernameDiv = document.querySelector(".username");
+  const levelDiv = document.querySelector(".level");
+
+  const statMessages = document.getElementById("statMessages");
+  const statLikes = document.getElementById("statLikes");
+  const statTopics = document.getElementById("statTopics");
+  const statYears = document.getElementById("statYears");
+
+  onAuthStateChanged(auth, async (user) => {
+    if (!user) {
+      window.location.href = "login.html";
+      return;
+    }
+
+    const ref = doc(db, "users", user.uid);
+    const snap = await getDoc(ref);
+
+    if (!snap.exists()) return;
+
+    const data = snap.data();
+
+    avatarDiv.textContent = data.username.charAt(0).toUpperCase();
+    usernameDiv.textContent = data.username;
+
+    const level = 1 + Math.floor((data.stats.messages + data.stats.topics) / 10);
+    levelDiv.textContent = `Seviye ${level}`;
+
+    statMessages.textContent = data.stats.messages;
+    statLikes.textContent = data.stats.likes;
+    statTopics.textContent = data.stats.topics;
+
+    if (data.createdAt?.toDate) {
+      const diff = Date.now() - data.createdAt.toDate().getTime();
+      const years = Math.floor(diff / (1000 * 60 * 60 * 24 * 365));
+      statYears.textContent = years + " yıl";
+    }
+  });
+</script>
 
 </body>
 </html>
