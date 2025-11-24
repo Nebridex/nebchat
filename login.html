@@ -263,7 +263,7 @@
     <!-- KAYIT FORMU -->
     <form id="register-form" onsubmit="event.preventDefault(); kayitOl();">
       <div class="input-group">
-        <label for="register-username">Kullanıcı Adı</label>
+        <label for="register-username">Kullanıcı Adı (Nick)</label>
         <input type="text" id="register-username" placeholder="Nebride">
       </div>
 
@@ -288,8 +288,15 @@
   import {
     getAuth,
     createUserWithEmailAndPassword,
-    signInWithEmailAndPassword
+    signInWithEmailAndPassword,
+    onAuthStateChanged
   } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
+  import {
+    getFirestore,
+    doc,
+    setDoc,
+    serverTimestamp
+  } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
 
   // Yeni Firebase projen (nebchat2) için config
   const firebaseConfig = {
@@ -304,26 +311,37 @@
   // Firebase'i başlat
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
+  const db = getFirestore(app);
 
-  // Form görünümünü değiştiren fonksiyonlar
+  // Eğer kullanıcı zaten giriş yapmışsa, direk profile.html'e at
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      // login sayfasına gelmiş ama zaten login ise zorlamaya gerek yok
+      if (window.location.pathname.endsWith("login.html")) {
+        window.location.href = "profile.html";
+      }
+    }
+  });
+
+  // Form görünümünü değiştiren fonksiyonlar (global yapmak için window'a bağlıyoruz)
   window.showLogin = function () {
     document.getElementById("login-form").style.display = "block";
     document.getElementById("register-form").style.display = "none";
     document.getElementById("loginBtn").classList.add("active");
     document.getElementById("registerBtn").classList.remove("active");
-  }
+  };
 
   window.showRegister = function () {
     document.getElementById("login-form").style.display = "none";
     document.getElementById("register-form").style.display = "block";
     document.getElementById("loginBtn").classList.remove("active");
     document.getElementById("registerBtn").classList.add("active");
-  }
+  };
 
   // Giriş fonksiyonu
   window.girisYap = function () {
-    const email = document.getElementById("login-email").value;
-    const password = document.getElementById("login-password").value;
+    const email = document.getElementById("login-email").value.trim();
+    const password = document.getElementById("login-password").value.trim();
 
     if (!email || !password) {
       alert("Lütfen e-posta ve şifreyi doldur.");
@@ -331,34 +349,57 @@
     }
 
     signInWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        alert("Giriş başarılı!");
+      .then(() => {
+        // Giriş başarılı
         window.location.href = "profile.html";
       })
       .catch((error) => {
+        console.error("Giriş hatası:", error);
         alert("Giriş hatası: " + error.message);
       });
-  }
+  };
 
-  // Kayıt fonksiyonu
-  window.kayitOl = function () {
-    const email = document.getElementById("register-email").value;
-    const password = document.getElementById("register-password").value;
+  // Kayıt fonksiyonu (Auth + Firestore users koleksiyonu)
+  window.kayitOl = async function () {
+    const username = document.getElementById("register-username").value.trim();
+    const email = document.getElementById("register-email").value.trim();
+    const password = document.getElementById("register-password").value.trim();
 
-    if (!email || !password) {
-      alert("Lütfen e-posta ve şifreyi doldur.");
+    if (!username || !email || !password) {
+      alert("Lütfen kullanıcı adı, e-posta ve şifreyi doldur.");
       return;
     }
 
-    createUserWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        alert("Kayıt başarılı! Şimdi giriş yapabilirsin.");
-        window.showLogin();
-      })
-      .catch((error) => {
-        alert("Kayıt hatası: " + error.message);
+    try {
+      // 1) Firebase Authentication'da kullanıcı oluştur
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+
+      // 2) Firestore'da users koleksiyonuna user kaydı aç
+      const userRef = doc(db, "users", user.uid);
+      await setDoc(userRef, {
+        username: username,
+        email: email,
+        createdAt: serverTimestamp(),
+
+        // İstatistikler – ileride profil sayfasında kullanacağız
+        messageCount: 0,
+        topicCount: 0,
+        likeCount: 0
       });
-  }
+
+      alert("Kayıt başarılı! Şimdi giriş yapabilirsin.");
+      // Formları login moduna çek
+      window.showLogin();
+
+      // Kayıt sonrası email ve şifre alanlarını login tarafına otomatik doldurmak istersen:
+      document.getElementById("login-email").value = email;
+      document.getElementById("login-password").value = "";
+    } catch (error) {
+      console.error("Kayıt hatası:", error);
+      alert("Kayıt hatası: " + error.message);
+    }
+  };
 </script>
 
 </body>
