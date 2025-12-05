@@ -15,7 +15,6 @@
       color: #e0e4ff;
     }
 
-    /* HEADER + MENÜ */
     header {
       background: rgba(15, 20, 40, 0.7);
       padding: 18px 25px;
@@ -38,11 +37,10 @@
 
     .logo-title {
       font-family: 'Pacifico', cursive;
-      font-size: 34px;
+      font-size: 30px;
       font-weight: 400;
       color: #8ab4ff;
       text-shadow: 0 0 10px rgba(121, 169, 255, 0.9);
-      letter-spacing: 0.5px;
     }
 
     .menu {
@@ -79,11 +77,24 @@
       }
     }
 
-    /* SAYFA İÇERİĞİ */
     .container {
       max-width: 900px;
       margin: 30px auto 60px;
       padding: 0 16px;
+    }
+
+    .back-link {
+      font-size: 13px;
+      margin-bottom: 8px;
+    }
+
+    .back-link a {
+      color: #9fb4ff;
+      text-decoration: none;
+    }
+
+    .back-link a:hover {
+      text-decoration: underline;
     }
 
     .topic-header {
@@ -117,20 +128,6 @@
       border-radius: 14px;
       border: 1px solid rgba(108, 99, 255, 0.3);
       box-shadow: 0 0 18px rgba(90, 80, 250, 0.35);
-    }
-
-    .back-link {
-      font-size: 13px;
-      margin-bottom: 8px;
-    }
-
-    .back-link a {
-      color: #9fb4ff;
-      text-decoration: none;
-    }
-
-    .back-link a:hover {
-      text-decoration: underline;
     }
 
     .message-card {
@@ -359,9 +356,14 @@
   const auth = getAuth(app);
 
   const categoryMap = {
-    genel: "⚡ Genel Sohbet",
-    oyun: "🎮 Oyun Sohbeti",
-    teknoloji: "💡 Teknoloji Köşesi"
+    cyber: "🛡 Cyber Security",
+    network: "🌐 Network & Infrastructure",
+    cloud: "☁️ Cloud & DevOps",
+    career: "💼 Career & Salary",
+    products: "📦 Products & Vendors",
+    confessions: "🙈 Anon Confessions",
+    tech: "💡 Tech Discussions",
+    offtopic: "🎭 Off-Topic / Community"
   };
 
   const params = new URLSearchParams(window.location.search);
@@ -402,7 +404,7 @@
       }
 
       const data = snap.data();
-      const categoryText = categoryMap[data.category] || "❔ Kategorisiz";
+      const categoryText = categoryMap[data.category] || "❔ Category";
 
       let timeText = "";
       if (data.createdAt && data.createdAt.toDate) {
@@ -415,7 +417,7 @@
         });
       }
 
-      topicTitleEl.textContent = `${categoryText} ${data.title || "Başlıksız Konu"}`;
+      topicTitleEl.textContent = `${categoryText} • ${data.title || "Untitled"}`;
       topicMetaEl.textContent =
         `Kategori: ${categoryText} • Açan: ${data.nick || "Anonim"} • ${timeText || ""}`;
       topicMessageEl.textContent = data.message || "";
@@ -492,7 +494,6 @@
     });
   }
 
-  // Yorum gönder
   replyBtn.addEventListener("click", async () => {
     if (!postId) {
       alert("Geçersiz konu.");
@@ -522,7 +523,6 @@
         lastReplyAt: serverTimestamp()
       });
 
-      // Kullanıcı giriş yaptıysa stats.messages += 1
       if (currentUser) {
         const userRef = doc(db, "users", currentUser.uid);
         await updateDoc(userRef, {
