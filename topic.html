@@ -104,7 +104,7 @@
     }
 
     .topic-title {
-      font-size: 24px;
+      font-size: 22px;
       font-weight: 700;
       color: #bcd2ff;
       text-shadow: 0 0 12px rgba(140, 160, 255, 0.5);
@@ -128,6 +128,34 @@
       border-radius: 14px;
       border: 1px solid rgba(108, 99, 255, 0.3);
       box-shadow: 0 0 18px rgba(90, 80, 250, 0.35);
+      margin-bottom: 10px;
+    }
+
+    .topic-actions {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      font-size: 12px;
+      color: #aab3ff;
+    }
+
+    .like-btn {
+      padding: 5px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(108, 99, 255, 0.7);
+      background: rgba(108, 99, 255, 0.35);
+      color: #e0e4ff;
+      cursor: pointer;
+      font-size: 12px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: 0.2s;
+    }
+
+    .like-btn:hover {
+      background: rgba(108, 99, 255, 0.55);
+      box-shadow: 0 0 16px rgba(108, 99, 255, 0.8);
     }
 
     .message-card {
@@ -184,6 +212,15 @@
       color: #dbe2ff;
       margin-top: 4px;
       white-space: pre-wrap;
+    }
+
+    .msg-actions {
+      margin-top: 6px;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #aab3ff;
     }
 
     .reply-box {
@@ -300,6 +337,12 @@
     <div class="topic-title" id="topicTitle">Konu yükleniyor...</div>
     <div class="topic-meta" id="topicMeta"></div>
     <div class="topic-message" id="topicMessage"></div>
+    <div class="topic-actions">
+      <button class="like-btn" id="postLikeBtn">
+        👍 <span id="postLikeCount">0</span> beğeni
+      </button>
+      <span id="postReplyInfo"></span>
+    </div>
   </div>
 
   <h2 style="font-size:18px;margin-bottom:10px;color:#c8d2ff;">Yorumlar</h2>
@@ -377,7 +420,12 @@
   const messageInput = document.getElementById("message");
   const replyBtn = document.getElementById("replyBtn");
 
+  const postLikeBtn = document.getElementById("postLikeBtn");
+  const postLikeCountEl = document.getElementById("postLikeCount");
+  const postReplyInfoEl = document.getElementById("postReplyInfo");
+
   let currentUser = null;
+  let currentPostData = null; // post userId, likes vs. için
 
   onAuthStateChanged(auth, (user) => {
     currentUser = user || null;
@@ -404,6 +452,11 @@
       }
 
       const data = snap.data();
+      currentPostData = {
+        ...data,
+        id: snap.id
+      };
+
       const categoryText = categoryMap[data.category] || "❔ Category";
 
       let timeText = "";
@@ -422,6 +475,13 @@
         `Kategori: ${categoryText} • Açan: ${data.nick || "Anonim"} • ${timeText || ""}`;
       topicMessageEl.textContent = data.message || "";
 
+      const likeCount = typeof data.likes === "number" ? data.likes : 0;
+      postLikeCountEl.textContent = likeCount;
+      postReplyInfoEl.textContent =
+        `${typeof data.replyCount === "number" ? data.replyCount : 0} yorum • ${likeCount} beğeni`;
+
+      // Post like butonu listener
+      postLikeBtn.addEventListener("click", () => handlePostLike());
     } catch (e) {
       console.error("Konu yüklenirken hata:", e);
       topicTitleEl.textContent = "Konu yüklenirken hata oluştu";
@@ -445,6 +505,7 @@
 
       snapshot.forEach((docSnap) => {
         const data = docSnap.data();
+        const replyId = docSnap.id;
 
         const card = document.createElement("div");
         card.className = "message-card";
@@ -486,8 +547,22 @@
         text.className = "msg-text";
         text.textContent = data.message || "";
 
+        const actions = document.createElement("div");
+        actions.className = "msg-actions";
+
+        const likeBtn = document.createElement("button");
+        likeBtn.className = "like-btn";
+        const likeCount = typeof data.likes === "number" ? data.likes : 0;
+        likeBtn.innerHTML = `👍 <span class="reply-like-count">${likeCount}</span> beğeni`;
+        likeBtn.addEventListener("click", () =>
+          handleReplyLike(replyId, data.userId || null, likeBtn)
+        );
+
+        actions.appendChild(likeBtn);
+
         card.appendChild(userRow);
         card.appendChild(text);
+        card.appendChild(actions);
 
         messagesListEl.appendChild(card);
       });
@@ -514,7 +589,8 @@
         nick,
         message: text,
         createdAt: serverTimestamp(),
-        userId: currentUser ? currentUser.uid : null
+        userId: currentUser ? currentUser.uid : null,
+        likes: 0
       });
 
       const postRef = doc(db, "posts", postId);
@@ -536,6 +612,76 @@
       alert("Yorum eklenirken bir hata oluştu.");
     }
   });
+
+  // ---- LIKE LOGIC (LOCALSTORAGE KORUMALI) ----
+
+  async function handlePostLike() {
+    if (!currentPostData || !postId) return;
+
+    const storageKey = `postLiked_${postId}`;
+    if (localStorage.getItem(storageKey) === "1") {
+      alert("Bu konuyu zaten beğendin.");
+      return;
+    }
+
+    try {
+      const postRef = doc(db, "posts", postId);
+      await updateDoc(postRef, {
+        likes: increment(1)
+      });
+
+      if (currentPostData.userId) {
+        const ownerRef = doc(db, "users", currentPostData.userId);
+        await updateDoc(ownerRef, {
+          "stats.likes": increment(1)
+        });
+      }
+
+      const currentCount = parseInt(postLikeCountEl.textContent || "0", 10);
+      const newCount = currentCount + 1;
+      postLikeCountEl.textContent = newCount;
+      postReplyInfoEl.textContent =
+        `${typeof currentPostData.replyCount === "number" ? currentPostData.replyCount : 0} yorum • ${newCount} beğeni`;
+
+      localStorage.setItem(storageKey, "1");
+    } catch (e) {
+      console.error("Post like hata:", e);
+      alert("Beğeni eklenirken bir hata oluştu.");
+    }
+  }
+
+  async function handleReplyLike(replyId, ownerUserId, buttonEl) {
+    if (!postId || !replyId || !buttonEl) return;
+
+    const storageKey = `replyLiked_${replyId}`;
+    if (localStorage.getItem(storageKey) === "1") {
+      alert("Bu yorumu zaten beğendin.");
+      return;
+    }
+
+    try {
+      const replyRef = doc(db, "posts", postId, "replies", replyId);
+      await updateDoc(replyRef, {
+        likes: increment(1)
+      });
+
+      if (ownerUserId) {
+        const ownerRef = doc(db, "users", ownerUserId);
+        await updateDoc(ownerRef, {
+          "stats.likes": increment(1)
+        });
+      }
+
+      const span = buttonEl.querySelector(".reply-like-count");
+      const currentCount = parseInt(span.textContent || "0", 10);
+      span.textContent = currentCount + 1;
+
+      localStorage.setItem(storageKey, "1");
+    } catch (e) {
+      console.error("Reply like hata:", e);
+      alert("Beğeni eklenirken bir hata oluştu.");
+    }
+  }
 </script>
 
 </body>
