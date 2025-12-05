@@ -234,12 +234,12 @@
     </div>
 
     <div class="switcher">
-      <button id="loginBtn" class="active" onclick="showLogin()">Giriş</button>
-      <button id="registerBtn" onclick="showRegister()">Kayıt Ol</button>
+      <button id="loginBtn" class="active">Giriş</button>
+      <button id="registerBtn">Kayıt Ol</button>
     </div>
 
     <!-- GİRİŞ FORMU -->
-    <form id="login-form" onsubmit="event.preventDefault(); girisYap();">
+    <form id="login-form">
       <div class="input-group">
         <label for="login-email">E-posta</label>
         <input type="email" id="login-email" placeholder="ornek@mail.com">
@@ -258,7 +258,7 @@
     </form>
 
     <!-- KAYIT FORMU -->
-    <form id="register-form" onsubmit="event.preventDefault(); kayitOl();">
+    <form id="register-form">
       <div class="input-group">
         <label for="register-username">Kullanıcı Adı (Nick)</label>
         <input type="text" id="register-username" placeholder="Nebride">
@@ -307,27 +307,70 @@
   const auth = getAuth(app);
   const db = getFirestore(app);
 
+  const loginBtn = document.getElementById("loginBtn");
+  const registerBtn = document.getElementById("registerBtn");
+  const loginForm = document.getElementById("login-form");
+  const registerForm = document.getElementById("register-form");
+
+  // Sekme geçişleri
+  function showLogin() {
+    loginForm.style.display = "block";
+    registerForm.style.display = "none";
+    loginBtn.classList.add("active");
+    registerBtn.classList.remove("active");
+  }
+
+  function showRegister() {
+    loginForm.style.display = "none";
+    registerForm.style.display = "block";
+    loginBtn.classList.remove("active");
+    registerBtn.classList.add("active");
+  }
+
+  loginBtn.addEventListener("click", (e) => {
+    e.preventDefault();
+    showLogin();
+  });
+
+  registerBtn.addEventListener("click", (e) => {
+    e.preventDefault();
+    showRegister();
+  });
+
+  // Zaten login ise direkt profile at
   onAuthStateChanged(auth, (user) => {
     if (user && window.location.pathname.endsWith("login.html")) {
       window.location.href = "profile.html";
     }
   });
 
-  window.showLogin = function () {
-    document.getElementById("login-form").style.display = "block";
-    document.getElementById("register-form").style.display = "none";
-    document.getElementById("loginBtn").classList.add("active");
-    document.getElementById("registerBtn").classList.remove("active");
-  };
+  // Giriş
+  async function girisYap(email, password) {
+    await signInWithEmailAndPassword(auth, email, password);
+    window.location.href = "profile.html";
+  }
 
-  window.showRegister = function () {
-    document.getElementById("login-form").style.display = "none";
-    document.getElementById("register-form").style.display = "block";
-    document.getElementById("loginBtn").classList.remove("active");
-    document.getElementById("registerBtn").classList.add("active");
-  };
+  // Kayıt
+  async function kayitOl(username, email, password) {
+    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+    const user = userCredential.user;
 
-  window.girisYap = function () {
+    const userRef = doc(db, "users", user.uid);
+    await setDoc(userRef, {
+      username,
+      email,
+      createdAt: serverTimestamp(),
+      stats: {
+        messages: 0,
+        topics: 0,
+        likes: 0
+      }
+    });
+  }
+
+  // Form submitleri
+  loginForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
     const email = document.getElementById("login-email").value.trim();
     const password = document.getElementById("login-password").value.trim();
 
@@ -336,17 +379,16 @@
       return;
     }
 
-    signInWithEmailAndPassword(auth, email, password)
-      .then(() => {
-        window.location.href = "profile.html";
-      })
-      .catch((error) => {
-        console.error("Giriş hatası:", error);
-        alert("Giriş hatası: " + error.message);
-      });
-  };
+    try {
+      await girisYap(email, password);
+    } catch (error) {
+      console.error("Giriş hatası:", error);
+      alert("Giriş hatası: " + error.message);
+    }
+  });
 
-  window.kayitOl = async function () {
+  registerForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
     const username = document.getElementById("register-username").value.trim();
     const email = document.getElementById("register-email").value.trim();
     const password = document.getElementById("register-password").value.trim();
@@ -357,30 +399,19 @@
     }
 
     try {
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-      const user = userCredential.user;
-
-      const userRef = doc(db, "users", user.uid);
-      await setDoc(userRef, {
-        username,
-        email,
-        createdAt: serverTimestamp(),
-        stats: {
-          messages: 0,
-          topics: 0,
-          likes: 0
-        }
-      });
-
+      await kayitOl(username, email, password);
       alert("Kayıt başarılı! Şimdi giriş yapabilirsin.");
-      window.showLogin();
+      showLogin();
       document.getElementById("login-email").value = email;
       document.getElementById("login-password").value = "";
     } catch (error) {
       console.error("Kayıt hatası:", error);
       alert("Kayıt hatası: " + error.message);
     }
-  };
+  });
+
+  // Sayfa açıldığında default olarak login formu gözüksün
+  showLogin();
 </script>
 
 </body>
