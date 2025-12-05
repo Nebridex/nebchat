@@ -45,6 +45,7 @@
     .menu {
       display: flex;
       gap: 16px;
+      align-items: center;
     }
 
     .menu a {
@@ -63,6 +64,22 @@
       background: rgba(108, 99, 255, 0.25);
       box-shadow: 0 0 14px rgba(108, 99, 255, 0.5);
       color: #ffffff;
+    }
+
+    .logout-btn {
+      padding: 7px 14px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 120, 120, 0.8);
+      background: rgba(255, 80, 80, 0.2);
+      color: #ffe5e5;
+      font-size: 13px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .logout-btn:hover {
+      background: rgba(255, 80, 80, 0.35);
+      box-shadow: 0 0 14px rgba(255, 80, 80, 0.7);
     }
 
     .profile-container {
@@ -135,6 +152,12 @@
       opacity: 0.85;
       font-size: 14px;
     }
+
+    .info-text {
+      margin-top: 20px;
+      font-size: 12px;
+      color: #a3addf;
+    }
   </style>
 </head>
 
@@ -151,13 +174,14 @@
     <a href="forum.html">Forum</a>
     <a href="login.html">Giriş Yap</a>
     <a href="profile.html">Profilim</a>
+    <button class="logout-btn" id="logoutBtn">Çıkış Yap</button>
   </nav>
 </header>
 
 <div class="profile-container">
   <div class="avatar">N</div>
   <div class="username">Nebride</div>
-  <div class="level">Seviye 1</div>
+  <div class="level">Seviye 1 • NebScore: 0</div>
 
   <div class="stats-grid">
     <div class="stat-card">
@@ -173,15 +197,24 @@
       <div class="stat-label">Açılan Konu</div>
     </div>
     <div class="stat-card">
+      <div class="stat-number" id="statScore">0</div>
+      <div class="stat-label">NebScore</div>
+    </div>
+    <div class="stat-card">
       <div class="stat-number" id="statYears">0 yıl</div>
       <div class="stat-label">Toplulukta Süre</div>
     </div>
+  </div>
+
+  <div class="info-text">
+    NebScore = likes ×2 + messages ×1.5 + topics ×3<br>
+    Seviye, (messages + topics) değerine göre artar.
   </div>
 </div>
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
-  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
+  import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
   import { 
     getFirestore, doc, getDoc 
   } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
@@ -207,6 +240,19 @@
   const statLikes = document.getElementById("statLikes");
   const statTopics = document.getElementById("statTopics");
   const statYears = document.getElementById("statYears");
+  const statScore = document.getElementById("statScore");
+
+  const logoutBtn = document.getElementById("logoutBtn");
+
+  logoutBtn.addEventListener("click", async () => {
+    try {
+      await signOut(auth);
+      window.location.href = "index.html";
+    } catch (e) {
+      console.error("Çıkış hatası:", e);
+      alert("Çıkış yapılırken bir hata oluştu.");
+    }
+  });
 
   onAuthStateChanged(auth, async (user) => {
     if (!user) {
@@ -239,15 +285,18 @@
         ? rawStats.likes
         : (typeof data.likeCount === "number" ? data.likeCount : 0);
 
+    const nebScore = Math.round(likes * 2 + messages * 1.5 + topics * 3);
+
     avatarDiv.textContent = username.charAt(0).toUpperCase();
     usernameDiv.textContent = username;
 
     const level = 1 + Math.floor((messages + topics) / 10);
-    levelDiv.textContent = `Seviye ${level}`;
+    levelDiv.textContent = `Seviye ${level} • NebScore: ${nebScore}`;
 
     statMessages.textContent = messages;
     statLikes.textContent = likes;
     statTopics.textContent = topics;
+    statScore.textContent = nebScore;
 
     if (data.createdAt?.toDate) {
       const diff = Date.now() - data.createdAt.toDate().getTime();
