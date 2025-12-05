@@ -77,14 +77,12 @@
       }
     }
 
-    /* SAYFA GENEL */
     .profile-container {
       max-width: 900px;
       margin: 40px auto;
       padding: 0 20px 40px;
     }
 
-    /* AUTH (GİRİŞ / KAYIT) BLOĞU */
     .auth-box {
       background: rgba(20, 25, 45, 0.65);
       padding: 30px 25px;
@@ -199,9 +197,8 @@
       display: none;
     }
 
-    /* PROFIL BLOĞU */
     #profileBox {
-      display: none; /* Başta gizli, login sonrası açılacak */
+      display: none;
     }
 
     .profile-top-row {
@@ -322,7 +319,6 @@
 </header>
 
 <div class="profile-container">
-  <!-- GİRİŞ / KAYIT BLOĞU -->
   <div class="auth-box" id="authBox">
     <div class="logo-area-small">
       <div class="logo-text">NebChat • Profil</div>
@@ -333,7 +329,6 @@
       <button id="registerBtn" onclick="showRegister()">Kayıt Ol</button>
     </div>
 
-    <!-- GİRİŞ FORMU -->
     <form id="login-form" onsubmit="event.preventDefault(); girisYap();">
       <div class="input-group">
         <label for="login-email">E-posta</label>
@@ -352,7 +347,6 @@
       </div>
     </form>
 
-    <!-- KAYIT FORMU -->
     <form id="register-form" onsubmit="event.preventDefault(); kayitOl();">
       <div class="input-group">
         <label for="register-username">Kullanıcı Adı (Nick)</label>
@@ -377,7 +371,6 @@
     </form>
   </div>
 
-  <!-- PROFİL BLOĞU -->
   <div id="profileBox">
     <div class="profile-top-row">
       <div class="avatar" id="avatar">N</div>
@@ -420,7 +413,6 @@
   </div>
 </div>
 
-<!-- FIREBASE PROFIL + AUTH JS -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
   import {
@@ -430,8 +422,8 @@
     createUserWithEmailAndPassword,
     signInWithEmailAndPassword
   } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
-  import { 
-    getFirestore, doc, getDoc, setDoc, serverTimestamp 
+  import {
+    getFirestore, doc, getDoc, setDoc, serverTimestamp
   } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
 
   const firebaseConfig = {
@@ -447,7 +439,6 @@
   const auth = getAuth(app);
   const db = getFirestore(app);
 
-  // DOM referansları
   const authBox = document.getElementById("authBox");
   const profileBox = document.getElementById("profileBox");
 
@@ -468,7 +459,6 @@
   const loginForm = document.getElementById("login-form");
   const registerForm = document.getElementById("register-form");
 
-  // Sekme değişimi (Giriş / Kayıt)
   window.showLogin = function () {
     loginForm.style.display = "block";
     registerForm.style.display = "none";
@@ -483,7 +473,6 @@
     registerBtn.classList.add("active");
   };
 
-  // Giriş yap
   window.girisYap = function () {
     const email = document.getElementById("login-email").value.trim();
     const password = document.getElementById("login-password").value.trim();
@@ -495,7 +484,7 @@
 
     signInWithEmailAndPassword(auth, email, password)
       .then(() => {
-        // onAuthStateChanged tetiklenecek, profil açılacak
+        // onAuthStateChanged tetiklenecek
       })
       .catch((error) => {
         console.error("Giriş hatası:", error);
@@ -503,7 +492,6 @@
       });
   };
 
-  // Kayıt ol
   window.kayitOl = async function () {
     const username = document.getElementById("register-username").value.trim();
     const email = document.getElementById("register-email").value.trim();
@@ -530,18 +518,16 @@
         }
       });
 
-      // onAuthStateChanged tetiklenecek, profil açılacak
+      // onAuthStateChanged tetiklenecek
     } catch (error) {
       console.error("Kayıt hatası:", error);
       alert("Kayıt hatası: " + error.message);
     }
   };
 
-  // Çıkış
   logoutBtn.addEventListener("click", async () => {
     try {
       await signOut(auth);
-      // Sayfayı temizden yükle
       window.location.reload();
     } catch (e) {
       console.error("Çıkış hatası:", e);
@@ -549,24 +535,20 @@
     }
   });
 
-  // Auth state izleme
+  // Auth state izleme – BURASI DÜZELTİLDİ
   onAuthStateChanged(auth, async (user) => {
-      onAuthStateChanged(auth, async (user) => {
     if (!user) {
-      // Kullanıcı yok → Auth kutusu açık, profil kapalı
       authBox.style.display = "block";
       profileBox.style.display = "none";
       return;
     }
 
-    // Kullanıcı var → Profili göster, auth'u kapat
     authBox.style.display = "none";
     profileBox.style.display = "block";
 
     const ref = doc(db, "users", user.uid);
     let snap = await getDoc(ref);
 
-    // Eğer daha önce hiç users/{uid} kaydı yoksa, otomatik oluştur
     if (!snap.exists()) {
       const fallbackUsername =
         (user.email && user.email.split("@")[0]) || "Anon";
@@ -590,14 +572,12 @@
     }
 
     if (!snap.exists()) {
-      // hala yoksa ciddi bir rules/proje sorunu vardır
       usernameDiv.textContent = user.email || "Kullanıcı";
       avatarDiv.textContent = (user.email || "?").charAt(0).toUpperCase();
       return;
     }
 
     const data = snap.data();
-
     const username = data.username || "Anon";
     const rawStats = data.stats || {};
 
@@ -637,7 +617,6 @@
       statYears.textContent = "0 yıl";
     }
   });
-
 </script>
 
 </body>
