@@ -107,30 +107,6 @@
       color: #8fa4ff;
     }
 
-    .about-box {
-      margin-top: 25px;
-      background: rgba(20, 25, 45, 0.55);
-      padding: 20px;
-      border-radius: 15px;
-      border: 2px solid rgba(108, 99, 255, 0.25);
-      box-shadow: 0 0 22px rgba(88, 80, 255, 0.25);
-      text-align: left;
-    }
-
-    .about-title {
-      font-size: 20px;
-      margin-bottom: 10px;
-      color: #cdd7ff;
-      text-shadow: 0 0 10px rgba(120, 140, 255, 0.5);
-    }
-
-    .about-text {
-      font-size: 15px;
-      opacity: 0.85;
-      line-height: 1.6;
-      color: #dbe2ff;
-    }
-
     .stats-grid {
       margin-top: 25px;
       display: grid;
@@ -252,20 +228,40 @@
 
     const data = snap.data();
 
-    avatarDiv.textContent = data.username.charAt(0).toUpperCase();
-    usernameDiv.textContent = data.username;
+    const username = data.username || "Anon";
+    const rawStats = data.stats || {};
 
-    const level = 1 + Math.floor((data.stats.messages + data.stats.topics) / 10);
+    const messages =
+      typeof rawStats.messages === "number"
+        ? rawStats.messages
+        : (typeof data.messageCount === "number" ? data.messageCount : 0);
+
+    const topics =
+      typeof rawStats.topics === "number"
+        ? rawStats.topics
+        : (typeof data.topicCount === "number" ? data.topicCount : 0);
+
+    const likes =
+      typeof rawStats.likes === "number"
+        ? rawStats.likes
+        : (typeof data.likeCount === "number" ? data.likeCount : 0);
+
+    avatarDiv.textContent = username.charAt(0).toUpperCase();
+    usernameDiv.textContent = username;
+
+    const level = 1 + Math.floor((messages + topics) / 10);
     levelDiv.textContent = `Seviye ${level}`;
 
-    statMessages.textContent = data.stats.messages;
-    statLikes.textContent = data.stats.likes;
-    statTopics.textContent = data.stats.topics;
+    statMessages.textContent = messages;
+    statLikes.textContent = likes;
+    statTopics.textContent = topics;
 
     if (data.createdAt?.toDate) {
       const diff = Date.now() - data.createdAt.toDate().getTime();
       const years = Math.floor(diff / (1000 * 60 * 60 * 24 * 365));
       statYears.textContent = years + " yıl";
+    } else {
+      statYears.textContent = "0 yıl";
     }
   });
 </script>
