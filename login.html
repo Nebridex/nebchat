@@ -15,7 +15,6 @@
       color: #dfe4ff;
     }
 
-    /* ORTAK HEADER + MENÜ */
     header {
       background: rgba(15, 20, 40, 0.7);
       backdrop-filter: blur(10px);
@@ -38,11 +37,10 @@
 
     .logo-title {
       font-family: 'Pacifico', cursive;
-      font-size: 34px;
+      font-size: 30px;
       font-weight: 400;
       color: #8ab4ff;
       text-shadow: 0 0 10px rgba(121, 169, 255, 0.9);
-      letter-spacing: 0.5px;
     }
 
     .menu {
@@ -79,7 +77,6 @@
       }
     }
 
-    /* SAYFA ORTASI */
     .page-container {
       min-height: calc(100vh - 80px);
       display: flex;
@@ -282,7 +279,6 @@
   </div>
 </div>
 
-<!-- Firebase v12 modüler SDK -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
   import {
@@ -298,7 +294,6 @@
     serverTimestamp
   } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
 
-  // Yeni Firebase projen (nebchat2) için config
   const firebaseConfig = {
     apiKey: "AIzaSyBAwFSe0pud59OXpx1G5hQO9opA1f7Eg9Y",
     authDomain: "nebchat2.firebaseapp.com",
@@ -308,22 +303,16 @@
     appId: "1:46979426016:web:fd1fbe341fff6970ae9285"
   };
 
-  // Firebase'i başlat
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
   const db = getFirestore(app);
 
-  // Eğer kullanıcı zaten giriş yapmışsa, direk profile.html'e at
   onAuthStateChanged(auth, (user) => {
-    if (user) {
-      // login sayfasına gelmiş ama zaten login ise zorlamaya gerek yok
-      if (window.location.pathname.endsWith("login.html")) {
-        window.location.href = "profile.html";
-      }
+    if (user && window.location.pathname.endsWith("login.html")) {
+      window.location.href = "profile.html";
     }
   });
 
-  // Form görünümünü değiştiren fonksiyonlar (global yapmak için window'a bağlıyoruz)
   window.showLogin = function () {
     document.getElementById("login-form").style.display = "block";
     document.getElementById("register-form").style.display = "none";
@@ -338,7 +327,6 @@
     document.getElementById("registerBtn").classList.add("active");
   };
 
-  // Giriş fonksiyonu
   window.girisYap = function () {
     const email = document.getElementById("login-email").value.trim();
     const password = document.getElementById("login-password").value.trim();
@@ -350,7 +338,6 @@
 
     signInWithEmailAndPassword(auth, email, password)
       .then(() => {
-        // Giriş başarılı
         window.location.href = "profile.html";
       })
       .catch((error) => {
@@ -359,7 +346,6 @@
       });
   };
 
-  // Kayıt fonksiyonu (Auth + Firestore users koleksiyonu)
   window.kayitOl = async function () {
     const username = document.getElementById("register-username").value.trim();
     const email = document.getElementById("register-email").value.trim();
@@ -371,28 +357,23 @@
     }
 
     try {
-      // 1) Firebase Authentication'da kullanıcı oluştur
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
 
-      // 2) Firestore'da users koleksiyonuna user kaydı aç
       const userRef = doc(db, "users", user.uid);
       await setDoc(userRef, {
-        username: username,
-        email: email,
+        username,
+        email,
         createdAt: serverTimestamp(),
-
-        // İstatistikler – ileride profil sayfasında kullanacağız
-        messageCount: 0,
-        topicCount: 0,
-        likeCount: 0
+        stats: {
+          messages: 0,
+          topics: 0,
+          likes: 0
+        }
       });
 
       alert("Kayıt başarılı! Şimdi giriş yapabilirsin.");
-      // Formları login moduna çek
       window.showLogin();
-
-      // Kayıt sonrası email ve şifre alanlarını login tarafına otomatik doldurmak istersen:
       document.getElementById("login-email").value = email;
       document.getElementById("login-password").value = "";
     } catch (error) {
