@@ -583,7 +583,7 @@
       return;
     }
 
-    try {
+        try {
       const repliesRef = collection(db, "posts", postId, "replies");
       await addDoc(repliesRef, {
         nick,
@@ -599,18 +599,26 @@
         lastReplyAt: serverTimestamp()
       });
 
-      if (currentUser) {
-        const userRef = doc(db, "users", currentUser.uid);
-        await updateDoc(userRef, {
-          "stats.messages": increment(1)
-        });
-      }
-
       messageInput.value = "";
     } catch (e) {
       console.error("Yorum eklenirken hata:", e);
       alert("Yorum eklenirken bir hata oluştu.");
+      return;
     }
+
+    if (currentUser) {
+      try {
+        const userRef = doc(db, "users", currentUser.uid);
+        await setDoc(
+          userRef,
+          { "stats.messages": increment(1) },
+          { merge: true }
+        );
+      } catch (e) {
+        console.error("Kullanıcı mesaj istatistiği güncellenemedi:", e);
+      }
+    }
+
   });
 
   // ---- LIKE LOGIC (LOCALSTORAGE KORUMALI) ----
