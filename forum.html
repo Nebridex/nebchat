@@ -15,7 +15,6 @@
       color: #dfe4ff;
     }
 
-    /* HEADER */
     header {
       background: rgba(15, 20, 40, 0.7);
       backdrop-filter: blur(10px);
@@ -38,11 +37,10 @@
 
     .logo-title {
       font-family: 'Pacifico', cursive;
-      font-size: 34px;
+      font-size: 30px;
       font-weight: 400;
       color: #8ab4ff;
       text-shadow: 0 0 10px rgba(121, 169, 255, 0.9);
-      letter-spacing: 0.5px;
     }
 
     .menu {
@@ -79,7 +77,6 @@
       }
     }
 
-    /* SAYFA GENEL */
     .page {
       max-width: 1100px;
       margin: 30px auto 60px;
@@ -101,7 +98,6 @@
       margin-bottom: 24px;
     }
 
-    /* YENİ KONU FORMU */
     .new-topic-box {
       background: rgba(20, 25, 50, 0.7);
       border-radius: 18px;
@@ -174,7 +170,6 @@
       box-shadow: 0 0 20px rgba(108, 99, 255, 0.85);
     }
 
-    /* KATEGORİ BLOKLARI */
     .category-block {
       margin-top: 30px;
       padding: 18px 16px 10px;
@@ -185,7 +180,7 @@
     }
 
     .category-title {
-      font-size: 20px;
+      font-size: 18px;
       font-weight: 600;
       margin-bottom: 4px;
     }
@@ -293,10 +288,10 @@
 <main class="page">
   <h1 class="page-title" id="pageTitle">Son Konular</h1>
   <p class="page-subtitle" id="pageSubtitle">
-    Giriş yapmak zorunlu değil. Bir takma ad (nick) seç, başlığını ve mesajını yaz.
+    Giriş yapmak zorunlu değil. Bir takma ad (nick) seç, başlığını ve mesajını yaz. 
+    Tech & Security ile ilgili her şey serbest; kişisel veri yok.
   </p>
 
-  <!-- YENİ KONU FORMU -->
   <section class="new-topic-box">
     <div class="new-topic-title">Yeni Konu Aç</div>
 
@@ -307,9 +302,14 @@
 
     <div class="form-row">
       <select id="categoryInput" class="select-category">
-        <option value="genel">⚡ Genel Sohbet</option>
-        <option value="oyun">🎮 Oyun Sohbeti</option>
-        <option value="teknoloji">💡 Teknoloji Köşesi</option>
+        <option value="cyber">🛡 Cyber Security</option>
+        <option value="network">🌐 Network & Infrastructure</option>
+        <option value="cloud">☁️ Cloud & DevOps</option>
+        <option value="career">💼 Career & Salary</option>
+        <option value="products">📦 Products & Vendors</option>
+        <option value="confessions">🙈 Anon Confessions</option>
+        <option value="tech">💡 Tech Discussions</option>
+        <option value="offtopic">🎭 Off-Topic / Community</option>
       </select>
     </div>
 
@@ -318,7 +318,6 @@
     <button class="btn-main" id="sendBtn">Konuyu Gönder</button>
   </section>
 
-  <!-- Burayı JS dolduracak -->
   <section class="topics-list">
     <div id="forumContent"></div>
   </section>
@@ -328,7 +327,6 @@
   NebChat anonim forum • İçerik kullanıcıların sorumluluğundadır.
 </footer>
 
-<!-- FIREBASE -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
   import {
@@ -340,8 +338,15 @@
     orderBy,
     onSnapshot,
     where,
-    limit
+    limit,
+    doc,
+    updateDoc,
+    increment
   } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
+  import {
+    getAuth,
+    onAuthStateChanged
+  } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyBAwFSe0pud59OXpx1G5hQO9opA1f7Eg9Y",
@@ -354,11 +359,17 @@
 
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
+  const auth = getAuth(app);
 
   const categoryMap = {
-    genel: "⚡ Genel Sohbet",
-    oyun: "🎮 Oyun Sohbeti",
-    teknoloji: "💡 Teknoloji Köşesi"
+    cyber: "🛡 Cyber Security",
+    network: "🌐 Network & Infrastructure",
+    cloud: "☁️ Cloud & DevOps",
+    career: "💼 Career & Salary",
+    products: "📦 Products & Vendors",
+    confessions: "🙈 Anon Confessions",
+    tech: "💡 Tech Discussions",
+    offtopic: "🎭 Off-Topic / Community"
   };
 
   const params = new URLSearchParams(window.location.search);
@@ -372,6 +383,12 @@
   const messageInput = document.getElementById("messageInput");
   const sendBtn = document.getElementById("sendBtn");
   const forumContent = document.getElementById("forumContent");
+
+  let currentUser = null;
+
+  onAuthStateChanged(auth, (user) => {
+    currentUser = user || null;
+  });
 
   // Yeni konu gönder
   sendBtn.addEventListener("click", async () => {
@@ -393,28 +410,46 @@
         category,
         createdAt: serverTimestamp(),
         replyCount: 0,
-        lastReplyAt: null
+        lastReplyAt: null,
+        likes: 0,
+        userId: currentUser ? currentUser.uid : null
       });
+
+      if (currentUser) {
+        const userRef = doc(db, "users", currentUser.uid);
+        await updateDoc(userRef, {
+          "stats.topics": increment(1)
+        });
+      }
 
       messageInput.value = "";
       titleInput.value = "";
-      // nick ve kategori aynı kalabilir
     } catch (e) {
       console.error("Konu eklenirken hata:", e);
       alert("Konu eklenirken bir hata oluştu.");
     }
   });
 
-  // -------- ANA SAYFA (Kategori önizlemeleri) --------
   function renderCategoryPreview() {
     pageTitleEl.textContent = "Son Konular";
     pageSubtitleEl.textContent =
-      "Aşağıdan kategorilere göz atabilir, her alandaki son konuları görebilirsin.";
+      "Aşağıdan Tech & Security kategorilerine göz at, her birinden son konuları gör.";
 
     forumContent.innerHTML = "";
 
-    for (const cat of ["genel", "oyun", "teknoloji"]) {
-      const label = categoryMap[cat];
+    const homeCats = [
+      "cyber",
+      "network",
+      "cloud",
+      "career",
+      "products",
+      "confessions",
+      "tech",
+      "offtopic"
+    ];
+
+    for (const cat of homeCats) {
+      const label = categoryMap[cat] || cat;
 
       const section = document.createElement("div");
       section.className = "category-block";
@@ -431,7 +466,7 @@
         collection(db, "posts"),
         where("category", "==", cat),
         orderBy("createdAt", "desc"),
-        limit(2)
+        limit(3)
       );
 
       onSnapshot(qCat, (snapshot) => {
@@ -481,15 +516,14 @@
     }
   }
 
-  // -------- KATEGORİ SAYFASI (Tümünü gör) --------
   function renderCategoryPage(cat) {
     const label = categoryMap[cat] || "Kategori";
 
     pageTitleEl.textContent = label;
     pageSubtitleEl.textContent =
-      "Bu sayfada sadece " + label + " konuları listelenir.";
+      label + " kategorisindeki tüm konular listelenir.";
 
-    categoryInput.value = cat; // formda seçili olsun
+    categoryInput.value = cat;
 
     forumContent.innerHTML = "";
 
@@ -545,7 +579,6 @@
     });
   }
 
-  // -------- HANGİ MOD AÇILACAK? --------
   if (selectedCat && categoryMap[selectedCat]) {
     renderCategoryPage(selectedCat);
   } else {
