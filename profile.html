@@ -551,6 +551,7 @@
 
   // Auth state izleme
   onAuthStateChanged(auth, async (user) => {
+      onAuthStateChanged(auth, async (user) => {
     if (!user) {
       // Kullanıcı yok → Auth kutusu açık, profil kapalı
       authBox.style.display = "block";
@@ -563,10 +564,33 @@
     profileBox.style.display = "block";
 
     const ref = doc(db, "users", user.uid);
-    const snap = await getDoc(ref);
+    let snap = await getDoc(ref);
+
+    // Eğer daha önce hiç users/{uid} kaydı yoksa, otomatik oluştur
+    if (!snap.exists()) {
+      const fallbackUsername =
+        (user.email && user.email.split("@")[0]) || "Anon";
+
+      await setDoc(
+        ref,
+        {
+          username: fallbackUsername,
+          email: user.email || "",
+          createdAt: serverTimestamp(),
+          stats: {
+            messages: 0,
+            topics: 0,
+            likes: 0
+          }
+        },
+        { merge: true }
+      );
+
+      snap = await getDoc(ref);
+    }
 
     if (!snap.exists()) {
-      // Güvenlik için yoksa minimal doc oluşturabiliriz, ama şimdilik sadece fallback verelim
+      // hala yoksa ciddi bir rules/proje sorunu vardır
       usernameDiv.textContent = user.email || "Kullanıcı";
       avatarDiv.textContent = (user.email || "?").charAt(0).toUpperCase();
       return;
@@ -613,6 +637,7 @@
       statYears.textContent = "0 yıl";
     }
   });
+
 </script>
 
 </body>
