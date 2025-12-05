@@ -66,27 +66,150 @@
       color: #ffffff;
     }
 
-    .logout-btn {
-      padding: 7px 14px;
-      border-radius: 999px;
-      border: 1px solid rgba(255, 120, 120, 0.8);
-      background: rgba(255, 80, 80, 0.2);
-      color: #ffe5e5;
-      font-size: 13px;
-      cursor: pointer;
-      transition: 0.2s;
+    @media (max-width: 700px) {
+      header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+      }
+      .menu {
+        flex-wrap: wrap;
+      }
     }
 
-    .logout-btn:hover {
-      background: rgba(255, 80, 80, 0.35);
-      box-shadow: 0 0 14px rgba(255, 80, 80, 0.7);
-    }
-
+    /* SAYFA GENEL */
     .profile-container {
       max-width: 900px;
       margin: 40px auto;
-      padding: 0 20px;
+      padding: 0 20px 40px;
+    }
+
+    /* AUTH (GİRİŞ / KAYIT) BLOĞU */
+    .auth-box {
+      background: rgba(20, 25, 45, 0.65);
+      padding: 30px 25px;
+      border-radius: 18px;
+      border: 2px solid rgba(108, 99, 255, 0.25);
+      box-shadow: 0 0 35px rgba(88, 80, 255, 0.4);
+      max-width: 360px;
+      margin: 0 auto;
+      backdrop-filter: blur(18px);
+      transition: 0.3s;
+    }
+
+    .auth-box:hover {
+      border-color: rgba(108, 99, 255, 0.55);
+      box-shadow: 0 0 45px rgba(88, 80, 255, 0.55);
+    }
+
+    .logo-area-small {
       text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .logo-text {
+      font-size: 24px;
+      font-weight: 600;
+      color: #9eb9ff;
+      text-shadow: 0 0 12px rgba(121, 169, 255, 0.8);
+    }
+
+    .switcher {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .switcher button {
+      padding: 7px 14px;
+      border-radius: 8px;
+      background: transparent;
+      border: 1px solid rgba(108, 99, 255, 0.4);
+      color: #c5ceff;
+      cursor: pointer;
+      transition: 0.3s;
+      font-size: 13px;
+    }
+
+    .switcher button.active {
+      background: rgba(108, 99, 255, 0.35);
+      box-shadow: 0 0 12px rgba(108, 99, 255, 0.7);
+      border-color: rgba(108, 99, 255, 0.7);
+    }
+
+    .switcher button:hover {
+      background: rgba(108, 99, 255, 0.25);
+    }
+
+    .input-group {
+      margin-bottom: 14px;
+    }
+
+    .input-group label {
+      font-size: 13px;
+      margin-bottom: 5px;
+      display: block;
+      color: #b7c2ff;
+    }
+
+    .input-group input {
+      width: 100%;
+      padding: 10px;
+      border-radius: 10px;
+      border: 1px solid rgba(108, 99, 255, 0.35);
+      background: rgba(255, 255, 255, 0.07);
+      color: #ffffff;
+      outline: none;
+      font-size: 14px;
+      transition: 0.25s;
+    }
+
+    .input-group input:focus {
+      border-color: rgba(138, 127, 255, 0.9);
+      box-shadow: 0 0 15px rgba(138, 127, 255, 0.7);
+    }
+
+    .btn-main {
+      width: 100%;
+      padding: 10px;
+      margin-top: 6px;
+      background: rgba(108, 99, 255, 0.4);
+      border: 1px solid rgba(108, 99, 255, 0.7);
+      border-radius: 10px;
+      color: #e0e4ff;
+      font-size: 15px;
+      cursor: pointer;
+      transition: 0.25s;
+    }
+
+    .btn-main:hover {
+      background: rgba(108, 99, 255, 0.55);
+      box-shadow: 0 0 22px rgba(108, 99, 255, 0.75);
+    }
+
+    .small-info {
+      margin-top: 10px;
+      font-size: 12px;
+      text-align: center;
+      color: #a3addf;
+    }
+
+    #register-form {
+      display: none;
+    }
+
+    /* PROFIL BLOĞU */
+    #profileBox {
+      display: none; /* Başta gizli, login sonrası açılacak */
+    }
+
+    .profile-top-row {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
     }
 
     .avatar {
@@ -94,7 +217,6 @@
       height: 110px;
       border-radius: 50%;
       background: #6d6cff;
-      margin: 0 auto;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -102,10 +224,15 @@
       font-weight: 700;
       color: white;
       box-shadow: 0 0 25px rgba(120, 140, 255, 0.9);
+      flex-shrink: 0;
+    }
+
+    .profile-main {
+      flex: 1;
+      min-width: 180px;
     }
 
     .username {
-      margin-top: 15px;
       font-size: 26px;
       font-weight: 700;
       color: #bcd2ff;
@@ -119,8 +246,25 @@
       color: #8fa4ff;
     }
 
+    .logout-btn {
+      padding: 7px 14px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 120, 120, 0.8);
+      background: rgba(255, 80, 80, 0.2);
+      color: #ffe5e5;
+      font-size: 13px;
+      cursor: pointer;
+      transition: 0.2s;
+      margin-left: auto;
+    }
+
+    .logout-btn:hover {
+      background: rgba(255, 80, 80, 0.35);
+      box-shadow: 0 0 14px rgba(255, 80, 80, 0.7);
+    }
+
     .stats-grid {
-      margin-top: 25px;
+      margin-top: 10px;
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
       gap: 18px;
@@ -157,6 +301,7 @@
       margin-top: 20px;
       font-size: 12px;
       color: #a3addf;
+      text-align: center;
     }
   </style>
 </head>
@@ -172,51 +317,121 @@
   <nav class="menu">
     <a href="index.html">Ana Sayfa</a>
     <a href="forum.html">Forum</a>
-    <a href="login.html">Giriş Yap</a>
     <a href="profile.html">Profilim</a>
-    <button class="logout-btn" id="logoutBtn">Çıkış Yap</button>
   </nav>
 </header>
 
 <div class="profile-container">
-  <div class="avatar">N</div>
-  <div class="username">Nebride</div>
-  <div class="level">Seviye 1 • NebScore: 0</div>
+  <!-- GİRİŞ / KAYIT BLOĞU -->
+  <div class="auth-box" id="authBox">
+    <div class="logo-area-small">
+      <div class="logo-text">NebChat • Profil</div>
+    </div>
 
-  <div class="stats-grid">
-    <div class="stat-card">
-      <div class="stat-number" id="statMessages">0</div>
-      <div class="stat-label">Mesaj</div>
+    <div class="switcher">
+      <button id="loginBtn" class="active" onclick="showLogin()">Giriş</button>
+      <button id="registerBtn" onclick="showRegister()">Kayıt Ol</button>
     </div>
-    <div class="stat-card">
-      <div class="stat-number" id="statLikes">0</div>
-      <div class="stat-label">Beğeni</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-number" id="statTopics">0</div>
-      <div class="stat-label">Açılan Konu</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-number" id="statScore">0</div>
-      <div class="stat-label">NebScore</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-number" id="statYears">0 yıl</div>
-      <div class="stat-label">Toplulukta Süre</div>
-    </div>
+
+    <!-- GİRİŞ FORMU -->
+    <form id="login-form" onsubmit="event.preventDefault(); girisYap();">
+      <div class="input-group">
+        <label for="login-email">E-posta</label>
+        <input type="email" id="login-email" placeholder="ornek@mail.com">
+      </div>
+
+      <div class="input-group">
+        <label for="login-password">Şifre</label>
+        <input type="password" id="login-password" placeholder="******">
+      </div>
+
+      <button class="btn-main" type="submit">Giriş Yap</button>
+
+      <div class="small-info">
+        Hesabın yok mu? Üstten "Kayıt Ol" sekmesine geçebilirsin.
+      </div>
+    </form>
+
+    <!-- KAYIT FORMU -->
+    <form id="register-form" onsubmit="event.preventDefault(); kayitOl();">
+      <div class="input-group">
+        <label for="register-username">Kullanıcı Adı (Nick)</label>
+        <input type="text" id="register-username" placeholder="Nebride">
+      </div>
+
+      <div class="input-group">
+        <label for="register-email">E-posta</label>
+        <input type="email" id="register-email" placeholder="ornek@mail.com">
+      </div>
+
+      <div class="input-group">
+        <label for="register-password">Şifre</label>
+        <input type="password" id="register-password" placeholder="******">
+      </div>
+
+      <button class="btn-main" type="submit">Kayıt Ol</button>
+
+      <div class="small-info">
+        Kayıt olduktan sonra otomatik olarak giriş yapmış olacaksın.
+      </div>
+    </form>
   </div>
 
-  <div class="info-text">
-    NebScore = likes ×2 + messages ×1.5 + topics ×3<br>
-    Seviye, (messages + topics) değerine göre artar.
+  <!-- PROFİL BLOĞU -->
+  <div id="profileBox">
+    <div class="profile-top-row">
+      <div class="avatar" id="avatar">N</div>
+
+      <div class="profile-main">
+        <div class="username" id="username">Nebride</div>
+        <div class="level" id="levelText">Seviye 1 • NebScore: 0</div>
+      </div>
+
+      <button class="logout-btn" id="logoutBtn">Çıkış Yap</button>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-number" id="statMessages">0</div>
+        <div class="stat-label">Mesaj</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number" id="statLikes">0</div>
+        <div class="stat-label">Beğeni</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number" id="statTopics">0</div>
+        <div class="stat-label">Açılan Konu</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number" id="statScore">0</div>
+        <div class="stat-label">NebScore</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number" id="statYears">0 yıl</div>
+        <div class="stat-label">Toplulukta Süre</div>
+      </div>
+    </div>
+
+    <div class="info-text">
+      NebScore = likes ×2 + messages ×1.5 + topics ×3<br>
+      Seviye, (messages + topics) değerine göre artar.
+    </div>
   </div>
 </div>
 
+<!-- FIREBASE PROFIL + AUTH JS -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
-  import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
+  import {
+    getAuth,
+    onAuthStateChanged,
+    signOut,
+    createUserWithEmailAndPassword,
+    signInWithEmailAndPassword
+  } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
   import { 
-    getFirestore, doc, getDoc 
+    getFirestore, doc, getDoc, setDoc, serverTimestamp 
   } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
 
   const firebaseConfig = {
@@ -232,9 +447,13 @@
   const auth = getAuth(app);
   const db = getFirestore(app);
 
-  const avatarDiv = document.querySelector(".avatar");
-  const usernameDiv = document.querySelector(".username");
-  const levelDiv = document.querySelector(".level");
+  // DOM referansları
+  const authBox = document.getElementById("authBox");
+  const profileBox = document.getElementById("profileBox");
+
+  const avatarDiv = document.getElementById("avatar");
+  const usernameDiv = document.getElementById("username");
+  const levelDiv = document.getElementById("levelText");
 
   const statMessages = document.getElementById("statMessages");
   const statLikes = document.getElementById("statLikes");
@@ -244,26 +463,114 @@
 
   const logoutBtn = document.getElementById("logoutBtn");
 
+  const loginBtn = document.getElementById("loginBtn");
+  const registerBtn = document.getElementById("registerBtn");
+  const loginForm = document.getElementById("login-form");
+  const registerForm = document.getElementById("register-form");
+
+  // Sekme değişimi (Giriş / Kayıt)
+  window.showLogin = function () {
+    loginForm.style.display = "block";
+    registerForm.style.display = "none";
+    loginBtn.classList.add("active");
+    registerBtn.classList.remove("active");
+  };
+
+  window.showRegister = function () {
+    loginForm.style.display = "none";
+    registerForm.style.display = "block";
+    loginBtn.classList.remove("active");
+    registerBtn.classList.add("active");
+  };
+
+  // Giriş yap
+  window.girisYap = function () {
+    const email = document.getElementById("login-email").value.trim();
+    const password = document.getElementById("login-password").value.trim();
+
+    if (!email || !password) {
+      alert("Lütfen e-posta ve şifreyi doldur.");
+      return;
+    }
+
+    signInWithEmailAndPassword(auth, email, password)
+      .then(() => {
+        // onAuthStateChanged tetiklenecek, profil açılacak
+      })
+      .catch((error) => {
+        console.error("Giriş hatası:", error);
+        alert("Giriş hatası: " + error.message);
+      });
+  };
+
+  // Kayıt ol
+  window.kayitOl = async function () {
+    const username = document.getElementById("register-username").value.trim();
+    const email = document.getElementById("register-email").value.trim();
+    const password = document.getElementById("register-password").value.trim();
+
+    if (!username || !email || !password) {
+      alert("Lütfen kullanıcı adı, e-posta ve şifreyi doldur.");
+      return;
+    }
+
+    try {
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+
+      const userRef = doc(db, "users", user.uid);
+      await setDoc(userRef, {
+        username,
+        email,
+        createdAt: serverTimestamp(),
+        stats: {
+          messages: 0,
+          topics: 0,
+          likes: 0
+        }
+      });
+
+      // onAuthStateChanged tetiklenecek, profil açılacak
+    } catch (error) {
+      console.error("Kayıt hatası:", error);
+      alert("Kayıt hatası: " + error.message);
+    }
+  };
+
+  // Çıkış
   logoutBtn.addEventListener("click", async () => {
     try {
       await signOut(auth);
-      window.location.href = "index.html";
+      // Sayfayı temizden yükle
+      window.location.reload();
     } catch (e) {
       console.error("Çıkış hatası:", e);
       alert("Çıkış yapılırken bir hata oluştu.");
     }
   });
 
+  // Auth state izleme
   onAuthStateChanged(auth, async (user) => {
     if (!user) {
-      window.location.href = "login.html";
+      // Kullanıcı yok → Auth kutusu açık, profil kapalı
+      authBox.style.display = "block";
+      profileBox.style.display = "none";
       return;
     }
+
+    // Kullanıcı var → Profili göster, auth'u kapat
+    authBox.style.display = "none";
+    profileBox.style.display = "block";
 
     const ref = doc(db, "users", user.uid);
     const snap = await getDoc(ref);
 
-    if (!snap.exists()) return;
+    if (!snap.exists()) {
+      // Güvenlik için yoksa minimal doc oluşturabiliriz, ama şimdilik sadece fallback verelim
+      usernameDiv.textContent = user.email || "Kullanıcı";
+      avatarDiv.textContent = (user.email || "?").charAt(0).toUpperCase();
+      return;
+    }
 
     const data = snap.data();
 
