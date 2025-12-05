@@ -472,6 +472,7 @@
     }
 
     try {
+         try {
       await addDoc(collection(db, "posts"), {
         nick,
         title,
@@ -484,18 +485,28 @@
         userId: currentUser ? currentUser.uid : null
       });
 
-      if (currentUser) {
-        const userRef = doc(db, "users", currentUser.uid);
-        await updateDoc(userRef, {
-          "stats.topics": increment(1)
-        });
-      }
-
       messageInput.value = "";
       titleInput.value = "";
     } catch (e) {
       console.error("Konu eklenirken hata:", e);
       alert("Konu eklenirken bir hata oluştu.");
+      return;
+    }
+
+    // Kullanıcı istatistiği ayrı try/catch – hata olsa bile konu açıldı diye bağırmıyoruz
+    if (currentUser) {
+      try {
+        const userRef = doc(db, "users", currentUser.uid);
+        await setDoc(
+          userRef,
+          {
+            "stats.topics": increment(1)
+          },
+          { merge: true }
+        );
+      } catch (e) {
+        console.error("Kullanıcı topic istatistiği güncellenemedi:", e);
+      }
     }
   });
 
@@ -782,5 +793,6 @@
 
 </body>
 </html>
+
 
 
