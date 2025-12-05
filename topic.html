@@ -16,7 +16,7 @@
     }
 
     header {
-      background: rgba(15, 20, 40, 0.7);
+      background: rgba(15, 20, 40, 0.9);
       padding: 18px 25px;
       display: flex;
       align-items: center;
@@ -37,8 +37,7 @@
 
     .logo-title {
       font-family: 'Pacifico', cursive;
-      font-size: 30px;
-      font-weight: 400;
+      font-size: 28px;
       color: #8ab4ff;
       text-shadow: 0 0 10px rgba(121, 169, 255, 0.9);
     }
@@ -54,7 +53,7 @@
       font-weight: 500;
       font-size: 14px;
       padding: 8px 12px;
-      border-radius: 8px;
+      border-radius: 999px;
       border: 1px solid rgba(108, 99, 255, 0.3);
       background: rgba(255, 255, 255, 0.03);
       transition: 0.25s;
@@ -66,136 +65,87 @@
       color: #ffffff;
     }
 
-    @media (max-width: 700px) {
-      header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 10px;
-      }
-      .menu {
-        flex-wrap: wrap;
-      }
-    }
-
-    .container {
+    main.page {
       max-width: 900px;
       margin: 30px auto 60px;
       padding: 0 16px;
     }
 
-    .back-link {
-      font-size: 13px;
-      margin-bottom: 8px;
-    }
-
-    .back-link a {
-      color: #9fb4ff;
-      text-decoration: none;
-    }
-
-    .back-link a:hover {
-      text-decoration: underline;
-    }
-
-    .topic-header {
+    .topic-box {
+      background: rgba(14, 18, 40, 0.98);
+      border-radius: 20px;
+      padding: 18px 16px;
+      border: 1px solid rgba(108, 99, 255, 0.5);
+      box-shadow: 0 0 26px rgba(80, 70, 230, 0.55);
       margin-bottom: 24px;
-      padding-bottom: 16px;
-      border-bottom: 1px solid rgba(120, 140, 255, 0.25);
     }
 
     .topic-title {
-      font-size: 22px;
-      font-weight: 700;
-      color: #bcd2ff;
-      text-shadow: 0 0 12px rgba(140, 160, 255, 0.5);
-      margin-bottom: 6px;
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 4px;
+      color: #dfe4ff;
     }
 
     .topic-meta {
-      font-size: 13px;
-      opacity: 0.85;
-      color: #a8b4ff;
+      font-size: 12px;
+      color: #a3aedf;
       margin-bottom: 10px;
     }
 
     .topic-message {
       font-size: 14px;
       line-height: 1.6;
-      color: #dde4ff;
-      white-space: pre-wrap;
-      background: rgba(20, 25, 45, 0.7);
-      padding: 14px;
-      border-radius: 14px;
-      border: 1px solid rgba(108, 99, 255, 0.3);
-      box-shadow: 0 0 18px rgba(90, 80, 250, 0.35);
+      color: #e4e8ff;
+    }
+
+    .section-title {
+      font-size: 16px;
+      font-weight: 600;
       margin-bottom: 10px;
+      color: #cdd7ff;
     }
 
-    .topic-actions {
+    .messages-box {
+      background: rgba(10, 14, 32, 0.98);
+      border-radius: 18px;
+      padding: 14px 12px;
+      border: 1px solid rgba(108, 99, 255, 0.35);
+      box-shadow: 0 0 22px rgba(80, 70, 230, 0.45);
+      margin-bottom: 22px;
+    }
+
+    .msg-item {
       display: flex;
       gap: 10px;
-      align-items: center;
-      font-size: 12px;
-      color: #aab3ff;
-    }
-
-    .like-btn {
-      padding: 5px 10px;
-      border-radius: 999px;
-      border: 1px solid rgba(108, 99, 255, 0.7);
-      background: rgba(108, 99, 255, 0.35);
-      color: #e0e4ff;
-      cursor: pointer;
-      font-size: 12px;
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      transition: 0.2s;
-    }
-
-    .like-btn:hover {
-      background: rgba(108, 99, 255, 0.55);
-      box-shadow: 0 0 16px rgba(108, 99, 255, 0.8);
-    }
-
-    .message-card {
-      background: rgba(20, 25, 45, 0.65);
-      padding: 16px;
-      border-radius: 15px;
-      margin-bottom: 14px;
-      border: 1px solid rgba(108, 99, 255, 0.25);
-      box-shadow: 0 0 18px rgba(88, 80, 255, 0.25);
-      transition: 0.2s;
-    }
-
-    .message-card:hover {
-      border-color: rgba(108, 99, 255, 0.45);
-      box-shadow: 0 0 24px rgba(88, 80, 255, 0.4);
-    }
-
-    .msg-user {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 6px;
+      padding: 10px 6px;
+      border-radius: 12px;
+      border: 1px solid rgba(70, 70, 150, 0.5);
+      background: rgba(16, 22, 55, 0.95);
+      margin-bottom: 8px;
     }
 
     .msg-avatar {
-      width: 38px;
-      height: 38px;
+      width: 32px;
+      height: 32px;
       border-radius: 50%;
       background: #6d6cff;
       display: flex;
       align-items: center;
       justify-content: center;
-      color: white;
+      font-size: 16px;
       font-weight: 700;
-      font-size: 17px;
-      box-shadow: 0 0 10px rgba(120, 140, 255, 0.8);
+      color: white;
+      box-shadow: 0 0 18px rgba(120, 140, 255, 0.9);
+      flex-shrink: 0;
+    }
+
+    .msg-body {
+      flex: 1;
     }
 
     .msg-username {
-      font-size: 14px;
+      font-size: 13px;
       font-weight: 600;
       color: #cdd7ff;
     }
@@ -209,113 +159,86 @@
     .msg-text {
       font-size: 14px;
       line-height: 1.5;
-      color: #dbe2ff;
       margin-top: 4px;
-      white-space: pre-wrap;
-    }
-
-    .msg-actions {
-      margin-top: 6px;
-      font-size: 12px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      color: #aab3ff;
+      color: #e4e8ff;
     }
 
     .reply-box {
-      margin-top: 30px;
-      background: rgba(20, 25, 45, 0.7);
-      padding: 16px;
-      border-radius: 15px;
-      border: 1px solid rgba(108, 99, 255, 0.35);
-      box-shadow: 0 0 22px rgba(88, 80, 255, 0.25);
+      background: rgba(14, 18, 40, 0.98);
+      border-radius: 18px;
+      padding: 16px 14px;
+      border: 1px solid rgba(108, 99, 255, 0.45);
+      box-shadow: 0 0 24px rgba(80, 70, 230, 0.55);
     }
 
-    .reply-title {
-      font-size: 16px;
-      margin-bottom: 10px;
-      color: #cdd7ff;
-      text-shadow: 0 0 8px rgba(140, 160, 255, 0.6);
-    }
-
-    .input-row {
+    .form-row {
       display: flex;
       gap: 10px;
-      margin-bottom: 10px;
       flex-wrap: wrap;
+      margin-bottom: 10px;
     }
 
-    .input-row input {
+    .form-row input {
       flex: 1;
-      min-width: 140px;
+      min-width: 160px;
       padding: 9px;
       border-radius: 10px;
       border: 1px solid rgba(108, 99, 255, 0.4);
-      background: rgba(255, 255, 255, 0.07);
+      background: rgba(7, 12, 30, 0.9);
       color: #ffffff;
-      outline: none;
       font-size: 13px;
+      outline: none;
     }
 
     textarea {
       width: 100%;
-      height: 120px;
+      min-height: 80px;
       border-radius: 12px;
       border: 1px solid rgba(108, 99, 255, 0.35);
-      background: rgba(255, 255, 255, 0.08);
+      background: rgba(7, 12, 30, 0.95);
       padding: 10px;
       color: white;
-      outline: none;
       font-size: 14px;
       resize: vertical;
-      transition: 0.25s;
+      margin-bottom: 8px;
     }
 
-    textarea:focus,
-    .input-row input:focus {
-      border-color: rgba(138, 127, 255, 0.9);
-      box-shadow: 0 0 15px rgba(138, 127, 255, 0.7);
-    }
-
-    .reply-button {
-      margin-top: 10px;
-      width: 100%;
-      padding: 10px;
-      background: rgba(108, 99, 255, 0.4);
-      border: 1px solid rgba(108, 99, 255, 0.7);
+    .btn-main {
+      padding: 9px 18px;
       border-radius: 10px;
+      border: 1px solid rgba(108, 99, 255, 0.7);
+      background: rgba(108, 99, 255, 0.7);
       color: #e0e4ff;
-      font-size: 15px;
+      font-size: 14px;
       cursor: pointer;
       transition: 0.25s;
     }
 
-    .reply-button:hover {
-      background: rgba(108, 99, 255, 0.55);
-      box-shadow: 0 0 22px rgba(108, 99, 255, 0.75);
+    .btn-main:hover {
+      background: rgba(108, 99, 255, 0.9);
+      box-shadow: 0 0 20px rgba(108, 99, 255, 0.85);
     }
 
     .info-text {
+      margin-top: 8px;
       font-size: 11px;
-      margin-top: 6px;
-      color: #a4aedf;
-      opacity: 0.85;
+      color: #9ca6e0;
     }
 
-    .no-comment {
+    footer {
+      margin-top: 40px;
+      padding: 20px;
+      text-align: center;
       font-size: 13px;
-      color: #969fdd;
-      margin-top: 8px;
+      color: #8189c4;
     }
   </style>
 </head>
 
 <body>
-
 <header>
   <div class="logo-area">
-    <a href="index.html" style="display:flex;align-items:center;gap:14px;text-decoration:none;">
+    <a href="index.html" style="text-decoration:none;">
       <div class="logo-title">NebChat</div>
     </a>
   </div>
@@ -327,42 +250,34 @@
   </nav>
 </header>
 
-<div class="container">
-  <div class="back-link">
-    <a href="forum.html">&larr; Foruma geri dön</a>
-  </div>
-
-  <div class="topic-header" id="topicHeader">
+<main class="page">
+  <section class="topic-box">
     <div class="topic-title" id="topicTitle">Konu yükleniyor...</div>
     <div class="topic-meta" id="topicMeta"></div>
     <div class="topic-message" id="topicMessage"></div>
-    <div class="topic-actions">
-      <button class="like-btn" id="postLikeBtn">
-        👍 <span id="postLikeCount">0</span> beğeni
-      </button>
-      <span id="postReplyInfo"></span>
-    </div>
-  </div>
+  </section>
 
-  <h2 style="font-size:18px;margin-bottom:10px;color:#c8d2ff;">Yorumlar</h2>
-  <div id="messages-list"></div>
+  <section class="messages-box">
+    <div class="section-title">Yanıtlar</div>
+    <div id="messages-list"></div>
+  </section>
 
-  <div class="reply-box">
-    <div class="reply-title">Yorum Yaz</div>
-
-    <div class="input-row">
+  <section class="reply-box">
+    <div class="section-title">Cevap Yaz</div>
+    <div class="form-row">
       <input type="text" id="nickname" placeholder="Takma adın (ör: Nebride)">
     </div>
-
-    <textarea id="message" placeholder="Yorumunu yaz..."></textarea>
-
-    <button class="reply-button" id="replyBtn">Yorumu Gönder</button>
-
+    <textarea id="message" placeholder="Mesajını yaz..."></textarea>
+    <button class="btn-main" id="replyBtn">Gönder</button>
     <div class="info-text">
-      Yorumlar anonimdir ve Firebase Firestore’da saklanır. Lütfen kişisel bilgilerini paylaşma.
+      Yorumlar anonimdir ve Firebase Firestore’da saklanır. Lütfen kişisel bilgi yazma.
     </div>
-  </div>
-</div>
+  </section>
+</main>
+
+<footer>
+  NebChat anonim forum • İçerik kullanıcıların sorumluluğundadır.
+</footer>
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
@@ -372,7 +287,6 @@
     addDoc,
     doc,
     updateDoc,
-    setDoc,
     increment,
     serverTimestamp,
     query,
@@ -380,10 +294,6 @@
     onSnapshot,
     getDoc
   } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
-  import {
-    getAuth,
-    onAuthStateChanged
-  } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyBAwFSe0pud59OXpx1G5hQO9opA1f7Eg9Y",
@@ -396,17 +306,17 @@
 
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
-  const auth = getAuth(app);
 
   const categoryMap = {
-    cyber: "🛡 Cyber Security",
-    network: "🌐 Network & Infrastructure",
+    cyber: "🔥 Cyber Security",
     cloud: "☁️ Cloud & DevOps",
-    career: "💼 Career & Salary",
-    products: "📦 Products & Vendors",
-    confessions: "🙈 Anon Confessions",
-    tech: "💡 Tech Discussions",
-    offtopic: "🎭 Off-Topic / Community"
+    blue: "🛡️ Blue Team / SOC",
+    red: "⚔️ Red Team / OffSec",
+    bug: "🪲 Bug Bounty",
+    career: "📈 Kariyer & Sertifikalar",
+    genel: "💬 Genel Sohbet",
+    oyun: "🎮 Oyun Sohbeti",
+    teknoloji: "💡 Teknoloji Köşesi"
   };
 
   const params = new URLSearchParams(window.location.search);
@@ -420,28 +330,18 @@
   const messageInput = document.getElementById("message");
   const replyBtn = document.getElementById("replyBtn");
 
-  const postLikeBtn = document.getElementById("postLikeBtn");
-  const postLikeCountEl = document.getElementById("postLikeCount");
-  const postReplyInfoEl = document.getElementById("postReplyInfo");
-
-  let currentUser = null;
-  let currentPostData = null; // post userId, likes vs. için
-
-  onAuthStateChanged(auth, (user) => {
-    currentUser = user || null;
-  });
-
   if (!postId) {
     topicTitleEl.textContent = "Konu bulunamadı";
-    topicMetaEl.textContent = "Geçersiz bağlantı.";
+    topicMetaEl.textContent = "";
+    topicMessageEl.textContent = "";
   } else {
-    loadTopic(postId);
-    listenReplies(postId);
+    loadPost();
+    listenReplies();
   }
 
-  async function loadTopic(id) {
+  async function loadPost() {
     try {
-      const ref = doc(db, "posts", id);
+      const ref = doc(db, "posts", postId);
       const snap = await getDoc(ref);
 
       if (!snap.exists()) {
@@ -452,12 +352,7 @@
       }
 
       const data = snap.data();
-      currentPostData = {
-        ...data,
-        id: snap.id
-      };
-
-      const categoryText = categoryMap[data.category] || "❔ Category";
+      const categoryText = categoryMap[data.category] || "❔ Diğer";
 
       let timeText = "";
       if (data.createdAt && data.createdAt.toDate) {
@@ -470,60 +365,49 @@
         });
       }
 
-      topicTitleEl.textContent = `${categoryText} • ${data.title || "Untitled"}`;
+      topicTitleEl.textContent = `${categoryText} • ${data.title || "Başlıksız Konu"}`;
       topicMetaEl.textContent =
         `Kategori: ${categoryText} • Açan: ${data.nick || "Anonim"} • ${timeText || ""}`;
       topicMessageEl.textContent = data.message || "";
-
-      const likeCount = typeof data.likes === "number" ? data.likes : 0;
-      postLikeCountEl.textContent = likeCount;
-      postReplyInfoEl.textContent =
-        `${typeof data.replyCount === "number" ? data.replyCount : 0} yorum • ${likeCount} beğeni`;
-
-      // Post like butonu listener
-      postLikeBtn.addEventListener("click", () => handlePostLike());
     } catch (e) {
       console.error("Konu yüklenirken hata:", e);
-      topicTitleEl.textContent = "Konu yüklenirken hata oluştu";
+      topicTitleEl.textContent = "Konu yüklenirken hata oluştu.";
     }
   }
 
-  function listenReplies(id) {
-    const repliesRef = collection(db, "posts", id, "replies");
+  function listenReplies() {
+    const repliesRef = collection(db, "posts", postId, "replies");
     const q = query(repliesRef, orderBy("createdAt", "asc"));
 
     onSnapshot(q, (snapshot) => {
       messagesListEl.innerHTML = "";
 
       if (snapshot.empty) {
-        const p = document.createElement("p");
-        p.className = "no-comment";
-        p.textContent = "Henüz yorum yok. İlk yorumu sen yaz 😊";
-        messagesListEl.appendChild(p);
+        messagesListEl.innerHTML =
+          '<div class="msg-item"><div class="msg-body"><div class="msg-text">Henüz yorum yok. İlk yorumu sen yaz.</div></div></div>';
         return;
       }
 
       snapshot.forEach((docSnap) => {
         const data = docSnap.data();
-        const replyId = docSnap.id;
 
-        const card = document.createElement("div");
-        card.className = "message-card";
-
-        const userRow = document.createElement("div");
-        userRow.className = "msg-user";
+        const wrapper = document.createElement("div");
+        wrapper.className = "msg-item";
 
         const avatar = document.createElement("div");
         avatar.className = "msg-avatar";
         avatar.textContent = (data.nick || "?").charAt(0).toUpperCase();
 
-        const nameBlock = document.createElement("div");
-        const name = document.createElement("div");
-        name.className = "msg-username";
-        name.textContent = data.nick || "Anonim";
+        const body = document.createElement("div");
+        body.className = "msg-body";
 
-        const time = document.createElement("div");
-        time.className = "msg-time";
+        const nameRow = document.createElement("div");
+        const nameEl = document.createElement("span");
+        nameEl.className = "msg-username";
+        nameEl.textContent = data.nick || "Anonim";
+
+        const timeEl = document.createElement("span");
+        timeEl.className = "msg-time";
 
         let t = "";
         if (data.createdAt && data.createdAt.toDate) {
@@ -535,40 +419,27 @@
             minute: "2-digit"
           });
         }
-        time.textContent = t || "";
+        timeEl.textContent = " • " + (t || "");
 
-        nameBlock.appendChild(name);
-        nameBlock.appendChild(time);
+        nameRow.appendChild(nameEl);
+        nameRow.appendChild(timeEl);
 
-        userRow.appendChild(avatar);
-        userRow.appendChild(nameBlock);
+        const textEl = document.createElement("div");
+        textEl.className = "msg-text";
+        textEl.textContent = data.message || "";
 
-        const text = document.createElement("div");
-        text.className = "msg-text";
-        text.textContent = data.message || "";
+        body.appendChild(nameRow);
+        body.appendChild(textEl);
 
-        const actions = document.createElement("div");
-        actions.className = "msg-actions";
+        wrapper.appendChild(avatar);
+        wrapper.appendChild(body);
 
-        const likeBtn = document.createElement("button");
-        likeBtn.className = "like-btn";
-        const likeCount = typeof data.likes === "number" ? data.likes : 0;
-        likeBtn.innerHTML = `👍 <span class="reply-like-count">${likeCount}</span> beğeni`;
-        likeBtn.addEventListener("click", () =>
-          handleReplyLike(replyId, data.userId || null, likeBtn)
-        );
-
-        actions.appendChild(likeBtn);
-
-        card.appendChild(userRow);
-        card.appendChild(text);
-        card.appendChild(actions);
-
-        messagesListEl.appendChild(card);
+        messagesListEl.appendChild(wrapper);
       });
     });
   }
 
+  // Yorum ekleme
   replyBtn.addEventListener("click", async () => {
     if (!postId) {
       alert("Geçersiz konu.");
@@ -583,14 +454,12 @@
       return;
     }
 
-        try {
+    try {
       const repliesRef = collection(db, "posts", postId, "replies");
       await addDoc(repliesRef, {
         nick,
         message: text,
-        createdAt: serverTimestamp(),
-        userId: currentUser ? currentUser.uid : null,
-        likes: 0
+        createdAt: serverTimestamp()
       });
 
       const postRef = doc(db, "posts", postId);
@@ -603,107 +472,8 @@
     } catch (e) {
       console.error("Yorum eklenirken hata:", e);
       alert("Yorum eklenirken bir hata oluştu.");
-      return;
     }
-
-    if (currentUser) {
-      try {
-        const userRef = doc(db, "users", currentUser.uid);
-        await setDoc(
-          userRef,
-          { "stats.messages": increment(1) },
-          { merge: true }
-        );
-      } catch (e) {
-        console.error("Kullanıcı mesaj istatistiği güncellenemedi:", e);
-      }
-    }
-
   });
-
-  // ---- LIKE LOGIC (LOCALSTORAGE KORUMALI) ----
-
-  async function handlePostLike() {
-    if (!currentPostData || !postId) return;
-
-    const storageKey = `postLiked_${postId}`;
-    if (localStorage.getItem(storageKey) === "1") {
-      alert("Bu konuyu zaten beğendin.");
-      return;
-    }
-
-    try {
-      const postRef = doc(db, "posts", postId);
-      await updateDoc(postRef, {
-        likes: increment(1)
-      });
-
-           if (currentPostData.userId) {
-        try {
-          const ownerRef = doc(db, "users", currentPostData.userId);
-          await setDoc(
-            ownerRef,
-            { "stats.likes": increment(1) },
-            { merge: true }
-          );
-        } catch (e) {
-          console.error("Gönderi sahibi like istatistiği güncellenemedi:", e);
-        }
-      }
-
-
-      const currentCount = parseInt(postLikeCountEl.textContent || "0", 10);
-      const newCount = currentCount + 1;
-      postLikeCountEl.textContent = newCount;
-      postReplyInfoEl.textContent =
-        `${typeof currentPostData.replyCount === "number" ? currentPostData.replyCount : 0} yorum • ${newCount} beğeni`;
-
-      localStorage.setItem(storageKey, "1");
-    } catch (e) {
-      console.error("Post like hata:", e);
-      alert("Beğeni eklenirken bir hata oluştu.");
-    }
-  }
-
-  async function handleReplyLike(replyId, ownerUserId, buttonEl) {
-    if (!postId || !replyId || !buttonEl) return;
-
-    const storageKey = `replyLiked_${replyId}`;
-    if (localStorage.getItem(storageKey) === "1") {
-      alert("Bu yorumu zaten beğendin.");
-      return;
-    }
-
-    try {
-      const replyRef = doc(db, "posts", postId, "replies", replyId);
-      await updateDoc(replyRef, {
-        likes: increment(1)
-      });
-
-           if (ownerUserId) {
-        try {
-          const ownerRef = doc(db, "users", ownerUserId);
-          await setDoc(
-            ownerRef,
-            { "stats.likes": increment(1) },
-            { merge: true }
-          );
-        } catch (e) {
-          console.error("Yorum sahibi like istatistiği güncellenemedi:", e);
-        }
-      }
-
-
-      const span = buttonEl.querySelector(".reply-like-count");
-      const currentCount = parseInt(span.textContent || "0", 10);
-      span.textContent = currentCount + 1;
-
-      localStorage.setItem(storageKey, "1");
-    } catch (e) {
-      console.error("Reply like hata:", e);
-      alert("Beğeni eklenirken bir hata oluştu.");
-    }
-  }
 </script>
 
 </body>
