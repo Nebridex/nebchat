@@ -170,6 +170,56 @@
       box-shadow: 0 0 20px rgba(108, 99, 255, 0.85);
     }
 
+    .meta-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    @media (max-width: 900px) {
+      .meta-row {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .meta-box {
+      background: rgba(16, 20, 45, 0.9);
+      border-radius: 16px;
+      border: 1px solid rgba(108, 99, 255, 0.4);
+      box-shadow: 0 0 20px rgba(80, 70, 230, 0.4);
+      padding: 14px 14px 10px;
+      font-size: 13px;
+    }
+
+    .meta-title {
+      font-size: 15px;
+      font-weight: 600;
+      margin-bottom: 6px;
+      color: #d4ddff;
+    }
+
+    .meta-item {
+      font-size: 13px;
+      margin-bottom: 6px;
+      color: #cbd5ff;
+    }
+
+    .meta-item a {
+      color: #cbd5ff;
+      text-decoration: none;
+    }
+
+    .meta-item a:hover {
+      text-decoration: underline;
+    }
+
+    .meta-note {
+      font-size: 11px;
+      color: #9aa4e0;
+      margin-top: 4px;
+    }
+
     .category-block {
       margin-top: 30px;
       padding: 18px 16px 10px;
@@ -318,6 +368,21 @@
     <button class="btn-main" id="sendBtn">Konuyu Gönder</button>
   </section>
 
+  <!-- TRENDING + TOP CONTRIBUTORS -->
+  <section class="meta-row">
+    <div class="meta-box" id="trendingBox">
+      <div class="meta-title">🔥 Trending Topics</div>
+      <div class="meta-note">Son saatlerde en çok hareket gören konular burada çıkar.</div>
+      <div id="trendingList" style="margin-top:8px;"></div>
+    </div>
+
+    <div class="meta-box" id="topContributorsBox">
+      <div class="meta-title">🏆 Top Contributors</div>
+      <div class="meta-note">NebScore: likes ×2 + messages ×1.5 + topics ×3</div>
+      <div id="contributorsList" style="margin-top:8px;"></div>
+    </div>
+  </section>
+
   <section class="topics-list">
     <div id="forumContent"></div>
   </section>
@@ -341,7 +406,8 @@
     limit,
     doc,
     updateDoc,
-    increment
+    increment,
+    getDocs
   } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
   import {
     getAuth,
@@ -383,6 +449,9 @@
   const messageInput = document.getElementById("messageInput");
   const sendBtn = document.getElementById("sendBtn");
   const forumContent = document.getElementById("forumContent");
+
+  const trendingListEl = document.getElementById("trendingList");
+  const contributorsListEl = document.getElementById("contributorsList");
 
   let currentUser = null;
 
@@ -499,6 +568,8 @@
               })
             : "";
 
+          const likeCount = typeof d.likes === "number" ? d.likes : 0;
+
           item.innerHTML = `
             <div class="topic-item">
               <div class="topic-title">${d.title || "Başlıksız konu"}</div>
@@ -506,6 +577,7 @@
               <div class="topic-message-preview">${d.message || ""}</div>
               <div class="topic-meta-line">
                 ${(typeof d.replyCount === "number" ? d.replyCount : 0)} yorum
+                • ${likeCount} beğeni
                 ${timeText ? " • Son hareket: " + timeText : ""}
               </div>
             </div>
@@ -563,6 +635,8 @@
             })
           : "";
 
+        const likeCount = typeof d.likes === "number" ? d.likes : 0;
+
         item.innerHTML = `
           <div class="topic-item">
             <div class="topic-title">${d.title || "Başlıksız konu"}</div>
@@ -570,6 +644,7 @@
             <div class="topic-message-preview">${d.message || ""}</div>
             <div class="topic-meta-line">
               ${(typeof d.replyCount === "number" ? d.replyCount : 0)} yorum
+              • ${likeCount} beğeni
               ${timeText ? " • Son hareket: " + timeText : ""}
             </div>
           </div>
@@ -579,11 +654,130 @@
     });
   }
 
+  // TRENDING TOPICS (client-side scoring)
+  async function loadTrending() {
+    try {
+      const postsRef = collection(db, "posts");
+      const q = query(postsRef, orderBy("createdAt", "desc"), limit(50));
+      const snap = await getDocs(q);
+
+      const now = Date.now();
+      const items = [];
+
+      snap.forEach((docSnap) => {
+        const d = docSnap.data();
+        if (!d.createdAt || !d.createdAt.toDate) return;
+
+        const createdAt = d.createdAt.toDate();
+        const ageHours = (now - createdAt.getTime()) / (1000 * 60 * 60);
+
+        const likes = typeof d.likes === "number" ? d.likes : 0;
+        const replies = typeof d.replyCount === "number" ? d.replyCount : 0;
+
+        const score = likes * 2 + replies * 1.5 + 1 / (ageHours + 1);
+
+        items.push({
+          id: docSnap.id,
+          title: d.title || "Başlıksız",
+          nick: d.nick || "Anonim",
+          category: d.category || "tech",
+          likes,
+          replies,
+          score
+        });
+      });
+
+      items.sort((a, b) => b.score - a.score);
+      const top = items.slice(0, 5);
+
+      if (top.length === 0) {
+        trendingListEl.innerHTML = '<div class="meta-note">Henüz yeterli hareket yok.</div>';
+        return;
+      }
+
+      trendingListEl.innerHTML = "";
+      top.forEach((item) => {
+        const catText = categoryMap[item.category] || "💡 Tech";
+        const div = document.createElement("div");
+        div.className = "meta-item";
+        div.innerHTML = `
+          <a href="topic.html?id=${encodeURIComponent(item.id)}">
+            ${catText} • <strong>${item.title}</strong>
+          </a>
+          <div style="font-size:11px;color:#9aa4e0;">
+            ${item.replies} yorum • ${item.likes} beğeni
+          </div>
+        `;
+        trendingListEl.appendChild(div);
+      });
+    } catch (e) {
+      console.error("Trending yüklenirken hata:", e);
+      trendingListEl.innerHTML = '<div class="meta-note">Trending verisi alınamadı.</div>';
+    }
+  }
+
+  // TOP CONTRIBUTORS
+  async function loadTopContributors() {
+    try {
+      const usersRef = collection(db, "users");
+      const snap = await getDocs(usersRef);
+
+      const arr = [];
+
+      snap.forEach((docSnap) => {
+        const data = docSnap.data();
+        const username = data.username || "Anon";
+        const stats = data.stats || {};
+        const messages = typeof stats.messages === "number" ? stats.messages : 0;
+        const topics = typeof stats.topics === "number" ? stats.topics : 0;
+        const likes = typeof stats.likes === "number" ? stats.likes : 0;
+
+        const nebScore = Math.round(likes * 2 + messages * 1.5 + topics * 3);
+
+        arr.push({
+          username,
+          messages,
+          topics,
+          likes,
+          nebScore
+        });
+      });
+
+      arr.sort((a, b) => b.nebScore - a.nebScore);
+      const top = arr.slice(0, 5);
+
+      if (top.length === 0) {
+        contributorsListEl.innerHTML = '<div class="meta-note">Henüz kayıtlı contributor yok.</div>';
+        return;
+      }
+
+      contributorsListEl.innerHTML = "";
+      top.forEach((user, index) => {
+        const div = document.createElement("div");
+        div.className = "meta-item";
+        div.innerHTML = `
+          <strong>#${index + 1} ${user.username}</strong>
+          <div style="font-size:11px;color:#9aa4e0;">
+            NebScore: ${user.nebScore} • Topics: ${user.topics} • Msg: ${user.messages} • Likes: ${user.likes}
+          </div>
+        `;
+        contributorsListEl.appendChild(div);
+      });
+    } catch (e) {
+      console.error("Top contributors yüklenirken hata:", e);
+      contributorsListEl.innerHTML = '<div class="meta-note">Contributor verisi alınamadı.</div>';
+    }
+  }
+
   if (selectedCat && categoryMap[selectedCat]) {
     renderCategoryPage(selectedCat);
   } else {
     renderCategoryPreview();
   }
+
+  // Paket 1: trending + top contributors çalıştır
+  loadTrending();
+  loadTopContributors();
 </script>
 
 </body>
