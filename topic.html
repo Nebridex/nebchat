@@ -306,9 +306,7 @@
   </div>
 
   <h2 style="font-size:18px;margin-bottom:10px;color:#c8d2ff;">Yorumlar</h2>
-  <div id="messages-list">
-    <!-- Yorum kartları buraya gelecek -->
-  </div>
+  <div id="messages-list"></div>
 
   <div class="reply-box">
     <div class="reply-title">Yorum Yaz</div>
@@ -342,6 +340,10 @@
     onSnapshot,
     getDoc
   } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
+  import {
+    getAuth,
+    onAuthStateChanged
+  } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyBAwFSe0pud59OXpx1G5hQO9opA1f7Eg9Y",
@@ -354,6 +356,7 @@
 
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
+  const auth = getAuth(app);
 
   const categoryMap = {
     genel: "⚡ Genel Sohbet",
@@ -372,6 +375,12 @@
   const messageInput = document.getElementById("message");
   const replyBtn = document.getElementById("replyBtn");
 
+  let currentUser = null;
+
+  onAuthStateChanged(auth, (user) => {
+    currentUser = user || null;
+  });
+
   if (!postId) {
     topicTitleEl.textContent = "Konu bulunamadı";
     topicMetaEl.textContent = "Geçersiz bağlantı.";
@@ -380,7 +389,6 @@
     listenReplies(postId);
   }
 
-  // Konu detayını yükle
   async function loadTopic(id) {
     try {
       const ref = doc(db, "posts", id);
@@ -394,7 +402,6 @@
       }
 
       const data = snap.data();
-
       const categoryText = categoryMap[data.category] || "❔ Kategorisiz";
 
       let timeText = "";
@@ -419,7 +426,6 @@
     }
   }
 
-  // Yorumları dinle
   function listenReplies(id) {
     const repliesRef = collection(db, "posts", id, "replies");
     const q = query(repliesRef, orderBy("createdAt", "asc"));
@@ -506,7 +512,8 @@
       await addDoc(repliesRef, {
         nick,
         message: text,
-        createdAt: serverTimestamp()
+        createdAt: serverTimestamp(),
+        userId: currentUser ? currentUser.uid : null
       });
 
       const postRef = doc(db, "posts", postId);
@@ -514,6 +521,14 @@
         replyCount: increment(1),
         lastReplyAt: serverTimestamp()
       });
+
+      // Kullanıcı giriş yaptıysa stats.messages += 1
+      if (currentUser) {
+        const userRef = doc(db, "users", currentUser.uid);
+        await updateDoc(userRef, {
+          "stats.messages": increment(1)
+        });
+      }
 
       messageInput.value = "";
     } catch (e) {
