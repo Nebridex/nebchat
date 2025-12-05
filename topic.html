@@ -638,12 +638,19 @@
         likes: increment(1)
       });
 
-      if (currentPostData.userId) {
-        const ownerRef = doc(db, "users", currentPostData.userId);
-        await updateDoc(ownerRef, {
-          "stats.likes": increment(1)
-        });
+           if (currentPostData.userId) {
+        try {
+          const ownerRef = doc(db, "users", currentPostData.userId);
+          await setDoc(
+            ownerRef,
+            { "stats.likes": increment(1) },
+            { merge: true }
+          );
+        } catch (e) {
+          console.error("Gönderi sahibi like istatistiği güncellenemedi:", e);
+        }
       }
+
 
       const currentCount = parseInt(postLikeCountEl.textContent || "0", 10);
       const newCount = currentCount + 1;
@@ -673,12 +680,19 @@
         likes: increment(1)
       });
 
-      if (ownerUserId) {
-        const ownerRef = doc(db, "users", ownerUserId);
-        await updateDoc(ownerRef, {
-          "stats.likes": increment(1)
-        });
+           if (ownerUserId) {
+        try {
+          const ownerRef = doc(db, "users", ownerUserId);
+          await setDoc(
+            ownerRef,
+            { "stats.likes": increment(1) },
+            { merge: true }
+          );
+        } catch (e) {
+          console.error("Yorum sahibi like istatistiği güncellenemedi:", e);
+        }
       }
+
 
       const span = buttonEl.querySelector(".reply-like-count");
       const currentCount = parseInt(span.textContent || "0", 10);
