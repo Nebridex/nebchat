@@ -393,21 +393,22 @@
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
-  import {
-    getFirestore,
-    collection,
-    addDoc,
-    serverTimestamp,
-    query,
-    orderBy,
-    onSnapshot,
-    where,
-    limit,
-    doc,
-    updateDoc,
-    increment,
-    getDocs
-  } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
+ import {
+  getFirestore,
+  collection,
+  addDoc,
+  serverTimestamp,
+  query,
+  orderBy,
+  onSnapshot,
+  where,
+  limit,
+  doc,
+  updateDoc,
+  setDoc,
+  increment,
+  getDocs
+} from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
   import {
     getAuth,
     onAuthStateChanged
@@ -781,4 +782,5 @@
 
 </body>
 </html>
+
 
