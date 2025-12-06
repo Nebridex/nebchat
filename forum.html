@@ -174,6 +174,13 @@
       box-shadow: 0 0 20px rgba(108, 99, 255, 0.85);
     }
 
+    .login-indicator {
+      font-size: 11px;
+      color: #cdd6ff;
+      margin-top: 4px;
+      opacity: 0.85;
+    }
+
     /* ALT GRID (TRENDING + TOP CONTRIBUTORS) */
     .bottom-grid {
       display: grid;
@@ -235,7 +242,7 @@
     /* TÜM KONULAR LİSTESİ */
     .all-topics-block {
       margin-top: 28px;
-      padding: 18px 16px 12px;
+      padding: 18px 16px 16px;
       border-radius: 18px;
       background: rgba(14, 18, 40, 0.95);
       border: 1px solid rgba(108, 99, 255, 0.4);
@@ -245,11 +252,32 @@
     .all-topics-title {
       font-size: 18px;
       font-weight: 600;
-      margin-bottom: 6px;
+      margin-bottom: 10px;
+    }
+
+    .filter-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 10px;
+      font-size: 12px;
+      color: #a3aedf;
+    }
+
+    .filter-bar input,
+    .filter-bar select {
+      padding: 7px 9px;
+      border-radius: 10px;
+      border: 1px solid rgba(108, 99, 255, 0.4);
+      background: rgba(7, 12, 30, 0.9);
+      color: #ffffff;
+      font-size: 12px;
+      outline: none;
+      min-width: 130px;
     }
 
     .topic-list {
-      margin-top: 10px;
+      margin-top: 6px;
     }
 
     .topic-link {
@@ -322,13 +350,6 @@
         grid-template-columns: 1fr;
       }
     }
-
-    .login-indicator {
-      font-size: 11px;
-      color: #cdd6ff;
-      margin-top: 4px;
-      opacity: 0.85;
-    }
   </style>
 </head>
 
@@ -357,305 +378,4 @@
 
   <!-- YENİ KONU FORMU -->
   <section class="new-topic-box">
-    <div class="new-topic-title">Yeni Konu Aç</div>
-
-    <div class="form-row">
-      <input type="text" id="nickInput" placeholder="Takma adın (ör: Nebride)">
-      <input type="text" id="titleInput" placeholder="Konu başlığı (ör: SIEM Rule Tuning)">
-    </div>
-
-    <div class="form-row">
-      <select id="categoryInput" class="select-category">
-        <option value="cyber">🔥 Cyber Security</option>
-        <option value="cloud">☁️ Cloud & DevOps</option>
-        <option value="blue">🛡️ Blue Team / SOC</option>
-        <option value="red">⚔️ Red Team / OffSec</option>
-        <option value="bug">🪲 Bug Bounty</option>
-        <option value="career">📈 Kariyer & Sertifikalar</option>
-        <option value="genel">💬 Genel Sohbet</option>
-      </select>
-    </div>
-
-    <textarea id="messageInput" placeholder="Mesajını yaz..."></textarea>
-
-    <button class="btn-main" id="sendBtn">Konuyu Gönder</button>
-    <div class="login-indicator" id="loginIndicator">
-      Giriş yaparsan açtığın konular ve mesajlar profilinde sayılır. (Profilim → Giriş)
-    </div>
-  </section>
-
-  <!-- ALT GRID -->
-  <section class="bottom-grid">
-    <div class="card">
-      <div class="card-title">🔥 Trending Topics</div>
-      <div class="card-sub">Son saatlerde en çok hareket gören konular burada çıkar.</div>
-      <div id="trendingList"></div>
-    </div>
-
-    <div class="card">
-      <div class="card-title">🏆 Top Contributors</div>
-      <div class="card-sub">NebScore: replies + topics (yakında kullanıcı hesabıyla bağlı hale gelecek).</div>
-      <div id="topContribList">
-        <div class="mini-user">Henüz kayıtlı contributor yok.</div>
-      </div>
-    </div>
-  </section>
-
-  <!-- TÜM KONULAR -->
-  <section class="all-topics-block">
-    <div class="all-topics-title">Tüm Konular</div>
-    <div class="topic-list" id="allTopicsList"></div>
-  </section>
-</main>
-
-<footer>
-  NebChat anonim forum • İçerik kullanıcıların sorumluluğundadır.
-</footer>
-
-<!-- FIREBASE -->
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
-  import {
-    getFirestore,
-    collection,
-    addDoc,
-    serverTimestamp,
-    query,
-    orderBy,
-    onSnapshot,
-    doc,
-    updateDoc,
-    increment,
-    getDoc
-  } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
-  import {
-    getAuth,
-    onAuthStateChanged
-  } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
-
-  const firebaseConfig = {
-    apiKey: "AIzaSyBAwFSe0pud59OXpx1G5hQO9opA1f7Eg9Y",
-    authDomain: "nebchat2.firebaseapp.com",
-    projectId: "nebchat2",
-    storageBucket: "nebchat2.firebasestorage.app",
-    messagingSenderId: "46979426016",
-    appId: "1:46979426016:web:fd1fbe341fff6970ae9285"
-  };
-
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
-  const auth = getAuth(app);
-
-  const nickInput = document.getElementById("nickInput");
-  const titleInput = document.getElementById("titleInput");
-  const categoryInput = document.getElementById("categoryInput");
-  const messageInput = document.getElementById("messageInput");
-  const sendBtn = document.getElementById("sendBtn");
-  const loginIndicator = document.getElementById("loginIndicator");
-
-  const trendingList = document.getElementById("trendingList");
-  const allTopicsList = document.getElementById("allTopicsList");
-  const topContribList = document.getElementById("topContribList");
-
-  const categoryLabel = {
-    cyber: "🔥 Cyber Security",
-    cloud: "☁️ Cloud & DevOps",
-    blue: "🛡️ Blue Team / SOC",
-    red: "⚔️ Red Team / OffSec",
-    bug: "🪲 Bug Bounty",
-    career: "📈 Kariyer & Sertifikalar",
-    genel: "💬 Genel Sohbet",
-    oyun: "🎮 Oyun Sohbeti",
-    teknoloji: "💡 Teknoloji Köşesi"
-  };
-
-  let currentUser = null;
-  let currentUserProfile = null;
-
-  async function loadUserProfile(uid) {
-    try {
-      const ref = doc(db, "users", uid);
-      const snap = await getDoc(ref);
-      if (!snap.exists()) {
-        return null;
-      }
-      return snap.data();
-    } catch (e) {
-      console.error("Kullanıcı profili çekilirken hata:", e);
-      return null;
-    }
-  }
-
-  onAuthStateChanged(auth, async (user) => {
-    currentUser = user || null;
-    currentUserProfile = null;
-
-    if (!user) {
-      loginIndicator.textContent =
-        "Giriş yaparsan açtığın konular ve mesajlar profilinde sayılır. (Profilim → Giriş)";
-      return;
-    }
-
-    const profile = await loadUserProfile(user.uid);
-    currentUserProfile = profile;
-
-    const username = profile?.username || (user.email ? user.email.split("@")[0] : "Anon");
-    loginIndicator.textContent = `Giriş yaptın: ${username} • Açtığın konular profil istatistiklerine yazılacak.`;
-    if (!nickInput.value.trim()) {
-      nickInput.placeholder = `${username} (isteğe bağlı değiştirebilirsin)`;
-    }
-  });
-
-  // Yeni konu gönder
-  sendBtn.addEventListener("click", async () => {
-    let nick = nickInput.value.trim();
-    const title = titleInput.value.trim();
-    const message = messageInput.value.trim();
-    const category = categoryInput.value;
-
-    if (!nick) {
-      if (currentUserProfile?.username) {
-        nick = currentUserProfile.username;
-      } else {
-        alert("Lütfen bir takma ad gir.");
-        return;
-      }
-    }
-
-    if (!title || !message) {
-      alert("Lütfen başlık ve mesajı doldurun.");
-      return;
-    }
-
-    try {
-      const postRef = await addDoc(collection(db, "posts"), {
-        nick,
-        title,
-        message,
-        category,
-        createdAt: serverTimestamp(),
-        replyCount: 0,
-        lastReplyAt: null,
-        likes: 0,
-        userId: currentUser ? currentUser.uid : null
-      });
-
-      // Kullanıcı giriş yapmışsa stats.topics ve stats.messages artır
-      if (currentUser) {
-        const userRef = doc(db, "users", currentUser.uid);
-        updateDoc(userRef, {
-          "stats.topics": increment(1),
-          "stats.messages": increment(1)
-        }).catch((e) => {
-          console.warn("Kullanıcı istatistikleri güncellenemedi:", e);
-        });
-      }
-
-      messageInput.value = "";
-      titleInput.value = "";
-      // nick'i silmiyoruz; user isterse aynı nick ile devam eder.
-    } catch (e) {
-      console.error("Konu eklenirken hata:", e);
-      alert("Konu eklenirken bir hata oluştu.");
-    }
-  });
-
-  // Tüm konular (eski + yeni hepsi)
-  function listenAllTopics() {
-    const q = query(
-      collection(db, "posts"),
-      orderBy("createdAt", "desc")
-    );
-
-    onSnapshot(q, (snapshot) => {
-      allTopicsList.innerHTML = "";
-
-      if (snapshot.empty) {
-        allTopicsList.innerHTML = '<p class="no-topics">Henüz konu açılmamış.</p>';
-        trendingList.innerHTML = '<div class="mini-topic">Henüz trend konu yok.</div>';
-        return;
-      }
-
-      const allDocs = [];
-      snapshot.forEach((docSnap) => {
-        const d = docSnap.data();
-        const id = docSnap.id;
-        allDocs.push({ id, ...d });
-
-        const baseTime = d.lastReplyAt?.toDate?.()
-          ? d.lastReplyAt.toDate()
-          : d.createdAt?.toDate?.();
-
-        const timeText = baseTime
-          ? baseTime.toLocaleString("tr-TR", {
-              day: "2-digit",
-              month: "2-digit",
-              hour: "2-digit",
-              minute: "2-digit"
-            })
-          : "";
-
-        const catText = categoryLabel[d.category] || "❔ Diğer";
-
-        const previewRaw = d.message || "";
-        const preview =
-          previewRaw.length > 140
-            ? previewRaw.slice(0, 140) + "..."
-            : previewRaw;
-
-        const item = document.createElement("a");
-        item.className = "topic-link";
-        item.href = `topic.html?id=${encodeURIComponent(id)}`;
-        item.innerHTML = `
-          <div class="topic-item">
-            <div class="topic-title">${catText} • ${d.title || "Başlıksız konu"}</div>
-            <div class="topic-nick">Yazan: ${d.nick || "Anonim"}</div>
-            <div class="topic-message-preview">${preview}</div>
-            <div class="topic-meta-line">
-              ${(typeof d.replyCount === "number" ? d.replyCount : 0)} yorum
-              ${timeText ? " • Son hareket: " + timeText : ""}
-            </div>
-          </div>
-        `;
-        allTopicsList.appendChild(item);
-      });
-
-      // Basit trending (en çok replyCount olan ilk 5)
-      const sorted = [...allDocs].sort((a, b) => {
-        const ra = typeof a.replyCount === "number" ? a.replyCount : 0;
-        const rb = typeof b.replyCount === "number" ? b.replyCount : 0;
-        return rb - ra;
-      });
-
-      trendingList.innerHTML = "";
-      const top = sorted.slice(0, 5);
-      if (top.length === 0) {
-        trendingList.innerHTML = '<div class="mini-topic">Henüz trend konu yok.</div>';
-      } else {
-        top.forEach((p) => {
-          const catText = categoryLabel[p.category] || "❔ Diğer";
-          const replies = typeof p.replyCount === "number" ? p.replyCount : 0;
-
-          const div = document.createElement("div");
-          div.className = "mini-topic";
-          div.innerHTML = `
-            <a href="topic.html?id=${encodeURIComponent(p.id)}">${catText} - ${p.title || "Başlıksız"}</a>
-            <div class="mini-meta">${replies} yorum</div>
-          `;
-          trendingList.appendChild(div);
-        });
-      }
-    });
-  }
-
-  // Şimdilik Top Contributors dummy; ileride users koleksiyonuna bağlayacağız
-  topContribList.innerHTML = `
-    <div class="mini-user"><span>Nebride</span> • 0 NebScore</div>
-    <div class="mini-user"><span>Anon</span> • 0 NebScore</div>
-  `;
-
-  listenAllTopics();
-</script>
-
-</body>
-</html>
+    <div class="new-topic-title
