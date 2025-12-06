@@ -265,6 +265,7 @@
       gap: 10px;
     }
 
+    /* Kategori kartını link yaptık */
     .cat-item {
       background: rgba(11, 16, 35, 0.9);
       border-radius: 14px;
@@ -272,6 +273,15 @@
       border: 1px solid rgba(108, 99, 255, 0.4);
       font-size: 12px;
       color: #c7d2ff;
+      display: block;
+      text-decoration: none;
+      transition: 0.2s;
+    }
+
+    .cat-item:hover {
+      border-color: rgba(108, 99, 255, 0.8);
+      box-shadow: 0 0 18px rgba(108, 99, 255, 0.7);
+      transform: translateY(-1px);
     }
 
     .cat-name {
@@ -311,7 +321,6 @@
 
   <nav class="menu">
     <a href="forum.html">Forum</a>
-    <!-- login.html ÖLDÜ, profil sayfasındaki auth’a yönlendiriyoruz -->
     <a href="profile.html#auth">Giriş / Kayıt</a>
     <a href="profile.html">Profilim</a>
   </nav>
@@ -366,38 +375,38 @@
   <div class="box">
     <div class="box-title">Kategoriler</div>
     <div class="cat-grid">
-      <div class="cat-item">
+      <a class="cat-item" href="forum.html?category=cyber">
         <div class="cat-name">🛡 Cyber Security</div>
         <div>Zafiyetler, DRP, SOC, SIEM, pentest, threat intel.</div>
-      </div>
-      <div class="cat-item">
+      </a>
+      <a class="cat-item" href="forum.html?category=network">
         <div class="cat-name">🌐 Network & Infrastructure</div>
         <div>Firewall, load balancer, routing, VPN, SD-WAN.</div>
-      </div>
-      <div class="cat-item">
+      </a>
+      <a class="cat-item" href="forum.html?category=cloud">
         <div class="cat-name">☁️ Cloud & DevOps</div>
         <div>AWS, Azure, GCP, Kubernetes, CI/CD ve cloud security.</div>
-      </div>
-      <div class="cat-item">
+      </a>
+      <a class="cat-item" href="forum.html?category=career">
         <div class="cat-name">💼 Career & Salary</div>
         <div>Maaş skalası, yurt dışı, iş ilanı, mülakat deneyimleri.</div>
-      </div>
-      <div class="cat-item">
+      </a>
+      <a class="cat-item" href="forum.html?category=products">
         <div class="cat-name">📦 Products & Vendors</div>
         <div>Vendor karşılaştırmaları, ürün deneyimleri, support dramaları.</div>
-      </div>
-      <div class="cat-item">
+      </a>
+      <a class="cat-item" href="forum.html?category=anon">
         <div class="cat-name">🙈 Anon Confessions</div>
         <div>“Prod’u ben çökerttim”, “manager ne yapıyor bilmiyor” itirafları.</div>
-      </div>
-      <div class="cat-item">
+      </a>
+      <a class="cat-item" href="forum.html?category=tech">
         <div class="cat-name">💡 Tech Discussions</div>
         <div>AI, yazılım, donanım, trendler.</div>
-      </div>
-      <div class="cat-item">
+      </a>
+      <a class="cat-item" href="forum.html?category=community">
         <div class="cat-name">🎭 Off-Topic / Community</div>
         <div>Gündelik geyik, oyun, dizi, film.</div>
-      </div>
+      </a>
     </div>
   </div>
 
