@@ -322,6 +322,13 @@
         grid-template-columns: 1fr;
       }
     }
+
+    .login-indicator {
+      font-size: 11px;
+      color: #cdd6ff;
+      margin-top: 4px;
+      opacity: 0.85;
+    }
   </style>
 </head>
 
@@ -372,6 +379,9 @@
     <textarea id="messageInput" placeholder="Mesajını yaz..."></textarea>
 
     <button class="btn-main" id="sendBtn">Konuyu Gönder</button>
+    <div class="login-indicator" id="loginIndicator">
+      Giriş yaparsan açtığın konular ve mesajlar profilinde sayılır. (Profilim → Giriş)
+    </div>
   </section>
 
   <!-- ALT GRID -->
@@ -412,8 +422,16 @@
     serverTimestamp,
     query,
     orderBy,
-    onSnapshot
+    onSnapshot,
+    doc,
+    updateDoc,
+    increment,
+    getDoc
   } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
+  import {
+    getAuth,
+    onAuthStateChanged
+  } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyBAwFSe0pud59OXpx1G5hQO9opA1f7Eg9Y",
@@ -426,12 +444,14 @@
 
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
+  const auth = getAuth(app);
 
   const nickInput = document.getElementById("nickInput");
   const titleInput = document.getElementById("titleInput");
   const categoryInput = document.getElementById("categoryInput");
   const messageInput = document.getElementById("messageInput");
   const sendBtn = document.getElementById("sendBtn");
+  const loginIndicator = document.getElementById("loginIndicator");
 
   const trendingList = document.getElementById("trendingList");
   const allTopicsList = document.getElementById("allTopicsList");
@@ -449,20 +469,66 @@
     teknoloji: "💡 Teknoloji Köşesi"
   };
 
+  let currentUser = null;
+  let currentUserProfile = null;
+
+  async function loadUserProfile(uid) {
+    try {
+      const ref = doc(db, "users", uid);
+      const snap = await getDoc(ref);
+      if (!snap.exists()) {
+        return null;
+      }
+      return snap.data();
+    } catch (e) {
+      console.error("Kullanıcı profili çekilirken hata:", e);
+      return null;
+    }
+  }
+
+  onAuthStateChanged(auth, async (user) => {
+    currentUser = user || null;
+    currentUserProfile = null;
+
+    if (!user) {
+      loginIndicator.textContent =
+        "Giriş yaparsan açtığın konular ve mesajlar profilinde sayılır. (Profilim → Giriş)";
+      return;
+    }
+
+    const profile = await loadUserProfile(user.uid);
+    currentUserProfile = profile;
+
+    const username = profile?.username || (user.email ? user.email.split("@")[0] : "Anon");
+    loginIndicator.textContent = `Giriş yaptın: ${username} • Açtığın konular profil istatistiklerine yazılacak.`;
+    if (!nickInput.value.trim()) {
+      nickInput.placeholder = `${username} (isteğe bağlı değiştirebilirsin)`;
+    }
+  });
+
   // Yeni konu gönder
   sendBtn.addEventListener("click", async () => {
-    const nick = nickInput.value.trim();
+    let nick = nickInput.value.trim();
     const title = titleInput.value.trim();
     const message = messageInput.value.trim();
     const category = categoryInput.value;
 
-    if (!nick || !title || !message) {
-      alert("Lütfen tüm alanları doldurun.");
+    if (!nick) {
+      if (currentUserProfile?.username) {
+        nick = currentUserProfile.username;
+      } else {
+        alert("Lütfen bir takma ad gir.");
+        return;
+      }
+    }
+
+    if (!title || !message) {
+      alert("Lütfen başlık ve mesajı doldurun.");
       return;
     }
 
     try {
-      await addDoc(collection(db, "posts"), {
+      const postRef = await addDoc(collection(db, "posts"), {
         nick,
         title,
         message,
@@ -470,11 +536,24 @@
         createdAt: serverTimestamp(),
         replyCount: 0,
         lastReplyAt: null,
-        likes: 0
+        likes: 0,
+        userId: currentUser ? currentUser.uid : null
       });
+
+      // Kullanıcı giriş yapmışsa stats.topics ve stats.messages artır
+      if (currentUser) {
+        const userRef = doc(db, "users", currentUser.uid);
+        updateDoc(userRef, {
+          "stats.topics": increment(1),
+          "stats.messages": increment(1)
+        }).catch((e) => {
+          console.warn("Kullanıcı istatistikleri güncellenemedi:", e);
+        });
+      }
 
       messageInput.value = "";
       titleInput.value = "";
+      // nick'i silmiyoruz; user isterse aynı nick ile devam eder.
     } catch (e) {
       console.error("Konu eklenirken hata:", e);
       alert("Konu eklenirken bir hata oluştu.");
