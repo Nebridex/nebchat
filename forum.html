@@ -378,4 +378,380 @@
 
   <!-- YENİ KONU FORMU -->
   <section class="new-topic-box">
-    <div class="new-topic-title
+    <div class="new-topic-title">Yeni Konu Aç</div>
+
+    <div class="form-row">
+      <input type="text" id="nickInput" placeholder="Takma adın (ör: Nebride)">
+      <input type="text" id="titleInput" placeholder="Konu başlığı (ör: SIEM Rule Tuning)">
+    </div>
+
+    <div class="form-row">
+      <select id="categoryInput" class="select-category">
+        <option value="cyber">🔥 Cyber Security</option>
+        <option value="cloud">☁️ Cloud & DevOps</option>
+        <option value="blue">🛡️ Blue Team / SOC</option>
+        <option value="red">⚔️ Red Team / OffSec</option>
+        <option value="bug">🪲 Bug Bounty</option>
+        <option value="career">📈 Kariyer & Sertifikalar</option>
+        <option value="genel">💬 Genel Sohbet</option>
+      </select>
+    </div>
+
+    <textarea id="messageInput" placeholder="Mesajını yaz..."></textarea>
+
+    <button class="btn-main" id="sendBtn">Konuyu Gönder</button>
+    <div class="login-indicator" id="loginIndicator">
+      Giriş yaparsan açtığın konular ve mesajlar profilinde sayılır. (Profilim → Giriş)
+    </div>
+  </section>
+
+  <!-- ALT GRID -->
+  <section class="bottom-grid">
+    <div class="card">
+      <div class="card-title">🔥 Trending Topics</div>
+      <div class="card-sub">Son dönemde en çok yanıt alan konular burada.</div>
+      <div id="trendingList"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">🏆 Top Contributors</div>
+      <div class="card-sub">Yakında NebScore’a göre gerçek zamanlı sıralama gelecek.</div>
+      <div id="topContribList">
+        <div class="mini-user"><span>Nebride</span> • 0 NebScore</div>
+        <div class="mini-user"><span>Anon</span> • 0 NebScore</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TÜM KONULAR -->
+  <section class="all-topics-block">
+    <div class="all-topics-title">Tüm Konular</div>
+
+    <div class="filter-bar">
+      <input type="text" id="searchInput" placeholder="Başlık / mesaj / nick ara...">
+      <select id="filterCategory">
+        <option value="all">Tüm kategoriler</option>
+        <option value="cyber">🔥 Cyber Security</option>
+        <option value="cloud">☁️ Cloud & DevOps</option>
+        <option value="blue">🛡️ Blue Team / SOC</option>
+        <option value="red">⚔️ Red Team / OffSec</option>
+        <option value="bug">🪲 Bug Bounty</option>
+        <option value="career">📈 Kariyer & Sertifikalar</option>
+        <option value="genel">💬 Genel Sohbet</option>
+      </select>
+      <select id="sortSelect">
+        <option value="newest">En yeni</option>
+        <option value="mostReplies">En çok yorum</option>
+        <option value="mostLikes">En çok beğeni</option>
+      </select>
+    </div>
+
+    <div class="topic-list" id="allTopicsList"></div>
+  </section>
+</main>
+
+<footer>
+  NebChat anonim forum • İçerik kullanıcıların sorumluluğundadır.
+</footer>
+
+<!-- FIREBASE -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
+  import {
+    getFirestore,
+    collection,
+    addDoc,
+    serverTimestamp,
+    query,
+    orderBy,
+    onSnapshot,
+    doc,
+    updateDoc,
+    increment,
+    getDoc
+  } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
+  import {
+    getAuth,
+    onAuthStateChanged
+  } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyBAwFSe0pud59OXpx1G5hQO9opA1f7Eg9Y",
+    authDomain: "nebchat2.firebaseapp.com",
+    projectId: "nebchat2",
+    storageBucket: "nebchat2.firebasestorage.app",
+    messagingSenderId: "46979426016",
+    appId: "1:46979426016:web:fd1fbe341fff6970ae9285"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+  const auth = getAuth(app);
+
+  const nickInput = document.getElementById("nickInput");
+  const titleInput = document.getElementById("titleInput");
+  const categoryInput = document.getElementById("categoryInput");
+  const messageInput = document.getElementById("messageInput");
+  const sendBtn = document.getElementById("sendBtn");
+  const loginIndicator = document.getElementById("loginIndicator");
+
+  const trendingList = document.getElementById("trendingList");
+  const allTopicsList = document.getElementById("allTopicsList");
+  const topContribList = document.getElementById("topContribList");
+
+  const searchInput = document.getElementById("searchInput");
+  const filterCategory = document.getElementById("filterCategory");
+  const sortSelect = document.getElementById("sortSelect");
+
+  const categoryLabel = {
+    cyber: "🔥 Cyber Security",
+    cloud: "☁️ Cloud & DevOps",
+    blue: "🛡️ Blue Team / SOC",
+    red: "⚔️ Red Team / OffSec",
+    bug: "🪲 Bug Bounty",
+    career: "📈 Kariyer & Sertifikalar",
+    genel: "💬 Genel Sohbet"
+  };
+
+  let currentUser = null;
+  let currentUserProfile = null;
+  let allPosts = [];
+
+  async function loadUserProfile(uid) {
+    try {
+      const ref = doc(db, "users", uid);
+      const snap = await getDoc(ref);
+      if (!snap.exists()) return null;
+      return snap.data();
+    } catch (e) {
+      console.error("Kullanıcı profili çekilirken hata:", e);
+      return null;
+    }
+  }
+
+  onAuthStateChanged(auth, async (user) => {
+    currentUser = user || null;
+    currentUserProfile = null;
+
+    if (!user) {
+      loginIndicator.textContent =
+        "Giriş yaparsan açtığın konular ve mesajlar profilinde sayılır. (Profilim → Giriş)";
+      return;
+    }
+
+    const profile = await loadUserProfile(user.uid);
+    currentUserProfile = profile;
+
+    const username = profile?.username || (user.email ? user.email.split("@")[0] : "Anon");
+    loginIndicator.textContent = `Giriş yaptın: ${username} • Açtığın konular profil istatistiklerine yazılacak.`;
+    if (!nickInput.value.trim()) {
+      nickInput.placeholder = `${username} (isteğe bağlı değiştirebilirsin)`;
+    }
+  });
+
+  // Yeni konu gönder
+  sendBtn.addEventListener("click", async () => {
+    let nick = nickInput.value.trim();
+    const title = titleInput.value.trim();
+    const message = messageInput.value.trim();
+    const category = categoryInput.value;
+
+    if (!nick) {
+      if (currentUserProfile?.username) {
+        nick = currentUserProfile.username;
+      } else {
+        alert("Lütfen bir takma ad gir.");
+        return;
+      }
+    }
+
+    if (!title || !message) {
+      alert("Lütfen başlık ve mesajı doldurun.");
+      return;
+    }
+
+    try {
+      await addDoc(collection(db, "posts"), {
+        nick,
+        title,
+        message,
+        category,
+        createdAt: serverTimestamp(),
+        replyCount: 0,
+        lastReplyAt: null,
+        likes: 0,
+        userId: currentUser ? currentUser.uid : null,
+        solutionReplyId: null
+      });
+
+      // Kullanıcı giriş yapmışsa stats.topics ve stats.messages artır
+      if (currentUser) {
+        const userRef = doc(db, "users", currentUser.uid);
+        updateDoc(userRef, {
+          "stats.topics": increment(1),
+          "stats.messages": increment(1)
+        }).catch((e) => {
+          console.warn("Kullanıcı istatistikleri güncellenemedi:", e);
+        });
+      }
+
+      messageInput.value = "";
+      titleInput.value = "";
+    } catch (e) {
+      console.error("Konu eklenirken hata:", e);
+      alert("Konu eklenirken bir hata oluştu.");
+    }
+  });
+
+  // Filtre + arama + sıralama ile tüm konuları render et
+  function renderAllTopics() {
+    allTopicsList.innerHTML = "";
+
+    if (!allPosts.length) {
+      allTopicsList.innerHTML = '<p class="no-topics">Henüz konu açılmamış.</p>';
+      return;
+    }
+
+    const term = (searchInput.value || "").toLowerCase().trim();
+    const cat = filterCategory.value;
+    const sortMode = sortSelect.value;
+
+    let filtered = allPosts.filter((p) => {
+      if (cat !== "all" && p.category !== cat) return false;
+
+      if (term) {
+        const haystack = [
+          p.title || "",
+          p.message || "",
+          p.nick || ""
+        ].join(" ").toLowerCase();
+        if (!haystack.includes(term)) return false;
+      }
+
+      return true;
+    });
+
+    filtered.sort((a, b) => {
+      const repliesA = typeof a.replyCount === "number" ? a.replyCount : 0;
+      const repliesB = typeof b.replyCount === "number" ? b.replyCount : 0;
+      const likesA = typeof a.likes === "number" ? a.likes : 0;
+      const likesB = typeof b.likes === "number" ? b.likes : 0;
+
+      const createdA = a.createdAt?.toDate ? a.createdAt.toDate().getTime() : 0;
+      const createdB = b.createdAt?.toDate ? b.createdAt.toDate().getTime() : 0;
+
+      if (sortMode === "mostReplies") {
+        return repliesB - repliesA || createdB - createdA;
+      }
+      if (sortMode === "mostLikes") {
+        return likesB - likesA || createdB - createdA;
+      }
+      // default: newest
+      return createdB - createdA;
+    });
+
+    filtered.forEach((d) => {
+      const id = d._id;
+
+      const baseTime = d.lastReplyAt?.toDate?.()
+        ? d.lastReplyAt.toDate()
+        : d.createdAt?.toDate?.();
+
+      const timeText = baseTime
+        ? baseTime.toLocaleString("tr-TR", {
+            day: "2-digit",
+            month: "2-digit",
+            hour: "2-digit",
+            minute: "2-digit"
+          })
+        : "";
+
+      const catText = categoryLabel[d.category] || "❔ Diğer";
+      const previewRaw = d.message || "";
+      const preview =
+        previewRaw.length > 140 ? previewRaw.slice(0, 140) + "..." : previewRaw;
+
+      const replyCount = typeof d.replyCount === "number" ? d.replyCount : 0;
+      const likeCount = typeof d.likes === "number" ? d.likes : 0;
+
+      const item = document.createElement("a");
+      item.className = "topic-link";
+      item.href = `topic.html?id=${encodeURIComponent(id)}`;
+      item.innerHTML = `
+        <div class="topic-item">
+          <div class="topic-title">${catText} • ${d.title || "Başlıksız konu"}</div>
+          <div class="topic-nick">Yazan: ${d.nick || "Anonim"}</div>
+          <div class="topic-message-preview">${preview}</div>
+          <div class="topic-meta-line">
+            ${replyCount} yorum • ${likeCount} beğeni
+            ${timeText ? " • Son hareket: " + timeText : ""}
+          </div>
+        </div>
+      `;
+      allTopicsList.appendChild(item);
+    });
+  }
+
+  // Trending list: en çok replyCount alan ilk 5
+  function renderTrending() {
+    trendingList.innerHTML = "";
+
+    if (!allPosts.length) {
+      trendingList.innerHTML = '<div class="mini-topic">Henüz trend konu yok.</div>';
+      return;
+    }
+
+    const sorted = [...allPosts].sort((a, b) => {
+      const ra = typeof a.replyCount === "number" ? a.replyCount : 0;
+      const rb = typeof b.replyCount === "number" ? b.replyCount : 0;
+      return rb - ra;
+    });
+
+    const top = sorted.slice(0, 5);
+
+    top.forEach((p) => {
+      const id = p._id;
+      const catText = categoryLabel[p.category] || "❔ Diğer";
+      const replies = typeof p.replyCount === "number" ? p.replyCount : 0;
+
+      const div = document.createElement("div");
+      div.className = "mini-topic";
+      div.innerHTML = `
+        <a href="topic.html?id=${encodeURIComponent(id)}">${catText} - ${p.title || "Başlıksız"}</a>
+        <div class="mini-meta">${replies} yorum</div>
+      `;
+      trendingList.appendChild(div);
+    });
+  }
+
+  function listenAllTopics() {
+    const q = query(
+      collection(db, "posts"),
+      orderBy("createdAt", "desc")
+    );
+
+    onSnapshot(q, (snapshot) => {
+      allPosts = [];
+
+      snapshot.forEach((docSnap) => {
+        const data = docSnap.data();
+        data._id = docSnap.id;
+        allPosts.push(data);
+      });
+
+      renderAllTopics();
+      renderTrending();
+    });
+  }
+
+  // Filtre alanları change olduğunda yeniden render
+  [searchInput, filterCategory, sortSelect].forEach((el) => {
+    el.addEventListener("input", renderAllTopics);
+    el.addEventListener("change", renderAllTopics);
+  });
+
+  listenAllTopics();
+</script>
+
+</body>
+</html>
