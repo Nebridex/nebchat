@@ -387,13 +387,14 @@
 
     <div class="form-row">
       <select id="categoryInput" class="select-category">
-        <option value="cyber">🔥 Cyber Security</option>
+        <option value="cyber">🛡 Cyber Security</option>
+        <option value="network">🌐 Network & Infrastructure</option>
         <option value="cloud">☁️ Cloud & DevOps</option>
-        <option value="blue">🛡️ Blue Team / SOC</option>
-        <option value="red">⚔️ Red Team / OffSec</option>
-        <option value="bug">🪲 Bug Bounty</option>
-        <option value="career">📈 Kariyer & Sertifikalar</option>
-        <option value="genel">💬 Genel Sohbet</option>
+        <option value="career">💼 Career & Salary</option>
+        <option value="products">📦 Products & Vendors</option>
+        <option value="anon">🙈 Anon Confessions</option>
+        <option value="tech">💡 Tech Discussions</option>
+        <option value="community">🎭 Off-Topic / Community</option>
       </select>
     </div>
 
@@ -431,13 +432,14 @@
       <input type="text" id="searchInput" placeholder="Başlık / mesaj / nick ara...">
       <select id="filterCategory">
         <option value="all">Tüm kategoriler</option>
-        <option value="cyber">🔥 Cyber Security</option>
+        <option value="cyber">🛡 Cyber Security</option>
+        <option value="network">🌐 Network & Infrastructure</option>
         <option value="cloud">☁️ Cloud & DevOps</option>
-        <option value="blue">🛡️ Blue Team / SOC</option>
-        <option value="red">⚔️ Red Team / OffSec</option>
-        <option value="bug">🪲 Bug Bounty</option>
-        <option value="career">📈 Kariyer & Sertifikalar</option>
-        <option value="genel">💬 Genel Sohbet</option>
+        <option value="career">💼 Career & Salary</option>
+        <option value="products">📦 Products & Vendors</option>
+        <option value="anon">🙈 Anon Confessions</option>
+        <option value="tech">💡 Tech Discussions</option>
+        <option value="community">🎭 Off-Topic / Community</option>
       </select>
       <select id="sortSelect">
         <option value="newest">En yeni</option>
@@ -503,13 +505,20 @@
   const filterCategory = document.getElementById("filterCategory");
   const sortSelect = document.getElementById("sortSelect");
 
+  // Yeni kategori seti + eski postlar için legacy map
   const categoryLabel = {
-    cyber: "🔥 Cyber Security",
+    cyber: "🛡 Cyber Security",
+    network: "🌐 Network & Infrastructure",
     cloud: "☁️ Cloud & DevOps",
-    blue: "🛡️ Blue Team / SOC",
+    career: "💼 Career & Salary",
+    products: "📦 Products & Vendors",
+    anon: "🙈 Anon Confessions",
+    tech: "💡 Tech Discussions",
+    community: "🎭 Off-Topic / Community",
+    // legacy kategoriler (eski postlar bozulmasın)
+    blue: "🛡 Blue Team / SOC",
     red: "⚔️ Red Team / OffSec",
     bug: "🪲 Bug Bounty",
-    career: "📈 Kariyer & Sertifikalar",
     genel: "💬 Genel Sohbet"
   };
 
@@ -549,6 +558,14 @@
     }
   });
 
+  // URL'den kategori parametresini oku (?category=cyber gibi)
+  const urlParams = new URLSearchParams(window.location.search);
+  const initialCategory = urlParams.get("category");
+  if (initialCategory && categoryLabel[initialCategory]) {
+    filterCategory.value = initialCategory;
+    categoryInput.value = initialCategory;
+  }
+
   // Yeni konu gönder
   sendBtn.addEventListener("click", async () => {
     let nick = nickInput.value.trim();
@@ -584,7 +601,6 @@
         solutionReplyId: null
       });
 
-      // Kullanıcı giriş yapmışsa stats.topics ve stats.messages artır
       if (currentUser) {
         const userRef = doc(db, "users", currentUser.uid);
         updateDoc(userRef, {
@@ -603,7 +619,6 @@
     }
   });
 
-  // Filtre + arama + sıralama ile tüm konuları render et
   function renderAllTopics() {
     allTopicsList.innerHTML = "";
 
@@ -646,7 +661,6 @@
       if (sortMode === "mostLikes") {
         return likesB - likesA || createdB - createdA;
       }
-      // default: newest
       return createdB - createdA;
     });
 
@@ -692,7 +706,6 @@
     });
   }
 
-  // Trending list: en çok replyCount alan ilk 5
   function renderTrending() {
     trendingList.innerHTML = "";
 
@@ -744,7 +757,6 @@
     });
   }
 
-  // Filtre alanları change olduğunda yeniden render
   [searchInput, filterCategory, sortSelect].forEach((el) => {
     el.addEventListener("input", renderAllTopics);
     el.addEventListener("change", renderAllTopics);
