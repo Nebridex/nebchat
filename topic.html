@@ -99,6 +99,35 @@
       color: #e4e8ff;
     }
 
+    .like-row {
+      margin-top: 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .btn-like {
+      padding: 6px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 215, 140, 0.8);
+      background: rgba(255, 215, 140, 0.1);
+      color: #ffd78c;
+      font-size: 13px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .btn-like:hover {
+      background: rgba(255, 215, 140, 0.2);
+      box-shadow: 0 0 14px rgba(255, 215, 140, 0.6);
+    }
+
+    .like-info {
+      font-size: 11px;
+      color: #9ea8e0;
+      opacity: 0.9;
+    }
+
     .section-title {
       font-size: 16px;
       font-weight: 600;
@@ -232,6 +261,13 @@
       font-size: 13px;
       color: #8189c4;
     }
+
+    .login-indicator {
+      font-size: 11px;
+      color: #cdd6ff;
+      margin-top: 4px;
+      opacity: 0.85;
+    }
   </style>
 </head>
 
@@ -255,6 +291,13 @@
     <div class="topic-title" id="topicTitle">Konu yükleniyor...</div>
     <div class="topic-meta" id="topicMeta"></div>
     <div class="topic-message" id="topicMessage"></div>
+
+    <div class="like-row">
+      <button class="btn-like" id="likeBtn">👍 Beğen (<span id="likeCount">0</span>)</button>
+      <div class="like-info">
+        Beğeniler, konu sahibini destekler. Giriş yaparsan aldığın beğeniler profilinde görünür.
+      </div>
+    </div>
   </section>
 
   <section class="messages-box">
@@ -271,6 +314,9 @@
     <button class="btn-main" id="replyBtn">Gönder</button>
     <div class="info-text">
       Yorumlar anonimdir ve Firebase Firestore’da saklanır. Lütfen kişisel bilgi yazma.
+      <div class="login-indicator" id="replyLoginInfo">
+        Giriş yaparsan yazdığın mesajlar profilinde sayılır. (Profilim → Giriş)
+      </div>
     </div>
   </section>
 </main>
@@ -294,6 +340,10 @@
     onSnapshot,
     getDoc
   } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
+  import {
+    getAuth,
+    onAuthStateChanged
+  } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyBAwFSe0pud59OXpx1G5hQO9opA1f7Eg9Y",
@@ -306,6 +356,7 @@
 
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
+  const auth = getAuth(app);
 
   const categoryMap = {
     cyber: "🔥 Cyber Security",
@@ -329,11 +380,50 @@
   const nicknameInput = document.getElementById("nickname");
   const messageInput = document.getElementById("message");
   const replyBtn = document.getElementById("replyBtn");
+  const likeBtn = document.getElementById("likeBtn");
+  const likeCountEl = document.getElementById("likeCount");
+  const replyLoginInfo = document.getElementById("replyLoginInfo");
+
+  let currentUser = null;
+  let currentUserProfile = null;
+
+  async function loadUserProfile(uid) {
+    try {
+      const ref = doc(db, "users", uid);
+      const snap = await getDoc(ref);
+      if (!snap.exists()) return null;
+      return snap.data();
+    } catch (e) {
+      console.error("Kullanıcı profili çekilirken hata:", e);
+      return null;
+    }
+  }
+
+  onAuthStateChanged(auth, async (user) => {
+    currentUser = user || null;
+    currentUserProfile = null;
+
+    if (!user) {
+      replyLoginInfo.textContent =
+        "Giriş yaparsan yazdığın mesajlar profilinde sayılır. (Profilim → Giriş)";
+      return;
+    }
+
+    const profile = await loadUserProfile(user.uid);
+    currentUserProfile = profile;
+
+    const username = profile?.username || (user.email ? user.email.split("@")[0] : "Anon");
+    replyLoginInfo.textContent = `Giriş yaptın: ${username} • Yazdığın mesajlar profil istatistiklerine yazılacak.`;
+    if (!nicknameInput.value.trim()) {
+      nicknameInput.placeholder = `${username} (isteğe bağlı değiştirebilirsin)`;
+    }
+  });
 
   if (!postId) {
     topicTitleEl.textContent = "Konu bulunamadı";
     topicMetaEl.textContent = "";
     topicMessageEl.textContent = "";
+    likeBtn.disabled = true;
   } else {
     loadPost();
     listenReplies();
@@ -348,6 +438,7 @@
         topicTitleEl.textContent = "Konu bulunamadı";
         topicMetaEl.textContent = "";
         topicMessageEl.textContent = "";
+        likeBtn.disabled = true;
         return;
       }
 
@@ -369,6 +460,9 @@
       topicMetaEl.textContent =
         `Kategori: ${categoryText} • Açan: ${data.nick || "Anonim"} • ${timeText || ""}`;
       topicMessageEl.textContent = data.message || "";
+
+      const likes = typeof data.likes === "number" ? data.likes : 0;
+      likeCountEl.textContent = likes;
     } catch (e) {
       console.error("Konu yüklenirken hata:", e);
       topicTitleEl.textContent = "Konu yüklenirken hata oluştu.";
@@ -446,11 +540,20 @@
       return;
     }
 
-    const nick = nicknameInput.value.trim();
+    let nick = nicknameInput.value.trim();
     const text = messageInput.value.trim();
 
-    if (!nick || !text) {
-      alert("Lütfen hem nick hem de yorumu doldur.");
+    if (!nick) {
+      if (currentUserProfile?.username) {
+        nick = currentUserProfile.username;
+      } else {
+        alert("Lütfen takma ad gir.");
+        return;
+      }
+    }
+
+    if (!text) {
+      alert("Lütfen yorum alanını doldur.");
       return;
     }
 
@@ -459,7 +562,8 @@
       await addDoc(repliesRef, {
         nick,
         message: text,
-        createdAt: serverTimestamp()
+        createdAt: serverTimestamp(),
+        userId: currentUser ? currentUser.uid : null
       });
 
       const postRef = doc(db, "posts", postId);
@@ -468,10 +572,51 @@
         lastReplyAt: serverTimestamp()
       });
 
+      // Kullanıcı girişliyse mesaj sayısını artır
+      if (currentUser) {
+        const userRef = doc(db, "users", currentUser.uid);
+        updateDoc(userRef, {
+          "stats.messages": increment(1)
+        }).catch((e) => {
+          console.warn("Mesaj istatistiği güncellenemedi:", e);
+        });
+      }
+
       messageInput.value = "";
     } catch (e) {
       console.error("Yorum eklenirken hata:", e);
       alert("Yorum eklenirken bir hata oluştu.");
+    }
+  });
+
+  // Beğeni
+  likeBtn.addEventListener("click", async () => {
+    if (!postId) {
+      alert("Geçersiz konu.");
+      return;
+    }
+
+    try {
+      const postRef = doc(db, "posts", postId);
+      await updateDoc(postRef, {
+        likes: increment(1)
+      });
+
+      // Ekrandaki sayacı anında artır
+      const current = parseInt(likeCountEl.textContent || "0", 10);
+      likeCountEl.textContent = current + 1;
+
+      if (currentUser) {
+        const userRef = doc(db, "users", currentUser.uid);
+        updateDoc(userRef, {
+          "stats.likes": increment(1)
+        }).catch((e) => {
+          console.warn("Like istatistiği güncellenemedi:", e);
+        });
+      }
+    } catch (e) {
+      console.error("Beğeni eklenirken hata:", e);
+      alert("Beğeni eklenirken bir hata oluştu.");
     }
   });
 </script>
