@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>NebChat • Konu Detayı</title>
 
-  <!-- highlight.js CSS -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css">
 
   <style>
@@ -30,12 +29,6 @@
       top: 0;
       z-index: 50;
       backdrop-filter: blur(10px);
-    }
-
-    .logo-area {
-      display: flex;
-      align-items: center;
-      gap: 14px;
     }
 
     .logo-title {
@@ -96,6 +89,21 @@
       margin-bottom: 10px;
     }
 
+    .badge-registered {
+      font-size: 10px;
+      padding: 2px 6px;
+      border-radius: 999px;
+      background: rgba(108, 99, 255, 0.2);
+      border: 1px solid rgba(108, 99, 255, 0.7);
+      margin-left: 4px;
+    }
+
+    .badge-guest {
+      font-size: 10px;
+      opacity: 0.7;
+      margin-left: 4px;
+    }
+
     .topic-message {
       font-size: 14px;
       line-height: 1.6;
@@ -139,19 +147,6 @@
       box-shadow: 0 0 14px rgba(255, 215, 140, 0.6);
     }
 
-    .like-info {
-      font-size: 11px;
-      color: #9ea8e0;
-      opacity: 0.9;
-    }
-
-    .section-title {
-      font-size: 16px;
-      font-weight: 600;
-      margin-bottom: 10px;
-      color: #cdd7ff;
-    }
-
     .messages-box {
       background: rgba(10, 14, 32, 0.98);
       border-radius: 18px;
@@ -159,6 +154,13 @@
       border: 1px solid rgba(108, 99, 255, 0.35);
       box-shadow: 0 0 22px rgba(80, 70, 230, 0.45);
       margin-bottom: 22px;
+    }
+
+    .section-title {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 10px;
+      color: #cdd7ff;
     }
 
     .msg-item {
@@ -175,7 +177,7 @@
     .msg-item.solution {
       border-color: rgba(72, 187, 120, 0.9);
       box-shadow: 0 0 20px rgba(72, 187, 120, 0.7);
-      background: linear-gradient(135deg, rgba(16, 22, 55, 0.95), rgba(30, 64, 45, 0.9));
+      background: linear-gradient(135deg, rgba(16,22,55,0.95), rgba(30,64,45,0.9));
     }
 
     .solution-badge {
@@ -327,6 +329,13 @@
       color: #9ca6e0;
     }
 
+    .login-indicator {
+      font-size: 11px;
+      color: #cdd6ff;
+      margin-top: 4px;
+      opacity: 0.85;
+    }
+
     footer {
       margin-top: 40px;
       padding: 20px;
@@ -334,24 +343,14 @@
       font-size: 13px;
       color: #8189c4;
     }
-
-    .login-indicator {
-      font-size: 11px;
-      color: #cdd6ff;
-      margin-top: 4px;
-      opacity: 0.85;
-    }
   </style>
 </head>
 
 <body>
 <header>
-  <div class="logo-area">
-    <a href="index.html" style="text-decoration:none;">
-      <div class="logo-title">NebChat</div>
-    </a>
-  </div>
-
+  <a href="index.html" style="text-decoration:none;">
+    <div class="logo-title">NebChat</div>
+  </a>
   <nav class="menu">
     <a href="index.html">Ana Sayfa</a>
     <a href="forum.html">Forum</a>
@@ -367,9 +366,9 @@
 
     <div class="like-row">
       <button class="btn-like" id="likeBtn">👍 Beğen (<span id="likeCount">0</span>)</button>
-      <div class="like-info">
-        Beğeniler, konu sahibini destekler. Giriş yaparsan aldığın beğeniler profilinde görünür.
-      </div>
+      <span style="font-size:11px;color:#9ea8e0;">
+        Beğeniler konu sahibine gider. Giriş yaparsan aldığın beğeniler profilinde sayılır.
+      </span>
     </div>
   </section>
 
@@ -381,26 +380,24 @@
   <section class="reply-box">
     <div class="section-title">Cevap Yaz</div>
     <div class="form-row">
-      <input type="text" id="nickname" placeholder="Takma adın (ör: Nebride)">
+      <input type="text" id="nickname" placeholder="Takma adın (guest için)">
     </div>
     <textarea id="message" placeholder="Mesajını yaz... (Markdown destekli)"></textarea>
     <button class="btn-main" id="replyBtn">Gönder</button>
     <div class="info-text">
-      Markdown destekli. Kod için <code>```</code> blokları kullanabilirsin.
+      Markdown destekli. Kod için ``` blokları kullanabilirsin.
       <div class="login-indicator" id="replyLoginInfo">
-        Giriş yaparsan yazdığın mesajlar profilinde sayılır. (Profilim → Giriş)
+        Giriş yaparsan yazdığın mesajlar kayıtlı kullanıcı adınla görünür, guest’ler kayıtlı nick kullanamaz.
       </div>
     </div>
   </section>
 </main>
 
 <footer>
-  NebChat anonim forum • İçerik kullanıcıların sorumluluğundadır.
+  NebChat anonim forum • Konu detay sayfası.
 </footer>
 
-<!-- Showdown (Markdown) -->
 <script src="https://cdn.jsdelivr.net/npm/showdown@2.1.0/dist/showdown.min.js"></script>
-<!-- highlight.js -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
 
 <script type="module">
@@ -416,7 +413,9 @@
     query,
     orderBy,
     onSnapshot,
-    getDoc
+    getDoc,
+    getDocs,
+    where
   } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
   import {
     getAuth,
@@ -437,13 +436,18 @@
   const auth = getAuth(app);
 
   const categoryMap = {
-    cyber: "🔥 Cyber Security",
+    cyber: "🛡 Cyber Security",
+    network: "🌐 Network & Infrastructure",
     cloud: "☁️ Cloud & DevOps",
-    blue: "🛡️ Blue Team / SOC",
-    red: "⚔️ Red Team / OffSec",
-    bug: "🪲 Bug Bounty",
-    career: "📈 Kariyer & Sertifikalar",
-    genel: "💬 Genel Sohbet"
+    career: "💼 Career & Salary",
+    products: "📦 Products & Vendors",
+    anon: "🙈 Anon Confessions",
+    tech: "💡 Tech Discussions",
+    community: "🎭 Off-Topic / Community",
+    blue: "Blue Team / SOC",
+    red: "Red Team / OffSec",
+    bug: "Bug Bounty",
+    genel: "Genel Sohbet"
   };
 
   const params = new URLSearchParams(window.location.search);
@@ -470,17 +474,14 @@
   function renderMarkdown(element, text) {
     const html = converter.makeHtml(text || "");
     element.innerHTML = html;
-    // Kod bloklarını renklendir
     setTimeout(() => {
-      if (window.hljs) {
-        window.hljs.highlightAll();
-      }
+      if (window.hljs) window.hljs.highlightAll();
     }, 0);
   }
 
   let currentUser = null;
   let currentUserProfile = null;
-  let loadedPost = null; // post data + id
+  let loadedPost = null;
 
   async function loadUserProfile(uid) {
     try {
@@ -489,9 +490,23 @@
       if (!snap.exists()) return null;
       return snap.data();
     } catch (e) {
-      console.error("Kullanıcı profili çekilirken hata:", e);
+      console.error("Kullanıcı profili alınamadı:", e);
       return null;
     }
+  }
+
+  function validateGuestNick(nick) {
+    if (!nick) return false;
+    if (nick.trim().length < 2) return false;
+    return true;
+  }
+
+  async function isNickReserved(nick) {
+    const lower = nick.trim().toLowerCase();
+    if (!lower) return false;
+    const q = query(collection(db, "users"), where("usernameLower", "==", lower));
+    const snap = await getDocs(q);
+    return !snap.empty;
   }
 
   onAuthStateChanged(auth, async (user) => {
@@ -500,18 +515,23 @@
 
     if (!user) {
       replyLoginInfo.textContent =
-        "Giriş yaparsan yazdığın mesajlar profilinde sayılır. (Profilim → Giriş)";
+        "Giriş yaparsan yazdığın mesajlar kayıtlı kullanıcı adınla görünür. Guest’ler kayıtlı nick kullanamaz.";
+      nicknameInput.disabled = false;
+      nicknameInput.placeholder = "Takma adın (guest için)";
       return;
     }
 
     const profile = await loadUserProfile(user.uid);
     currentUserProfile = profile;
 
-    const username = profile?.username || (user.email ? user.email.split("@")[0] : "Anon");
-    replyLoginInfo.textContent = `Giriş yaptın: ${username} • Yazdığın mesajlar profil istatistiklerine yazılacak.`;
-    if (!nicknameInput.value.trim()) {
-      nicknameInput.placeholder = `${username} (isteğe bağlı değiştirebilirsin)`;
-    }
+    const username =
+      profile?.username ||
+      (user.email ? user.email.split("@")[0] : "Kayıtlı Kullanıcı");
+    replyLoginInfo.textContent =
+      `Giriş yaptın: ${username}. Bu konuda yazdığın tüm cevaplar bu kullanıcı adı ile görünecek.`;
+    nicknameInput.value = "";
+    nicknameInput.disabled = true;
+    nicknameInput.placeholder = `${username} (kayıtlı kullanıcı)`;
   });
 
   if (!postId) {
@@ -540,10 +560,10 @@
       const data = snap.data();
       loadedPost = { id: snap.id, ...data };
 
-      const categoryText = categoryMap[data.category] || "❔ Diğer";
+      const categoryText = categoryMap[data.category] || "Kategori";
 
       let timeText = "";
-      if (data.createdAt && data.createdAt.toDate) {
+      if (data.createdAt?.toDate) {
         const d = data.createdAt.toDate();
         timeText = d.toLocaleString("tr-TR", {
           day: "2-digit",
@@ -553,9 +573,14 @@
         });
       }
 
+      const regBadge = data.userId
+        ? '<span class="badge-registered">registered</span>'
+        : '<span class="badge-guest">guest</span>';
+
       topicTitleEl.textContent = `${categoryText} • ${data.title || "Başlıksız Konu"}`;
-      topicMetaEl.textContent =
-        `Kategori: ${categoryText} • Açan: ${data.nick || "Anonim"}${timeText ? " • " + timeText : ""}`;
+      topicMetaEl.innerHTML =
+        `Açan: ${data.nick || "Anonim"} ${regBadge}` +
+        (timeText ? " • " + timeText : "");
 
       renderMarkdown(topicMessageEl, data.message || "");
 
@@ -574,10 +599,6 @@
     onSnapshot(q, (snapshot) => {
       messagesListEl.innerHTML = "";
 
-      if (!snapshot.empty && !loadedPost) {
-        // post henüz yüklenmediyse bile replyleri bekletebiliriz
-      }
-
       const replies = [];
       snapshot.forEach((docSnap) => {
         replies.push({
@@ -586,7 +607,6 @@
         });
       });
 
-      // Çözüm varsa en üste al
       let solutionReply = null;
       let others = replies;
 
@@ -629,13 +649,18 @@
     const nameRow = document.createElement("div");
     const nameEl = document.createElement("span");
     nameEl.className = "msg-username";
-    nameEl.textContent = data.nick || "Anonim";
+
+    const regBadge = data.userId
+      ? '<span class="badge-registered">registered</span>'
+      : '<span class="badge-guest">guest</span>';
+
+    nameEl.innerHTML = `${data.nick || "Anonim"} ${regBadge}`;
 
     const timeEl = document.createElement("span");
     timeEl.className = "msg-time";
 
     let t = "";
-    if (data.createdAt && data.createdAt.toDate) {
+    if (data.createdAt?.toDate) {
       const d = data.createdAt.toDate();
       t = d.toLocaleString("tr-TR", {
         day: "2-digit",
@@ -660,7 +685,6 @@
     const likeSpan = document.createElement("span");
     likeSpan.textContent = `👍 ${likes} beğeni`;
 
-    // Upvote butonu
     const upvoteBtn = document.createElement("button");
     upvoteBtn.textContent = "Beğen";
     upvoteBtn.addEventListener("click", () => {
@@ -670,7 +694,6 @@
     actions.appendChild(likeSpan);
     actions.appendChild(upvoteBtn);
 
-    // Çözüm olarak işaretle butonu (sadece konu sahibi için)
     if (loadedPost && currentUser && loadedPost.userId === currentUser.uid) {
       const solutionBtn = document.createElement("button");
       solutionBtn.textContent = isSolution ? "Çözüm (seçili)" : "Çözüm olarak işaretle";
@@ -697,28 +720,34 @@
     return wrapper;
   }
 
-  // Yorum ekleme
   replyBtn.addEventListener("click", async () => {
     if (!postId) {
       alert("Geçersiz konu.");
       return;
     }
 
-    let nick = nicknameInput.value.trim();
+    let nick;
     const text = messageInput.value.trim();
-
-    if (!nick) {
-      if (currentUserProfile?.username) {
-        nick = currentUserProfile.username;
-      } else {
-        alert("Lütfen takma ad gir.");
-        return;
-      }
-    }
 
     if (!text) {
       alert("Lütfen yorum alanını doldur.");
       return;
+    }
+
+    if (currentUser) {
+      nick =
+        currentUserProfile?.username ||
+        (currentUser.email ? currentUser.email.split("@")[0] : "Kayıtlı Kullanıcı");
+    } else {
+      nick = nicknameInput.value.trim();
+      if (!validateGuestNick(nick)) {
+        alert("Geçerli bir takma ad gir (min 2 karakter).");
+        return;
+      }
+      if (await isNickReserved(nick)) {
+        alert("Bu nick kayıtlı bir kullanıcıya ait. Farklı bir takma ad kullan.");
+        return;
+      }
     }
 
     try {
@@ -737,14 +766,11 @@
         lastReplyAt: serverTimestamp()
       });
 
-      // Kullanıcı girişliyse mesaj sayısını artır
       if (currentUser) {
         const userRef = doc(db, "users", currentUser.uid);
         updateDoc(userRef, {
           "stats.messages": increment(1)
-        }).catch((e) => {
-          console.warn("Mesaj istatistiği güncellenemedi:", e);
-        });
+        }).catch((e) => console.warn("Mesaj istatistiği güncellenemedi:", e));
       }
 
       messageInput.value = "";
@@ -754,7 +780,6 @@
     }
   });
 
-  // Beğeni (konu)
   likeBtn.addEventListener("click", async () => {
     if (!postId || !loadedPost) {
       alert("Geçersiz konu.");
@@ -770,14 +795,11 @@
       const current = parseInt(likeCountEl.textContent || "0", 10);
       likeCountEl.textContent = current + 1;
 
-      // Konu sahibi varsa onun likes istatistiğini artır
       if (loadedPost.userId) {
         const ownerRef = doc(db, "users", loadedPost.userId);
         updateDoc(ownerRef, {
           "stats.likes": increment(1)
-        }).catch((e) => {
-          console.warn("Konu sahibi like istatistiği güncellenemedi:", e);
-        });
+        }).catch((e) => console.warn("Konu sahibi like istatistiği güncellenemedi:", e));
       }
     } catch (e) {
       console.error("Beğeni eklenirken hata:", e);
@@ -785,7 +807,6 @@
     }
   });
 
-  // Reply upvote
   async function upvoteReply(replyId, replyUserId, likeSpanElement) {
     if (!postId || !replyId) {
       alert("Geçersiz yorum.");
@@ -798,20 +819,16 @@
         likes: increment(1)
       });
 
-      // UI güncelle
       const currentText = likeSpanElement.textContent || "";
       const match = currentText.match(/(\d+)/);
       const current = match ? parseInt(match[1], 10) : 0;
       likeSpanElement.textContent = `👍 ${current + 1} beğeni`;
 
-      // Yorum sahibinin stats.likes değeri artır
       if (replyUserId) {
         const userRef = doc(db, "users", replyUserId);
         updateDoc(userRef, {
           "stats.likes": increment(1)
-        }).catch((e) => {
-          console.warn("Yorum sahibi like istatistiği güncellenemedi:", e);
-        });
+        }).catch((e) => console.warn("Yorum sahibi like istatistiği güncellenemedi:", e));
       }
     } catch (e) {
       console.error("Reply beğenilirken hata:", e);
@@ -819,7 +836,6 @@
     }
   }
 
-  // Çözüm olarak işaretleme
   async function markAsSolution(replyId) {
     if (!postId || !loadedPost) return;
 
@@ -834,7 +850,6 @@
         solutionReplyId: replyId
       });
       loadedPost.solutionReplyId = replyId;
-      // Tekrar yüklemeden, snapshot dinleyicisi render sırasını zaten güncelleyecek.
     } catch (e) {
       console.error("Çözüm işaretlenirken hata:", e);
       alert("Çözüm işaretlenirken bir hata oluştu.");
