@@ -31,7 +31,7 @@
 
     .logo-title {
       font-family: 'Pacifico', cursive;
-      font-size: 32px;
+      font-size: 30px;
       color: #8ab4ff;
       text-shadow: 0 0 10px rgba(121, 169, 255, 0.9);
     }
@@ -43,17 +43,20 @@
 
     .menu a {
       color: #a8b4ff;
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 14px;
       padding: 8px 12px;
       border-radius: 999px;
       border: 1px solid rgba(108, 99, 255, 0.3);
       background: rgba(255, 255, 255, 0.03);
-      text-decoration: none;
-      transition: .2s;
+      transition: 0.25s;
     }
 
     .menu a:hover {
-      background: rgba(108, 99, 255, .3);
-      color: white;
+      background: rgba(108, 99, 255, 0.3);
+      box-shadow: 0 0 14px rgba(108, 99, 255, 0.6);
+      color: #ffffff;
     }
 
     main.page {
@@ -66,85 +69,212 @@
       font-size: 26px;
       font-weight: 600;
       margin-bottom: 6px;
+      color: #dfe6ff;
+      text-shadow: 0 0 18px rgba(120,140,255,0.7);
+    }
+
+    .page-subtitle {
+      font-size: 14px;
+      color: #a3aedf;
+      margin-bottom: 20px;
     }
 
     .new-topic-box {
       background: radial-gradient(circle at top left, rgba(108, 99, 255, 0.6), rgba(10, 10, 30, 0.95));
-      padding: 20px;
       border-radius: 20px;
+      padding: 20px 18px 18px;
       border: 1px solid rgba(108, 99, 255, 0.55);
-      box-shadow: 0 0 25px rgba(108, 99, 255, .4);
-      margin-bottom: 25px;
+      box-shadow: 0 0 32px rgba(80, 70, 230, 0.6);
+      margin-bottom: 26px;
+    }
+
+    .new-topic-title {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 10px;
+      color: #d6e0ff;
     }
 
     .form-row {
       display: flex;
       gap: 10px;
-      margin-bottom: 10px;
       flex-wrap: wrap;
+      margin-bottom: 10px;
     }
 
-    input, select, textarea {
-      background: rgba(7, 12, 30, 0.95);
-      border: 1px solid rgba(108, 99, 255, 0.4);
-      padding: 10px;
+    .form-row input,
+    .select-category {
+      flex: 1;
+      min-width: 160px;
+      padding: 9px;
       border-radius: 10px;
-      color: white;
-      width: 100%;
+      border: 1px solid rgba(108, 99, 255, 0.4);
+      background: rgba(7, 12, 30, 0.9);
+      color: #ffffff;
+      font-size: 13px;
+      outline: none;
+    }
+
+    .form-row input:focus,
+    .select-category:focus,
+    textarea:focus {
+      border-color: rgba(138, 127, 255, 0.9);
+      box-shadow: 0 0 15px rgba(138, 127, 255, 0.7);
     }
 
     textarea {
+      width: 100%;
       min-height: 90px;
-      resize: vertical;
-    }
-
-    button.btn-main {
-      padding: 10px 16px;
-      border-radius: 10px;
-      background: rgba(108,99,255,.8);
-      border: 1px solid rgba(108,99,255,.9);
+      border-radius: 12px;
+      border: 1px solid rgba(108, 99, 255, 0.35);
+      background: rgba(7, 12, 30, 0.95);
+      padding: 10px;
       color: white;
-      cursor: pointer;
-      transition: .2s;
+      font-size: 14px;
+      resize: vertical;
+      margin-bottom: 8px;
     }
 
-    button.btn-main:hover {
-      background: rgba(108,99,255,1);
-      box-shadow: 0 0 20px rgba(108,99,255, .8);
+    .btn-main {
+      padding: 9px 18px;
+      border-radius: 10px;
+      border: 1px solid rgba(108, 99, 255, 0.7);
+      background: rgba(108, 99, 255, 0.85);
+      color: #e0e4ff;
+      font-size: 14px;
+      cursor: pointer;
+      transition: 0.25s;
+    }
+
+    .btn-main:hover {
+      background: rgba(108, 99, 255, 1);
+      box-shadow: 0 0 20px rgba(108, 99, 255, 0.85);
+    }
+
+    .login-indicator {
+      font-size: 11px;
+      color: #cdd6ff;
+      margin-top: 4px;
+      opacity: 0.85;
     }
 
     .all-topics-block {
-      background: rgba(14,18,40,.95);
-      padding: 18px;
-      border-radius: 20px;
-      border: 1px solid rgba(108, 99, 255, 0.35);
-      box-shadow: 0 0 22px rgba(80,70,230,.4);
-      margin-top: 30px;
+      margin-top: 28px;
+      padding: 18px 16px 16px;
+      border-radius: 18px;
+      background: rgba(14, 18, 40, 0.95);
+      border: 1px solid rgba(108, 99, 255, 0.4);
+      box-shadow: 0 0 22px rgba(80, 70, 230, 0.4);
     }
 
-    .topic-item {
-      background: rgba(10,14,32,.98);
-      border-radius: 16px;
-      padding: 14px;
-      border: 1px solid rgba(108,99,255,.25);
+    .filter-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
       margin-bottom: 10px;
-      transition: .2s;
-      cursor: pointer;
+      font-size: 12px;
+      color: #a3aedf;
+    }
+
+    .filter-bar input,
+    .filter-bar select {
+      padding: 7px 9px;
+      border-radius: 10px;
+      border: 1px solid rgba(108, 99, 255, 0.4);
+      background: rgba(7, 12, 30, 0.9);
+      color: #ffffff;
+      font-size: 12px;
+      outline: none;
+      min-width: 130px;
+    }
+
+    .topic-list {
+      margin-top: 6px;
+    }
+
+    .topic-link {
       text-decoration: none;
-      color: white;
+      color: inherit;
       display: block;
     }
 
-    .topic-item:hover {
-      border-color: rgba(108,99,255,.7);
-      box-shadow: 0 0 20px rgba(108,99,255,.4);
+    .topic-item {
+      background: rgba(10, 14, 32, 0.98);
+      border-radius: 16px;
+      padding: 12px 13px;
+      margin-bottom: 8px;
+      border: 1px solid rgba(108, 99, 255, 0.3);
+      box-shadow: 0 0 18px rgba(88, 80, 255, 0.25);
+      cursor: pointer;
+      transition: 0.25s;
     }
 
+    .topic-item:hover {
+      border-color: rgba(108, 99, 255, 0.7);
+      box-shadow: 0 0 24px rgba(88, 80, 255, 0.4);
+      transform: translateY(-1px);
+    }
+
+    .topic-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: #dfe4ff;
+      margin-bottom: 2px;
+    }
+
+    .topic-nick {
+      font-size: 12px;
+      color: #aeb7ff;
+    }
+
+    .topic-message-preview {
+      font-size: 13px;
+      color: #cfd7ff;
+      margin-top: 4px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .topic-meta-line {
+      margin-top: 4px;
+      font-size: 11px;
+      color: #9ea7f0;
+      opacity: 0.95;
+    }
+
+    .badge-registered {
+      font-size: 10px;
+      padding: 2px 6px;
+      border-radius: 999px;
+      background: rgba(108, 99, 255, 0.2);
+      border: 1px solid rgba(108, 99, 255, 0.7);
+      margin-left: 4px;
+    }
+
+    .badge-guest {
+      font-size: 10px;
+      opacity: 0.7;
+      margin-left: 4px;
+    }
+
+    .no-topics {
+      font-size: 13px;
+      color: #9da5dd;
+      margin-top: 6px;
+    }
+
+    footer {
+      margin-top: 40px;
+      padding: 20px;
+      text-align: center;
+      font-size: 13px;
+      color: #8189c4;
+    }
   </style>
 </head>
 
 <body>
-
 <header>
   <a href="index.html" style="text-decoration:none;">
     <div class="logo-title">NebChat</div>
@@ -159,17 +289,21 @@
 
 <main class="page">
   <h1 class="page-title">Son Konular</h1>
+  <p class="page-subtitle">
+    Giriş yapmak zorunlu değil. Bir takma ad (guest) veya kayıtlı kullanıcı adı ile yazabilirsin.
+    Kayıtlı kullanıcı adları rezerve edilir, başkası kullanamaz.
+  </p>
 
   <section class="new-topic-box">
     <div class="new-topic-title">Yeni Konu Aç</div>
 
     <div class="form-row">
-      <input id="nickInput" placeholder="Takma ad (ör: Nebride)">
-      <input id="titleInput" placeholder="Konu başlığı">
+      <input type="text" id="nickInput" placeholder="Takma adın (guest kullanıcılar için)">
+      <input type="text" id="titleInput" placeholder="Konu başlığı (ör: SIEM Rule Tuning)">
     </div>
 
     <div class="form-row">
-      <select id="categoryInput">
+      <select id="categoryInput" class="select-category">
         <option value="cyber">🛡 Cyber Security</option>
         <option value="network">🌐 Network & Infrastructure</option>
         <option value="cloud">☁️ Cloud & DevOps</option>
@@ -181,17 +315,17 @@
       </select>
     </div>
 
-    <textarea id="messageInput" placeholder="Mesajınızı yazın..."></textarea>
+    <textarea id="messageInput" placeholder="Mesajını yaz..."></textarea>
 
     <button class="btn-main" id="sendBtn">Konuyu Gönder</button>
-    <div id="loginIndicator" style="font-size:11px; opacity:.7; margin-top:6px;">
-      Giriş yaparsan konular profilinde görünecek.
+    <div class="login-indicator" id="loginIndicator">
+      Giriş yaparsan forumdaki tüm yazıların KENDİ kullanıcı adınla görünür, kimse o adı kullanamaz.
     </div>
   </section>
 
   <section class="all-topics-block">
     <div class="filter-bar">
-      <input id="searchInput" placeholder="Ara...">
+      <input type="text" id="searchInput" placeholder="Başlık / mesaj / nick ara...">
       <select id="filterCategory">
         <option value="all">Tüm kategoriler</option>
         <option value="cyber">🛡 Cyber Security</option>
@@ -203,28 +337,42 @@
         <option value="tech">💡 Tech Discussions</option>
         <option value="community">🎭 Off-Topic / Community</option>
       </select>
-
       <select id="sortSelect">
-        <option value="newest">En Yeni</option>
-        <option value="mostReplies">En Çok Yorum</option>
-        <option value="mostLikes">En Çok Beğeni</option>
+        <option value="newest">En yeni</option>
+        <option value="mostReplies">En çok yorum</option>
+        <option value="mostLikes">En çok beğeni</option>
       </select>
     </div>
 
-    <div id="allTopicsList"></div>
+    <div class="topic-list" id="allTopicsList"></div>
   </section>
 </main>
 
-<!-- FIREBASE -->
+<footer>
+  NebChat anonim forum • Kullanıcı adları kayıtlıdır, guest nick’ler ayrı gösterilir.
+</footer>
+
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
   import {
-    getFirestore, collection, addDoc, serverTimestamp,
-    query, orderBy, onSnapshot, doc, updateDoc, increment, getDoc
+    getFirestore,
+    collection,
+    addDoc,
+    serverTimestamp,
+    query,
+    orderBy,
+    onSnapshot,
+    doc,
+    updateDoc,
+    increment,
+    getDoc,
+    getDocs,
+    where
   } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
-
-  import { getAuth, onAuthStateChanged }
-    from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
+  import {
+    getAuth,
+    onAuthStateChanged
+  } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyBAwFSe0pud59OXpx1G5hQO9opA1f7Eg9Y",
@@ -244,58 +392,22 @@
   const categoryInput = document.getElementById("categoryInput");
   const messageInput = document.getElementById("messageInput");
   const sendBtn = document.getElementById("sendBtn");
+  const loginIndicator = document.getElementById("loginIndicator");
 
   const searchInput = document.getElementById("searchInput");
   const filterCategory = document.getElementById("filterCategory");
   const sortSelect = document.getElementById("sortSelect");
   const allTopicsList = document.getElementById("allTopicsList");
 
-  let currentUser = null;
-  let currentProfile = null;
-  let allPosts = [];
+  const urlParams = new URLSearchParams(window.location.search);
+  const initialCategory = urlParams.get("category");
 
-  onAuthStateChanged(auth, async (user) => {
-    currentUser = user;
-    if (!user) return;
+  if (initialCategory) {
+    filterCategory.value = initialCategory;
+    categoryInput.value = initialCategory;
+  }
 
-    let ref = doc(db, "users", user.uid);
-    let snap = await getDoc(ref);
-    currentProfile = snap.exists() ? snap.data() : null;
-
-    if (currentProfile?.username) {
-      nickInput.placeholder = currentProfile.username;
-    }
-  });
-
-  sendBtn.addEventListener("click", async () => {
-    let nick = nickInput.value.trim() || currentProfile?.username || "Anon";
-    let title = titleInput.value.trim();
-    let msg = messageInput.value.trim();
-    let cat = categoryInput.value;
-
-    if (!title || !msg) return alert("Başlık ve mesaj zorunlu.");
-
-    await addDoc(collection(db, "posts"), {
-      nick, title, message: msg, category: cat,
-      createdAt: serverTimestamp(),
-      replyCount: 0,
-      likes: 0,
-      userId: currentUser?.uid || null,
-      lastReplyAt: null
-    });
-
-    if (currentUser) {
-      updateDoc(doc(db, "users", currentUser.uid), {
-        "stats.topics": increment(1),
-        "stats.messages": increment(1)
-      });
-    }
-
-    titleInput.value = "";
-    messageInput.value = "";
-  });
-
-  const labelMap = {
+  const categoryLabel = {
     cyber: "🛡 Cyber Security",
     network: "🌐 Network & Infrastructure",
     cloud: "☁️ Cloud & DevOps",
@@ -304,73 +416,240 @@
     anon: "🙈 Anon Confessions",
     tech: "💡 Tech Discussions",
     community: "🎭 Off-Topic / Community",
-
+    // eski postlar için legacy:
     blue: "Blue Team / SOC",
     red: "Red Team / OffSec",
     bug: "Bug Bounty",
     genel: "Genel Sohbet"
   };
 
-  const params = new URLSearchParams(location.search);
-  const initial = params.get("category");
-  if (initial) {
-    filterCategory.value = initial;
-    categoryInput.value = initial;
+  let currentUser = null;
+  let currentUserProfile = null;
+  let allPosts = [];
+
+  async function loadUserProfile(uid) {
+    try {
+      const ref = doc(db, "users", uid);
+      const snap = await getDoc(ref);
+      if (!snap.exists()) return null;
+      return snap.data();
+    } catch (e) {
+      console.error("Kullanıcı profili alınamadı:", e);
+      return null;
+    }
   }
 
-  function renderTopics() {
+  function validateGuestNick(nick) {
+    if (!nick) return false;
+    if (nick.trim().length < 2) return false;
+    return true;
+  }
+
+  async function isNickReserved(nick) {
+    const lower = nick.trim().toLowerCase();
+    if (!lower) return false;
+    const q = query(collection(db, "users"), where("usernameLower", "==", lower));
+    const snap = await getDocs(q);
+    return !snap.empty;
+  }
+
+  onAuthStateChanged(auth, async (user) => {
+    currentUser = user || null;
+    currentUserProfile = null;
+
+    if (!user) {
+      loginIndicator.textContent =
+        "Giriş yaparsan tüm mesajların kayıtlı kullanıcı adınla görünür. Guest’ler kayıtlı nick kullanamaz.";
+      nickInput.disabled = false;
+      nickInput.placeholder = "Takma adın (guest için, ör: siber-guest)";
+      return;
+    }
+
+    const profile = await loadUserProfile(user.uid);
+    currentUserProfile = profile;
+
+    const username =
+      profile?.username ||
+      (user.email ? user.email.split("@")[0] : "Kayıtlı Kullanıcı");
+    loginIndicator.textContent =
+      `Giriş yaptın: ${username}. Forumda yazdıkların bu kullanıcı adı ile görünecek.`;
+    nickInput.value = "";
+    nickInput.disabled = true;
+    nickInput.placeholder = `${username} (kayıtlı kullanıcı adı)`;
+  });
+
+  sendBtn.addEventListener("click", async () => {
+    let nick;
+    const title = titleInput.value.trim();
+    const message = messageInput.value.trim();
+    const category = categoryInput.value;
+
+    if (!title || !message) {
+      alert("Başlık ve mesaj zorunlu.");
+      return;
+    }
+
+    if (currentUser) {
+      nick = currentUserProfile?.username ||
+        (currentUser.email ? currentUser.email.split("@")[0] : "Kayıtlı Kullanıcı");
+    } else {
+      nick = nickInput.value.trim();
+      if (!validateGuestNick(nick)) {
+        alert("Geçerli bir takma ad gir (min 2 karakter).");
+        return;
+      }
+      if (await isNickReserved(nick)) {
+        alert("Bu nick kayıtlı bir kullanıcıya ait. Farklı bir takma ad kullan.");
+        return;
+      }
+    }
+
+    try {
+      await addDoc(collection(db, "posts"), {
+        nick,
+        title,
+        message,
+        category,
+        createdAt: serverTimestamp(),
+        replyCount: 0,
+        lastReplyAt: null,
+        likes: 0,
+        userId: currentUser ? currentUser.uid : null,
+        solutionReplyId: null
+      });
+
+      if (currentUser) {
+        const userRef = doc(db, "users", currentUser.uid);
+        updateDoc(userRef, {
+          "stats.topics": increment(1),
+          "stats.messages": increment(1)
+        }).catch((e) => console.warn("İstatistik güncellenemedi:", e));
+      }
+
+      titleInput.value = "";
+      messageInput.value = "";
+    } catch (e) {
+      console.error("Konu eklenirken hata:", e);
+      alert("Konu eklenirken bir hata oluştu.");
+    }
+  });
+
+  function renderAllTopics() {
     allTopicsList.innerHTML = "";
 
-    let term = searchInput.value.toLowerCase().trim();
-    let cat = filterCategory.value;
-    let sort = sortSelect.value;
+    if (!allPosts.length) {
+      allTopicsList.innerHTML = '<p class="no-topics">Henüz konu açılmamış.</p>';
+      return;
+    }
 
-    let list = allPosts.filter(p => {
+    const term = (searchInput.value || "").toLowerCase().trim();
+    const cat = filterCategory.value;
+    const sortMode = sortSelect.value;
+
+    let filtered = allPosts.filter((p) => {
       if (cat !== "all" && p.category !== cat) return false;
 
-      let hay = (p.title + " " + p.message + " " + p.nick).toLowerCase();
-      if (term && !hay.includes(term)) return false;
+      if (term) {
+        const haystack = [
+          p.title || "",
+          p.message || "",
+          p.nick || ""
+        ].join(" ").toLowerCase();
+        if (!haystack.includes(term)) return false;
+      }
 
       return true;
     });
 
-    list.sort((a, b) => {
-      if (sort === "mostReplies") return b.replyCount - a.replyCount;
-      if (sort === "mostLikes") return b.likes - a.likes;
-      return (b.createdAt?.toDate?.() || 0) - (a.createdAt?.toDate?.() || 0);
+    filtered.sort((a, b) => {
+      const repliesA = typeof a.replyCount === "number" ? a.replyCount : 0;
+      const repliesB = typeof b.replyCount === "number" ? b.replyCount : 0;
+      const likesA = typeof a.likes === "number" ? a.likes : 0;
+      const likesB = typeof b.likes === "number" ? b.likes : 0;
+
+      const createdA = a.createdAt?.toDate ? a.createdAt.toDate().getTime() : 0;
+      const createdB = b.createdAt?.toDate ? b.createdAt.toDate().getTime() : 0;
+
+      if (sortMode === "mostReplies") {
+        return repliesB - repliesA || createdB - createdA;
+      }
+      if (sortMode === "mostLikes") {
+        return likesB - likesA || createdB - createdA;
+      }
+      return createdB - createdA;
     });
 
-    for (let p of list) {
-      let t = document.createElement("a");
-      t.href = "topic.html?id=" + p._id;
-      t.className = "topic-item";
+    filtered.forEach((d) => {
+      const id = d._id;
 
-      let time = p.createdAt?.toDate
-        ? p.createdAt.toDate().toLocaleString("tr-TR")
+      const baseTime = d.lastReplyAt?.toDate?.()
+        ? d.lastReplyAt.toDate()
+        : d.createdAt?.toDate?.();
+
+      const timeText = baseTime
+        ? baseTime.toLocaleString("tr-TR", {
+            day: "2-digit",
+            month: "2-digit",
+            hour: "2-digit",
+            minute: "2-digit"
+          })
         : "";
 
-      t.innerHTML = `
-        <div class="topic-title">${labelMap[p.category] || "Kategori"} • ${p.title}</div>
-        <div>${p.nick}</div>
-        <div style="opacity:.7; font-size:12px;">
-          ${p.replyCount} yorum • ${p.likes} beğeni • ${time}
+      const catText = categoryLabel[d.category] || "Kategori";
+      const previewRaw = d.message || "";
+      const preview =
+        previewRaw.length > 140 ? previewRaw.slice(0, 140) + "..." : previewRaw;
+
+      const replyCount = typeof d.replyCount === "number" ? d.replyCount : 0;
+      const likeCount = typeof d.likes === "number" ? d.likes : 0;
+
+      const regBadge = d.userId
+        ? '<span class="badge-registered">registered</span>'
+        : '<span class="badge-guest">guest</span>';
+
+      const item = document.createElement("a");
+      item.className = "topic-link";
+      item.href = `topic.html?id=${encodeURIComponent(id)}`;
+      item.innerHTML = `
+        <div class="topic-item">
+          <div class="topic-title">${catText} • ${d.title || "Başlıksız konu"}</div>
+          <div class="topic-nick">
+            ${d.nick || "Anonim"} ${regBadge}
+          </div>
+          <div class="topic-message-preview">${preview}</div>
+          <div class="topic-meta-line">
+            ${replyCount} yorum • ${likeCount} beğeni
+            ${timeText ? " • Son hareket: " + timeText : ""}
+          </div>
         </div>
       `;
-      allTopicsList.appendChild(t);
-    }
+      allTopicsList.appendChild(item);
+    });
   }
 
-  onSnapshot(query(collection(db, "posts"), orderBy("createdAt", "desc")),
-    snap => {
-      allPosts = snap.docs.map(d => ({ _id: d.id, ...d.data() }));
-      renderTopics();
-    }
-  );
+  function listenAllTopics() {
+    const q = query(
+      collection(db, "posts"),
+      orderBy("createdAt", "desc")
+    );
 
-  searchInput.addEventListener("input", renderTopics);
-  filterCategory.addEventListener("change", renderTopics);
-  sortSelect.addEventListener("change", renderTopics);
+    onSnapshot(q, (snapshot) => {
+      allPosts = [];
+      snapshot.forEach((docSnap) => {
+        const data = docSnap.data();
+        data._id = docSnap.id;
+        allPosts.push(data);
+      });
+      renderAllTopics();
+    });
+  }
 
+  [searchInput, filterCategory, sortSelect].forEach((el) => {
+    el.addEventListener("input", renderAllTopics);
+    el.addEventListener("change", renderAllTopics);
+  });
+
+  listenAllTopics();
 </script>
 
 </body>
