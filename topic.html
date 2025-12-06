@@ -5,6 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>NebChat • Konu Detayı</title>
 
+  <!-- highlight.js CSS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css">
+
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&family=Pacifico&display=swap');
 
@@ -99,11 +102,25 @@
       color: #e4e8ff;
     }
 
+    .topic-message pre {
+      padding: 10px;
+      border-radius: 8px;
+      background: #111827;
+      overflow-x: auto;
+      font-size: 13px;
+    }
+
+    .topic-message code {
+      font-family: "Fira Code", monospace;
+      font-size: 13px;
+    }
+
     .like-row {
       margin-top: 12px;
       display: flex;
       align-items: center;
       gap: 10px;
+      flex-wrap: wrap;
     }
 
     .btn-like {
@@ -152,6 +169,25 @@
       border: 1px solid rgba(70, 70, 150, 0.5);
       background: rgba(16, 22, 55, 0.95);
       margin-bottom: 8px;
+      position: relative;
+    }
+
+    .msg-item.solution {
+      border-color: rgba(72, 187, 120, 0.9);
+      box-shadow: 0 0 20px rgba(72, 187, 120, 0.7);
+      background: linear-gradient(135deg, rgba(16, 22, 55, 0.95), rgba(30, 64, 45, 0.9));
+    }
+
+    .solution-badge {
+      position: absolute;
+      top: 6px;
+      right: 8px;
+      background: rgba(72, 187, 120, 0.2);
+      border-radius: 999px;
+      padding: 3px 8px;
+      font-size: 11px;
+      color: #9ae6b4;
+      border: 1px solid rgba(72, 187, 120, 0.7);
     }
 
     .msg-avatar {
@@ -190,6 +226,43 @@
       line-height: 1.5;
       margin-top: 4px;
       color: #e4e8ff;
+    }
+
+    .msg-text pre {
+      padding: 8px;
+      border-radius: 8px;
+      background: #111827;
+      overflow-x: auto;
+      font-size: 13px;
+    }
+
+    .msg-text code {
+      font-family: "Fira Code", monospace;
+      font-size: 13px;
+    }
+
+    .msg-actions {
+      margin-top: 6px;
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      font-size: 11px;
+      color: #a3aedf;
+    }
+
+    .msg-actions button {
+      padding: 3px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(108, 99, 255, 0.5);
+      background: rgba(108, 99, 255, 0.15);
+      color: #e0e4ff;
+      cursor: pointer;
+      font-size: 11px;
+      transition: 0.2s;
+    }
+
+    .msg-actions button:hover {
+      background: rgba(108, 99, 255, 0.3);
     }
 
     .reply-box {
@@ -310,10 +383,10 @@
     <div class="form-row">
       <input type="text" id="nickname" placeholder="Takma adın (ör: Nebride)">
     </div>
-    <textarea id="message" placeholder="Mesajını yaz..."></textarea>
+    <textarea id="message" placeholder="Mesajını yaz... (Markdown destekli)"></textarea>
     <button class="btn-main" id="replyBtn">Gönder</button>
     <div class="info-text">
-      Yorumlar anonimdir ve Firebase Firestore’da saklanır. Lütfen kişisel bilgi yazma.
+      Markdown destekli. Kod için <code>```</code> blokları kullanabilirsin.
       <div class="login-indicator" id="replyLoginInfo">
         Giriş yaparsan yazdığın mesajlar profilinde sayılır. (Profilim → Giriş)
       </div>
@@ -324,6 +397,11 @@
 <footer>
   NebChat anonim forum • İçerik kullanıcıların sorumluluğundadır.
 </footer>
+
+<!-- Showdown (Markdown) -->
+<script src="https://cdn.jsdelivr.net/npm/showdown@2.1.0/dist/showdown.min.js"></script>
+<!-- highlight.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
@@ -365,9 +443,7 @@
     red: "⚔️ Red Team / OffSec",
     bug: "🪲 Bug Bounty",
     career: "📈 Kariyer & Sertifikalar",
-    genel: "💬 Genel Sohbet",
-    oyun: "🎮 Oyun Sohbeti",
-    teknoloji: "💡 Teknoloji Köşesi"
+    genel: "💬 Genel Sohbet"
   };
 
   const params = new URLSearchParams(window.location.search);
@@ -384,8 +460,27 @@
   const likeCountEl = document.getElementById("likeCount");
   const replyLoginInfo = document.getElementById("replyLoginInfo");
 
+  const converter = new showdown.Converter({
+    simpleLineBreaks: true,
+    strikethrough: true,
+    tables: true,
+    ghCodeBlocks: true
+  });
+
+  function renderMarkdown(element, text) {
+    const html = converter.makeHtml(text || "");
+    element.innerHTML = html;
+    // Kod bloklarını renklendir
+    setTimeout(() => {
+      if (window.hljs) {
+        window.hljs.highlightAll();
+      }
+    }, 0);
+  }
+
   let currentUser = null;
   let currentUserProfile = null;
+  let loadedPost = null; // post data + id
 
   async function loadUserProfile(uid) {
     try {
@@ -443,6 +538,8 @@
       }
 
       const data = snap.data();
+      loadedPost = { id: snap.id, ...data };
+
       const categoryText = categoryMap[data.category] || "❔ Diğer";
 
       let timeText = "";
@@ -458,8 +555,9 @@
 
       topicTitleEl.textContent = `${categoryText} • ${data.title || "Başlıksız Konu"}`;
       topicMetaEl.textContent =
-        `Kategori: ${categoryText} • Açan: ${data.nick || "Anonim"} • ${timeText || ""}`;
-      topicMessageEl.textContent = data.message || "";
+        `Kategori: ${categoryText} • Açan: ${data.nick || "Anonim"}${timeText ? " • " + timeText : ""}`;
+
+      renderMarkdown(topicMessageEl, data.message || "");
 
       const likes = typeof data.likes === "number" ? data.likes : 0;
       likeCountEl.textContent = likes;
@@ -476,61 +574,127 @@
     onSnapshot(q, (snapshot) => {
       messagesListEl.innerHTML = "";
 
-      if (snapshot.empty) {
+      if (!snapshot.empty && !loadedPost) {
+        // post henüz yüklenmediyse bile replyleri bekletebiliriz
+      }
+
+      const replies = [];
+      snapshot.forEach((docSnap) => {
+        replies.push({
+          id: docSnap.id,
+          ...docSnap.data()
+        });
+      });
+
+      // Çözüm varsa en üste al
+      let solutionReply = null;
+      let others = replies;
+
+      if (loadedPost && loadedPost.solutionReplyId) {
+        solutionReply = replies.find((r) => r.id === loadedPost.solutionReplyId) || null;
+        if (solutionReply) {
+          others = replies.filter((r) => r.id !== loadedPost.solutionReplyId);
+        }
+      }
+
+      if (!replies.length) {
         messagesListEl.innerHTML =
           '<div class="msg-item"><div class="msg-body"><div class="msg-text">Henüz yorum yok. İlk yorumu sen yaz.</div></div></div>';
         return;
       }
 
-      snapshot.forEach((docSnap) => {
-        const data = docSnap.data();
+      if (solutionReply) {
+        const el = createReplyElement(solutionReply, true);
+        messagesListEl.appendChild(el);
+      }
 
-        const wrapper = document.createElement("div");
-        wrapper.className = "msg-item";
-
-        const avatar = document.createElement("div");
-        avatar.className = "msg-avatar";
-        avatar.textContent = (data.nick || "?").charAt(0).toUpperCase();
-
-        const body = document.createElement("div");
-        body.className = "msg-body";
-
-        const nameRow = document.createElement("div");
-        const nameEl = document.createElement("span");
-        nameEl.className = "msg-username";
-        nameEl.textContent = data.nick || "Anonim";
-
-        const timeEl = document.createElement("span");
-        timeEl.className = "msg-time";
-
-        let t = "";
-        if (data.createdAt && data.createdAt.toDate) {
-          const d = data.createdAt.toDate();
-          t = d.toLocaleString("tr-TR", {
-            day: "2-digit",
-            month: "2-digit",
-            hour: "2-digit",
-            minute: "2-digit"
-          });
-        }
-        timeEl.textContent = " • " + (t || "");
-
-        nameRow.appendChild(nameEl);
-        nameRow.appendChild(timeEl);
-
-        const textEl = document.createElement("div");
-        textEl.className = "msg-text";
-        textEl.textContent = data.message || "";
-
-        body.appendChild(nameRow);
-        body.appendChild(textEl);
-
-        wrapper.appendChild(avatar);
-        wrapper.appendChild(body);
-
-        messagesListEl.appendChild(wrapper);
+      others.forEach((data) => {
+        const el = createReplyElement(data, false);
+        messagesListEl.appendChild(el);
       });
     });
+  }
+
+  function createReplyElement(data, isSolution) {
+    const wrapper = document.createElement("div");
+    wrapper.className = "msg-item" + (isSolution ? " solution" : "");
+
+    const avatar = document.createElement("div");
+    avatar.className = "msg-avatar";
+    avatar.textContent = (data.nick || "?").charAt(0).toUpperCase();
+
+    const body = document.createElement("div");
+    body.className = "msg-body";
+
+    const nameRow = document.createElement("div");
+    const nameEl = document.createElement("span");
+    nameEl.className = "msg-username";
+    nameEl.textContent = data.nick || "Anonim";
+
+    const timeEl = document.createElement("span");
+    timeEl.className = "msg-time";
+
+    let t = "";
+    if (data.createdAt && data.createdAt.toDate) {
+      const d = data.createdAt.toDate();
+      t = d.toLocaleString("tr-TR", {
+        day: "2-digit",
+        month: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit"
+      });
+    }
+    timeEl.textContent = " • " + (t || "");
+
+    nameRow.appendChild(nameEl);
+    nameRow.appendChild(timeEl);
+
+    const textEl = document.createElement("div");
+    textEl.className = "msg-text";
+    renderMarkdown(textEl, data.message || "");
+
+    const actions = document.createElement("div");
+    actions.className = "msg-actions";
+
+    const likes = typeof data.likes === "number" ? data.likes : 0;
+    const likeSpan = document.createElement("span");
+    likeSpan.textContent = `👍 ${likes} beğeni`;
+
+    // Upvote butonu
+    const upvoteBtn = document.createElement("button");
+    upvoteBtn.textContent = "Beğen";
+    upvoteBtn.addEventListener("click", () => {
+      upvoteReply(data.id, data.userId || null, likeSpan);
+    });
+
+    actions.appendChild(likeSpan);
+    actions.appendChild(upvoteBtn);
+
+    // Çözüm olarak işaretle butonu (sadece konu sahibi için)
+    if (loadedPost && currentUser && loadedPost.userId === currentUser.uid) {
+      const solutionBtn = document.createElement("button");
+      solutionBtn.textContent = isSolution ? "Çözüm (seçili)" : "Çözüm olarak işaretle";
+      solutionBtn.addEventListener("click", () => {
+        markAsSolution(data.id);
+      });
+      actions.appendChild(solutionBtn);
+    }
+
+    body.appendChild(nameRow);
+    body.appendChild(textEl);
+    body.appendChild(actions);
+
+    wrapper.appendChild(avatar);
+    wrapper.appendChild(body);
+
+    if (isSolution) {
+      const badge = document.createElement("div");
+      badge.className = "solution-badge";
+      badge.textContent = "✔ ÇÖZÜM";
+      wrapper.appendChild(badge);
+    }
+
+    return wrapper;
   }
 
   // Yorum ekleme
@@ -563,7 +727,8 @@
         nick,
         message: text,
         createdAt: serverTimestamp(),
-        userId: currentUser ? currentUser.uid : null
+        userId: currentUser ? currentUser.uid : null,
+        likes: 0
       });
 
       const postRef = doc(db, "posts", postId);
@@ -589,9 +754,9 @@
     }
   });
 
-  // Beğeni
+  // Beğeni (konu)
   likeBtn.addEventListener("click", async () => {
-    if (!postId) {
+    if (!postId || !loadedPost) {
       alert("Geçersiz konu.");
       return;
     }
@@ -602,16 +767,16 @@
         likes: increment(1)
       });
 
-      // Ekrandaki sayacı anında artır
       const current = parseInt(likeCountEl.textContent || "0", 10);
       likeCountEl.textContent = current + 1;
 
-      if (currentUser) {
-        const userRef = doc(db, "users", currentUser.uid);
-        updateDoc(userRef, {
+      // Konu sahibi varsa onun likes istatistiğini artır
+      if (loadedPost.userId) {
+        const ownerRef = doc(db, "users", loadedPost.userId);
+        updateDoc(ownerRef, {
           "stats.likes": increment(1)
         }).catch((e) => {
-          console.warn("Like istatistiği güncellenemedi:", e);
+          console.warn("Konu sahibi like istatistiği güncellenemedi:", e);
         });
       }
     } catch (e) {
@@ -619,6 +784,62 @@
       alert("Beğeni eklenirken bir hata oluştu.");
     }
   });
+
+  // Reply upvote
+  async function upvoteReply(replyId, replyUserId, likeSpanElement) {
+    if (!postId || !replyId) {
+      alert("Geçersiz yorum.");
+      return;
+    }
+
+    try {
+      const replyRef = doc(db, "posts", postId, "replies", replyId);
+      await updateDoc(replyRef, {
+        likes: increment(1)
+      });
+
+      // UI güncelle
+      const currentText = likeSpanElement.textContent || "";
+      const match = currentText.match(/(\d+)/);
+      const current = match ? parseInt(match[1], 10) : 0;
+      likeSpanElement.textContent = `👍 ${current + 1} beğeni`;
+
+      // Yorum sahibinin stats.likes değeri artır
+      if (replyUserId) {
+        const userRef = doc(db, "users", replyUserId);
+        updateDoc(userRef, {
+          "stats.likes": increment(1)
+        }).catch((e) => {
+          console.warn("Yorum sahibi like istatistiği güncellenemedi:", e);
+        });
+      }
+    } catch (e) {
+      console.error("Reply beğenilirken hata:", e);
+      alert("Beğeni eklenirken bir hata oluştu.");
+    }
+  }
+
+  // Çözüm olarak işaretleme
+  async function markAsSolution(replyId) {
+    if (!postId || !loadedPost) return;
+
+    if (!currentUser || loadedPost.userId !== currentUser.uid) {
+      alert("Sadece konuyu açan kişi çözümü işaretleyebilir.");
+      return;
+    }
+
+    try {
+      const postRef = doc(db, "posts", postId);
+      await updateDoc(postRef, {
+        solutionReplyId: replyId
+      });
+      loadedPost.solutionReplyId = replyId;
+      // Tekrar yüklemeden, snapshot dinleyicisi render sırasını zaten güncelleyecek.
+    } catch (e) {
+      console.error("Çözüm işaretlenirken hata:", e);
+      alert("Çözüm işaretlenirken bir hata oluştu.");
+    }
+  }
 </script>
 
 </body>
