@@ -399,6 +399,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/showdown@2.1.0/dist/showdown.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/dompurify@3.2.6/dist/purify.min.js"></script>
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
@@ -472,11 +473,32 @@
   });
 
   function renderMarkdown(element, text) {
-    const html = converter.makeHtml(text || "");
-    element.innerHTML = html;
-    setTimeout(() => {
-      if (window.hljs) window.hljs.highlightAll();
-    }, 0);
+    const source = text || "";
+    const html = converter.makeHtml(source);
+
+    if (window.DOMPurify) {
+      const safeHtml = window.DOMPurify.sanitize(html, {
+        USE_PROFILES: { html: true },
+        ALLOWED_URI_REGEXP: /^(?:(?:https?|mailto|tel):|[^a-z]|[a-z+.-]+(?:[^a-z+.-:]|$))/i
+      });
+      element.innerHTML = safeHtml;
+    } else {
+      // DOMPurify yüklenemezse, güvenlik için markdown çıktısı yerine düz metin göster.
+      element.textContent = source;
+    }
+
+    if (window.hljs) {
+      element.querySelectorAll("pre code").forEach((codeBlock) => {
+        window.hljs.highlightElement(codeBlock);
+      });
+    }
+  }
+
+  function createUserBadge(isRegistered) {
+    const badge = document.createElement("span");
+    badge.className = isRegistered ? "badge-registered" : "badge-guest";
+    badge.textContent = isRegistered ? "registered" : "guest";
+    return badge;
   }
 
   let currentUser = null;
@@ -573,14 +595,13 @@
         });
       }
 
-      const regBadge = data.userId
-        ? '<span class="badge-registered">registered</span>'
-        : '<span class="badge-guest">guest</span>';
-
       topicTitleEl.textContent = `${categoryText} • ${data.title || "Başlıksız Konu"}`;
-      topicMetaEl.innerHTML =
-        `Açan: ${data.nick || "Anonim"} ${regBadge}` +
-        (timeText ? " • " + timeText : "");
+      topicMetaEl.textContent = "";
+      topicMetaEl.append("Açan: " + (data.nick || "Anonim") + " ");
+      topicMetaEl.appendChild(createUserBadge(Boolean(data.userId)));
+      if (timeText) {
+        topicMetaEl.append(" • " + timeText);
+      }
 
       renderMarkdown(topicMessageEl, data.message || "");
 
@@ -650,11 +671,8 @@
     const nameEl = document.createElement("span");
     nameEl.className = "msg-username";
 
-    const regBadge = data.userId
-      ? '<span class="badge-registered">registered</span>'
-      : '<span class="badge-guest">guest</span>';
-
-    nameEl.innerHTML = `${data.nick || "Anonim"} ${regBadge}`;
+    nameEl.textContent = (data.nick || "Anonim") + " ";
+    nameEl.appendChild(createUserBadge(Boolean(data.userId)));
 
     const timeEl = document.createElement("span");
     timeEl.className = "msg-time";
