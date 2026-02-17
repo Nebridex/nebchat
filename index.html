@@ -321,7 +321,7 @@
 
   <nav class="menu">
     <a href="forum.html">Forum</a>
-    <a href="profile.html#auth">Giriş / Kayıt</a>
+    <a href="profile.html#auth" id="loginNavLink">Giriş / Kayıt</a>
     <a href="profile.html">Profilim</a>
   </nav>
 </header>
@@ -348,7 +348,7 @@
       <a href="forum.html" class="btn-primary">
         Foruma Gir
       </a>
-      <a href="profile.html#auth" class="btn-secondary">
+      <a href="profile.html#auth" class="btn-secondary" id="heroLoginCta">
         Hesap Oluştur / Giriş Yap
       </a>
     </div>
@@ -427,6 +427,38 @@
 <footer>
   NebChat • Anonim Tech & Security Forum • İçerikler kullanıcıların sorumluluğundadır.
 </footer>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
+  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyBAwFSe0pud59OXpx1G5hQO9opA1f7Eg9Y",
+    authDomain: "nebchat2.firebaseapp.com",
+    projectId: "nebchat2",
+    storageBucket: "nebchat2.firebasestorage.app",
+    messagingSenderId: "46979426016",
+    appId: "1:46979426016:web:fd1fbe341fff6970ae9285"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+
+  const loginNavLink = document.getElementById("loginNavLink");
+  const heroLoginCta = document.getElementById("heroLoginCta");
+
+  onAuthStateChanged(auth, (user) => {
+    const isLoggedIn = Boolean(user);
+
+    if (loginNavLink) {
+      loginNavLink.style.display = isLoggedIn ? "none" : "inline-flex";
+    }
+
+    if (heroLoginCta) {
+      heroLoginCta.style.display = isLoggedIn ? "none" : "inline-flex";
+    }
+  });
+</script>
 
 </body>
 </html>
