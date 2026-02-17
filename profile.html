@@ -320,7 +320,7 @@
         </div>
         <div class="form-row">
           <label for="regUsername">Kullanıcı adı (forumdaki nick’in)</label>
-          <input type="text" id="regUsername" placeholder="Nebride" />
+          <input type="text" id="regUsername" placeholder="Nebride" minlength="3" maxlength="20" autocomplete="username" />
         </div>
         <button class="btn-main" id="registerBtn">Kayıt Ol</button>
         <div class="hint">
@@ -344,7 +344,7 @@
       <div class="section-sub">Kullanıcı adını güncelle</div>
       <div class="form-row">
         <label for="usernameEdit">Kullanıcı adı</label>
-        <input type="text" id="usernameEdit" />
+        <input type="text" id="usernameEdit" minlength="3" maxlength="20" autocomplete="username" />
       </div>
       <button class="btn-main" id="updateUsernameBtn">Kullanıcı adını kaydet</button>
       <div class="warning">
@@ -477,6 +477,7 @@
     const trimmed = name.trim();
     if (trimmed.length < 3 || trimmed.length > 20) return false;
     if (/\s/.test(trimmed)) return false;
+    if (!/^[\p{L}\p{N}_.-]+$/u.test(trimmed)) return false;
     return true;
   }
 
@@ -551,7 +552,7 @@
         return;
       }
       if (!validateUsername(username)) {
-        alert("Kullanıcı adı 3-20 karakter, boşluksuz olmalı.");
+        alert("Kullanıcı adı 3-20 karakter olmalı ve sadece harf/rakam (Türkçe dahil)/_/./- içerebilir.");
         return;
       }
       if (await isUsernameTaken(username)) {
@@ -582,7 +583,7 @@
     if (!currentUser) return;
     const newName = usernameEdit.value.trim();
     if (!validateUsername(newName)) {
-      alert("Kullanıcı adı 3-20 karakter, boşluksuz olmalı.");
+      alert("Kullanıcı adı 3-20 karakter olmalı ve sadece harf/rakam (Türkçe dahil)/_/./- içerebilir.");
       return;
     }
     if (await isUsernameTaken(newName, currentUser.uid)) {
