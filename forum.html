@@ -427,6 +427,13 @@
   let currentUserProfile = null;
   let allPosts = [];
 
+  function createUserBadge(isRegistered) {
+    const badge = document.createElement("span");
+    badge.className = isRegistered ? "badge-registered" : "badge-guest";
+    badge.textContent = isRegistered ? "registered" : "guest";
+    return badge;
+  }
+
   async function loadUserProfile(uid) {
     try {
       const ref = doc(db, "users", uid);
@@ -603,26 +610,37 @@
       const replyCount = typeof d.replyCount === "number" ? d.replyCount : 0;
       const likeCount = typeof d.likes === "number" ? d.likes : 0;
 
-      const regBadge = d.userId
-        ? '<span class="badge-registered">registered</span>'
-        : '<span class="badge-guest">guest</span>';
-
       const item = document.createElement("a");
       item.className = "topic-link";
       item.href = `topic.html?id=${encodeURIComponent(id)}`;
-      item.innerHTML = `
-        <div class="topic-item">
-          <div class="topic-title">${catText} • ${d.title || "Başlıksız konu"}</div>
-          <div class="topic-nick">
-            ${d.nick || "Anonim"} ${regBadge}
-          </div>
-          <div class="topic-message-preview">${preview}</div>
-          <div class="topic-meta-line">
-            ${replyCount} yorum • ${likeCount} beğeni
-            ${timeText ? " • Son hareket: " + timeText : ""}
-          </div>
-        </div>
-      `;
+
+      const topicItem = document.createElement("div");
+      topicItem.className = "topic-item";
+
+      const titleEl = document.createElement("div");
+      titleEl.className = "topic-title";
+      titleEl.textContent = `${catText} • ${d.title || "Başlıksız konu"}`;
+
+      const nickEl = document.createElement("div");
+      nickEl.className = "topic-nick";
+      nickEl.textContent = (d.nick || "Anonim") + " ";
+      nickEl.appendChild(createUserBadge(Boolean(d.userId)));
+
+      const previewEl = document.createElement("div");
+      previewEl.className = "topic-message-preview";
+      previewEl.textContent = preview;
+
+      const metaEl = document.createElement("div");
+      metaEl.className = "topic-meta-line";
+      metaEl.textContent =
+        `${replyCount} yorum • ${likeCount} beğeni` +
+        (timeText ? ` • Son hareket: ${timeText}` : "");
+
+      topicItem.appendChild(titleEl);
+      topicItem.appendChild(nickEl);
+      topicItem.appendChild(previewEl);
+      topicItem.appendChild(metaEl);
+      item.appendChild(topicItem);
       allTopicsList.appendChild(item);
     });
   }
