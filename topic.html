@@ -380,9 +380,9 @@
   <section class="reply-box">
     <div class="section-title">Cevap Yaz</div>
     <div class="form-row">
-      <input type="text" id="nickname" placeholder="Takma adın (guest için)">
+      <input type="text" id="nickname" placeholder="Takma adın (guest için)" minlength="2" maxlength="24" autocomplete="nickname">
     </div>
-    <textarea id="message" placeholder="Mesajını yaz... (Markdown destekli)"></textarea>
+    <textarea id="message" placeholder="Mesajını yaz... (Markdown destekli)" minlength="12" maxlength="4000"></textarea>
     <button class="btn-main" id="replyBtn">Gönder</button>
     <div class="info-text">
       Markdown destekli. Kod için ``` blokları kullanabilirsin.
@@ -465,6 +465,13 @@
   const likeCountEl = document.getElementById("likeCount");
   const replyLoginInfo = document.getElementById("replyLoginInfo");
 
+  const LIMITS = {
+    nickMin: 2,
+    nickMax: 24,
+    messageMin: 12,
+    messageMax: 4000
+  };
+
   const converter = new showdown.Converter({
     simpleLineBreaks: true,
     strikethrough: true,
@@ -519,7 +526,9 @@
 
   function validateGuestNick(nick) {
     if (!nick) return false;
-    if (nick.trim().length < 2) return false;
+    const value = nick.trim();
+    if (value.length < LIMITS.nickMin || value.length > LIMITS.nickMax) return false;
+    if (!/^[\p{L}\p{N}_.-]+$/u.test(value)) return false;
     return true;
   }
 
@@ -752,6 +761,11 @@
       return;
     }
 
+    if (text.length < LIMITS.messageMin || text.length > LIMITS.messageMax) {
+      alert(`Yorum ${LIMITS.messageMin}-${LIMITS.messageMax} karakter arasında olmalı.`);
+      return;
+    }
+
     if (currentUser) {
       nick =
         currentUserProfile?.username ||
@@ -759,7 +773,7 @@
     } else {
       nick = nicknameInput.value.trim();
       if (!validateGuestNick(nick)) {
-        alert("Geçerli bir takma ad gir (min 2 karakter).");
+        alert(`Geçerli bir takma ad gir (${LIMITS.nickMin}-${LIMITS.nickMax} karakter, sadece harf/rakam (Türkçe dahil)/_/./-).`);
         return;
       }
       if (await isNickReserved(nick)) {
@@ -769,6 +783,7 @@
     }
 
     try {
+      replyBtn.disabled = true;
       const repliesRef = collection(db, "posts", postId, "replies");
       await addDoc(repliesRef, {
         nick,
@@ -795,6 +810,8 @@
     } catch (e) {
       console.error("Yorum eklenirken hata:", e);
       alert("Yorum eklenirken bir hata oluştu.");
+    } finally {
+      replyBtn.disabled = false;
     }
   });
 

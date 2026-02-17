@@ -298,8 +298,8 @@
     <div class="new-topic-title">Yeni Konu Aç</div>
 
     <div class="form-row">
-      <input type="text" id="nickInput" placeholder="Takma adın (guest kullanıcılar için)">
-      <input type="text" id="titleInput" placeholder="Konu başlığı (ör: SIEM Rule Tuning)">
+      <input type="text" id="nickInput" placeholder="Takma adın (guest kullanıcılar için)" minlength="2" maxlength="24" autocomplete="nickname">
+      <input type="text" id="titleInput" placeholder="Konu başlığı (ör: SIEM Rule Tuning)" minlength="6" maxlength="120">
     </div>
 
     <div class="form-row">
@@ -315,7 +315,7 @@
       </select>
     </div>
 
-    <textarea id="messageInput" placeholder="Mesajını yaz..."></textarea>
+    <textarea id="messageInput" placeholder="Mesajını yaz..." minlength="12" maxlength="4000"></textarea>
 
     <button class="btn-main" id="sendBtn">Konuyu Gönder</button>
     <div class="login-indicator" id="loginIndicator">
@@ -402,6 +402,15 @@
   const urlParams = new URLSearchParams(window.location.search);
   const initialCategory = urlParams.get("category");
 
+  const LIMITS = {
+    nickMin: 2,
+    nickMax: 24,
+    titleMin: 6,
+    titleMax: 120,
+    messageMin: 12,
+    messageMax: 4000
+  };
+
   if (initialCategory) {
     filterCategory.value = initialCategory;
     categoryInput.value = initialCategory;
@@ -448,8 +457,20 @@
 
   function validateGuestNick(nick) {
     if (!nick) return false;
-    if (nick.trim().length < 2) return false;
+    const value = nick.trim();
+    if (value.length < LIMITS.nickMin || value.length > LIMITS.nickMax) return false;
+    if (!/^[\p{L}\p{N}_.-]+$/u.test(value)) return false;
     return true;
+  }
+
+  function validateTopicInput(title, message) {
+    if (title.length < LIMITS.titleMin || title.length > LIMITS.titleMax) {
+      return `Başlık ${LIMITS.titleMin}-${LIMITS.titleMax} karakter arasında olmalı.`;
+    }
+    if (message.length < LIMITS.messageMin || message.length > LIMITS.messageMax) {
+      return `Mesaj ${LIMITS.messageMin}-${LIMITS.messageMax} karakter arasında olmalı.`;
+    }
+    return null;
   }
 
   async function isNickReserved(nick) {
@@ -496,13 +517,19 @@
       return;
     }
 
+    const validationError = validateTopicInput(title, message);
+    if (validationError) {
+      alert(validationError);
+      return;
+    }
+
     if (currentUser) {
       nick = currentUserProfile?.username ||
         (currentUser.email ? currentUser.email.split("@")[0] : "Kayıtlı Kullanıcı");
     } else {
       nick = nickInput.value.trim();
       if (!validateGuestNick(nick)) {
-        alert("Geçerli bir takma ad gir (min 2 karakter).");
+        alert(`Geçerli bir takma ad gir (${LIMITS.nickMin}-${LIMITS.nickMax} karakter, sadece harf/rakam (Türkçe dahil)/_/./-).`);
         return;
       }
       if (await isNickReserved(nick)) {
@@ -512,6 +539,7 @@
     }
 
     try {
+      sendBtn.disabled = true;
       await addDoc(collection(db, "posts"), {
         nick,
         title,
@@ -538,6 +566,8 @@
     } catch (e) {
       console.error("Konu eklenirken hata:", e);
       alert("Konu eklenirken bir hata oluştu.");
+    } finally {
+      sendBtn.disabled = false;
     }
   });
 
