@@ -258,28 +258,6 @@
       margin-left: 4px;
     }
 
-    .featured-topics-block {
-      margin-top: 18px;
-      padding: 16px;
-      border-radius: 18px;
-      background: rgba(12, 16, 36, 0.95);
-      border: 1px solid rgba(90, 110, 255, 0.35);
-      box-shadow: 0 0 20px rgba(80, 70, 230, 0.3);
-    }
-
-    .featured-title {
-      font-size: 15px;
-      font-weight: 600;
-      margin-bottom: 8px;
-      color: #dbe4ff;
-    }
-
-    .featured-note {
-      font-size: 12px;
-      color: #a8b2e5;
-      margin-bottom: 10px;
-    }
-
     .no-topics {
       font-size: 13px;
       color: #9da5dd;
@@ -345,12 +323,6 @@
     </div>
   </section>
 
-  <section class="featured-topics-block">
-    <div class="featured-title">Kaliteli Örnek Konular</div>
-    <div class="featured-note">Topluluğa değer katacak içerik formatı için başlangıç örnekleri.</div>
-    <div class="topic-list" id="featuredTopicsList"></div>
-  </section>
-
   <section class="all-topics-block">
     <div class="filter-bar">
       <input type="text" id="searchInput" placeholder="Başlık / mesaj / nick ara...">
@@ -397,8 +369,7 @@
     increment,
     getDoc,
     getDocs,
-    where,
-    limit
+    where
   } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
   import {
     getAuth,
@@ -429,7 +400,6 @@
   const filterCategory = document.getElementById("filterCategory");
   const sortSelect = document.getElementById("sortSelect");
   const allTopicsList = document.getElementById("allTopicsList");
-  const featuredTopicsList = document.getElementById("featuredTopicsList");
 
   const urlParams = new URLSearchParams(window.location.search);
   const initialCategory = urlParams.get("category");
@@ -463,49 +433,6 @@
     bug: "Bug Bounty",
     genel: "Genel Sohbet"
   };
-
-  const featuredTopics = [
-    {
-      key: "featured-soc-onboarding",
-      category: "cyber",
-      title: "SOC için 30-60-90 Günlük Onboarding Planı (SIEM, Playbook, KPI)",
-      nick: "BlueMentor",
-      message: "Yeni başlayan bir analistin ilk 90 günde alarm gürültüsünü azaltma, runbook standardizasyonu ve MTTR takibi için adım adım plan öneriyorum.",
-      replyCount: 12,
-      likes: 41,
-      pinnedLabel: "Starter Guide"
-    },
-    {
-      key: "featured-k8s-hardening",
-      category: "cloud",
-      title: "Kubernetes Hardening Checklist: RBAC, NetworkPolicy, Secrets, Admission",
-      nick: "k8s-guardian",
-      message: "Prod cluster için uygulanabilir bir hardening checklist paylaşıyorum: Pod Security, image signing, egress kontrolü ve audit policy örnekleri dahil.",
-      replyCount: 18,
-      likes: 57,
-      pinnedLabel: "Checklist"
-    },
-    {
-      key: "featured-career-senior",
-      category: "career",
-      title: "Siber Güvenlikte Senior’a Geçiş: Portföy, Mülakat ve Maaş Pazarlığı",
-      nick: "career-lab",
-      message: "Gerçek vaka yazılarıyla portföy oluşturma, teknik mülakatta hikâye anlatımı ve teklif görüşmelerinde ölçülebilir etkiyi konuşma rehberi.",
-      replyCount: 26,
-      likes: 63,
-      pinnedLabel: "Career"
-    },
-    {
-      key: "featured-home-lab-network",
-      category: "network",
-      title: "Sıfırdan Ev Lab: VLAN Segmentasyonu + Suricata + Zeek Telemetri Akışı",
-      nick: "netforensic",
-      message: "Uygun bütçeli donanımla gerçekçi bir mavi takım labı kurmak isteyenler için topoloji, log akışı ve test senaryoları.",
-      replyCount: 9,
-      likes: 35,
-      pinnedLabel: "Lab Setup"
-    }
-  ];
 
   let currentUser = null;
   let currentUserProfile = null;
@@ -648,102 +575,6 @@
   });
 
 
-  function getSignedInDisplayName() {
-    if (!currentUser) return null;
-    return currentUserProfile?.username ||
-      (currentUser.email ? currentUser.email.split("@")[0] : "Kayıtlı Kullanıcı");
-  }
-
-  async function ensureFeaturedTopicPost(topic) {
-    const key = topic.key || topic.title;
-    const q = query(
-      collection(db, "posts"),
-      where("featuredKey", "==", key),
-      limit(1)
-    );
-
-    const snap = await getDocs(q);
-    if (!snap.empty) {
-      return snap.docs[0].id;
-    }
-
-    const author = getSignedInDisplayName() || topic.nick || "NebChat";
-    const docRef = await addDoc(collection(db, "posts"), {
-      featuredKey: key,
-      isFeatured: true,
-      nick: author,
-      title: topic.title,
-      message: topic.message,
-      category: topic.category,
-      createdAt: serverTimestamp(),
-      replyCount: 0,
-      lastReplyAt: null,
-      likes: typeof topic.likes === "number" ? topic.likes : 0,
-      dislikes: 0,
-      userId: currentUser ? currentUser.uid : null,
-      solutionReplyId: null
-    });
-
-    return docRef.id;
-  }
-
-  async function openFeaturedTopic(topic, itemElement) {
-    const originalMeta = itemElement.dataset.metaText || "";
-    const metaEl = itemElement.querySelector(".topic-meta-line");
-
-    try {
-      itemElement.style.pointerEvents = "none";
-      if (metaEl) metaEl.textContent = "Konu hazırlanıyor...";
-      const topicId = await ensureFeaturedTopicPost(topic);
-      window.location.href = `topic.html?id=${encodeURIComponent(topicId)}`;
-    } catch (e) {
-      console.error("Örnek konu açılırken hata:", e);
-      if (metaEl) metaEl.textContent = originalMeta || "Konu açılamadı, tekrar dene.";
-      itemElement.style.pointerEvents = "auto";
-      alert("Örnek konu açılırken bir hata oluştu.");
-    }
-  }
-
-  function renderFeaturedTopics() {
-    if (!featuredTopicsList) return;
-    featuredTopicsList.innerHTML = "";
-
-    featuredTopics.forEach((d) => {
-      const item = document.createElement("a");
-      item.className = "topic-item topic-link";
-      item.href = `topic.html?featured=${encodeURIComponent(d.key || d.title)}`;
-
-      const catText = categoryLabel[d.category] || "Kategori";
-
-      const titleEl = document.createElement("div");
-      titleEl.className = "topic-title";
-      titleEl.textContent = `${catText} • ${d.title}`;
-
-      const nickEl = document.createElement("div");
-      nickEl.className = "topic-nick";
-      nickEl.textContent = `${d.nick} • ${d.pinnedLabel}`;
-
-      const previewEl = document.createElement("div");
-      previewEl.className = "topic-message-preview";
-      previewEl.textContent = d.message;
-
-      const metaEl = document.createElement("div");
-      metaEl.className = "topic-meta-line";
-      metaEl.textContent = `${d.replyCount} yorum • ${d.likes} beğeni • Açmak için tıkla`;
-      item.dataset.metaText = metaEl.textContent;
-
-      item.appendChild(titleEl);
-      item.appendChild(nickEl);
-      item.appendChild(previewEl);
-      item.appendChild(metaEl);
-      item.addEventListener("click", (event) => {
-        event.preventDefault();
-        openFeaturedTopic(d, item);
-      });
-      featuredTopicsList.appendChild(item);
-    });
-  }
-
   function renderAllTopics() {
     allTopicsList.innerHTML = "";
 
@@ -884,7 +715,6 @@
     el.addEventListener("change", renderAllTopics);
   });
 
-  renderFeaturedTopics();
   listenAllTopics();
 </script>
 
