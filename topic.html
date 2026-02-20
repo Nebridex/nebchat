@@ -147,6 +147,51 @@
       box-shadow: 0 0 14px rgba(255, 215, 140, 0.6);
     }
 
+    .btn-dislike {
+      padding: 6px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 144, 144, 0.75);
+      background: rgba(255, 96, 96, 0.12);
+      color: #ffb4b4;
+      font-size: 13px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .btn-dislike:hover {
+      background: rgba(255, 96, 96, 0.2);
+      box-shadow: 0 0 14px rgba(255, 96, 96, 0.55);
+    }
+
+    .score-pill {
+      font-size: 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(130, 147, 255, 0.45);
+      background: rgba(95, 112, 255, 0.15);
+      color: #dbe3ff;
+      padding: 5px 9px;
+      font-weight: 600;
+    }
+
+    .reply-toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+    }
+
+    .reply-toolbar select {
+      padding: 6px 10px;
+      border-radius: 10px;
+      border: 1px solid rgba(108, 99, 255, 0.45);
+      background: rgba(9, 14, 34, 0.9);
+      color: #dfe6ff;
+      font-size: 12px;
+      outline: none;
+    }
+
     .messages-box {
       background: rgba(10, 14, 32, 0.98);
       border-radius: 18px;
@@ -366,23 +411,33 @@
 
     <div class="like-row">
       <button class="btn-like" id="likeBtn">👍 Beğen (<span id="likeCount">0</span>)</button>
+      <button class="btn-dislike" id="dislikeBtn">👎 Katılmıyorum (<span id="dislikeCount">0</span>)</button>
+      <span class="score-pill" id="topicScorePill">Skor: 0</span>
       <span style="font-size:11px;color:#9ea8e0;">
-        Beğeniler konu sahibine gider. Giriş yaparsan aldığın beğeniler profilinde sayılır.
+        Oylama dengesiyle kaliteli yanıtları öne çıkar. Beğeniler konu sahibine profil puanı olarak yansır.
       </span>
     </div>
   </section>
 
   <section class="messages-box">
-    <div class="section-title">Yanıtlar</div>
+    <div class="reply-toolbar">
+      <div class="section-title" style="margin-bottom:0;">Yanıtlar</div>
+      <select id="replySortSelect">
+        <option value="top">En faydalı (skor)</option>
+        <option value="newest">En yeni</option>
+        <option value="oldest">En eski</option>
+        <option value="controversial">En tartışmalı</option>
+      </select>
+    </div>
     <div id="messages-list"></div>
   </section>
 
   <section class="reply-box">
     <div class="section-title">Cevap Yaz</div>
     <div class="form-row">
-      <input type="text" id="nickname" placeholder="Takma adın (guest için)">
+      <input type="text" id="nickname" placeholder="Takma adın (guest için)" minlength="2" maxlength="24" autocomplete="nickname">
     </div>
-    <textarea id="message" placeholder="Mesajını yaz... (Markdown destekli)"></textarea>
+    <textarea id="message" placeholder="Mesajını yaz... (Markdown destekli)" minlength="12" maxlength="4000"></textarea>
     <button class="btn-main" id="replyBtn">Gönder</button>
     <div class="info-text">
       Markdown destekli. Kod için ``` blokları kullanabilirsin.
@@ -462,8 +517,19 @@
   const messageInput = document.getElementById("message");
   const replyBtn = document.getElementById("replyBtn");
   const likeBtn = document.getElementById("likeBtn");
+  const dislikeBtn = document.getElementById("dislikeBtn");
   const likeCountEl = document.getElementById("likeCount");
+  const dislikeCountEl = document.getElementById("dislikeCount");
+  const topicScorePill = document.getElementById("topicScorePill");
+  const replySortSelect = document.getElementById("replySortSelect");
   const replyLoginInfo = document.getElementById("replyLoginInfo");
+
+  const LIMITS = {
+    nickMin: 2,
+    nickMax: 24,
+    messageMin: 12,
+    messageMax: 4000
+  };
 
   const converter = new showdown.Converter({
     simpleLineBreaks: true,
@@ -504,6 +570,7 @@
   let currentUser = null;
   let currentUserProfile = null;
   let loadedPost = null;
+  let latestReplies = [];
 
   async function loadUserProfile(uid) {
     try {
@@ -519,7 +586,9 @@
 
   function validateGuestNick(nick) {
     if (!nick) return false;
-    if (nick.trim().length < 2) return false;
+    const value = nick.trim();
+    if (value.length < LIMITS.nickMin || value.length > LIMITS.nickMax) return false;
+    if (!/^[\p{L}\p{N}_.-]+$/u.test(value)) return false;
     return true;
   }
 
@@ -561,6 +630,7 @@
     topicMetaEl.textContent = "";
     topicMessageEl.textContent = "";
     likeBtn.disabled = true;
+    dislikeBtn.disabled = true;
   } else {
     loadPost();
     listenReplies();
@@ -576,6 +646,7 @@
         topicMetaEl.textContent = "";
         topicMessageEl.textContent = "";
         likeBtn.disabled = true;
+        dislikeBtn.disabled = true;
         return;
       }
 
@@ -606,11 +677,61 @@
       renderMarkdown(topicMessageEl, data.message || "");
 
       const likes = typeof data.likes === "number" ? data.likes : 0;
+      const dislikes = typeof data.dislikes === "number" ? data.dislikes : 0;
       likeCountEl.textContent = likes;
+      dislikeCountEl.textContent = dislikes;
+      topicScorePill.textContent = `Skor: ${likes - dislikes}`;
     } catch (e) {
       console.error("Konu yüklenirken hata:", e);
       topicTitleEl.textContent = "Konu yüklenirken hata oluştu.";
     }
+  }
+
+  function getReplyScore(reply) {
+    const likes = typeof reply.likes === "number" ? reply.likes : 0;
+    const dislikes = typeof reply.dislikes === "number" ? reply.dislikes : 0;
+    return likes - dislikes;
+  }
+
+  function renderReplies() {
+    messagesListEl.innerHTML = "";
+
+    if (!latestReplies.length) {
+      messagesListEl.innerHTML =
+        '<div class="msg-item"><div class="msg-body"><div class="msg-text">Henüz yorum yok. İlk yorumu sen yaz.</div></div></div>';
+      return;
+    }
+
+    let replies = [...latestReplies];
+    let solutionReply = null;
+
+    if (loadedPost && loadedPost.solutionReplyId) {
+      solutionReply = replies.find((r) => r.id === loadedPost.solutionReplyId) || null;
+      replies = replies.filter((r) => r.id !== loadedPost.solutionReplyId);
+    }
+
+    const mode = replySortSelect?.value || "top";
+    replies.sort((a, b) => {
+      const at = a.createdAt?.toDate ? a.createdAt.toDate().getTime() : 0;
+      const bt = b.createdAt?.toDate ? b.createdAt.toDate().getTime() : 0;
+      const as = getReplyScore(a);
+      const bs = getReplyScore(b);
+      const av = (a.likes || 0) + (a.dislikes || 0);
+      const bv = (b.likes || 0) + (b.dislikes || 0);
+
+      if (mode === "newest") return bt - at;
+      if (mode === "oldest") return at - bt;
+      if (mode === "controversial") return bv - av || bt - at;
+      return bs - as || bt - at;
+    });
+
+    if (solutionReply) {
+      messagesListEl.appendChild(createReplyElement(solutionReply, true));
+    }
+
+    replies.forEach((data) => {
+      messagesListEl.appendChild(createReplyElement(data, false));
+    });
   }
 
   function listenReplies() {
@@ -618,42 +739,19 @@
     const q = query(repliesRef, orderBy("createdAt", "asc"));
 
     onSnapshot(q, (snapshot) => {
-      messagesListEl.innerHTML = "";
-
-      const replies = [];
+      latestReplies = [];
       snapshot.forEach((docSnap) => {
-        replies.push({
+        latestReplies.push({
           id: docSnap.id,
           ...docSnap.data()
         });
       });
-
-      let solutionReply = null;
-      let others = replies;
-
-      if (loadedPost && loadedPost.solutionReplyId) {
-        solutionReply = replies.find((r) => r.id === loadedPost.solutionReplyId) || null;
-        if (solutionReply) {
-          others = replies.filter((r) => r.id !== loadedPost.solutionReplyId);
-        }
-      }
-
-      if (!replies.length) {
-        messagesListEl.innerHTML =
-          '<div class="msg-item"><div class="msg-body"><div class="msg-text">Henüz yorum yok. İlk yorumu sen yaz.</div></div></div>';
-        return;
-      }
-
-      if (solutionReply) {
-        const el = createReplyElement(solutionReply, true);
-        messagesListEl.appendChild(el);
-      }
-
-      others.forEach((data) => {
-        const el = createReplyElement(data, false);
-        messagesListEl.appendChild(el);
-      });
+      renderReplies();
     });
+
+    if (replySortSelect) {
+      replySortSelect.addEventListener("change", renderReplies);
+    }
   }
 
   function createReplyElement(data, isSolution) {
@@ -700,17 +798,25 @@
     actions.className = "msg-actions";
 
     const likes = typeof data.likes === "number" ? data.likes : 0;
-    const likeSpan = document.createElement("span");
-    likeSpan.textContent = `👍 ${likes} beğeni`;
+    const dislikes = typeof data.dislikes === "number" ? data.dislikes : 0;
+    const scoreSpan = document.createElement("span");
+    scoreSpan.textContent = `Skor ${likes - dislikes} • 👍 ${likes} / 👎 ${dislikes}`;
 
     const upvoteBtn = document.createElement("button");
     upvoteBtn.textContent = "Beğen";
     upvoteBtn.addEventListener("click", () => {
-      upvoteReply(data.id, data.userId || null, likeSpan);
+      voteReply(data.id, data.userId || null, 1, 0, scoreSpan);
     });
 
-    actions.appendChild(likeSpan);
+    const downvoteBtn = document.createElement("button");
+    downvoteBtn.textContent = "Katılmıyorum";
+    downvoteBtn.addEventListener("click", () => {
+      voteReply(data.id, data.userId || null, 0, 1, scoreSpan);
+    });
+
+    actions.appendChild(scoreSpan);
     actions.appendChild(upvoteBtn);
+    actions.appendChild(downvoteBtn);
 
     if (loadedPost && currentUser && loadedPost.userId === currentUser.uid) {
       const solutionBtn = document.createElement("button");
@@ -752,6 +858,11 @@
       return;
     }
 
+    if (text.length < LIMITS.messageMin || text.length > LIMITS.messageMax) {
+      alert(`Yorum ${LIMITS.messageMin}-${LIMITS.messageMax} karakter arasında olmalı.`);
+      return;
+    }
+
     if (currentUser) {
       nick =
         currentUserProfile?.username ||
@@ -759,7 +870,7 @@
     } else {
       nick = nicknameInput.value.trim();
       if (!validateGuestNick(nick)) {
-        alert("Geçerli bir takma ad gir (min 2 karakter).");
+        alert(`Geçerli bir takma ad gir (${LIMITS.nickMin}-${LIMITS.nickMax} karakter, sadece harf/rakam (Türkçe dahil)/_/./-).`);
         return;
       }
       if (await isNickReserved(nick)) {
@@ -769,13 +880,15 @@
     }
 
     try {
+      replyBtn.disabled = true;
       const repliesRef = collection(db, "posts", postId, "replies");
       await addDoc(repliesRef, {
         nick,
         message: text,
         createdAt: serverTimestamp(),
         userId: currentUser ? currentUser.uid : null,
-        likes: 0
+        likes: 0,
+        dislikes: 0
       });
 
       const postRef = doc(db, "posts", postId);
@@ -795,37 +908,57 @@
     } catch (e) {
       console.error("Yorum eklenirken hata:", e);
       alert("Yorum eklenirken bir hata oluştu.");
+    } finally {
+      replyBtn.disabled = false;
     }
   });
 
-  likeBtn.addEventListener("click", async () => {
+  async function voteTopic(likeDelta, dislikeDelta) {
     if (!postId || !loadedPost) {
       alert("Geçersiz konu.");
       return;
     }
 
     try {
+      likeBtn.disabled = true;
+      dislikeBtn.disabled = true;
+
       const postRef = doc(db, "posts", postId);
-      await updateDoc(postRef, {
-        likes: increment(1)
-      });
+      const payload = {};
+      if (likeDelta) payload.likes = increment(likeDelta);
+      if (dislikeDelta) payload.dislikes = increment(dislikeDelta);
+      await updateDoc(postRef, payload);
 
-      const current = parseInt(likeCountEl.textContent || "0", 10);
-      likeCountEl.textContent = current + 1;
+      const likes = parseInt(likeCountEl.textContent || "0", 10) + likeDelta;
+      const dislikes = parseInt(dislikeCountEl.textContent || "0", 10) + dislikeDelta;
+      likeCountEl.textContent = likes;
+      dislikeCountEl.textContent = dislikes;
+      topicScorePill.textContent = `Skor: ${likes - dislikes}`;
 
-      if (loadedPost.userId) {
+      if (likeDelta > 0 && loadedPost.userId) {
         const ownerRef = doc(db, "users", loadedPost.userId);
         updateDoc(ownerRef, {
           "stats.likes": increment(1)
         }).catch((e) => console.warn("Konu sahibi like istatistiği güncellenemedi:", e));
       }
     } catch (e) {
-      console.error("Beğeni eklenirken hata:", e);
-      alert("Beğeni eklenirken bir hata oluştu.");
+      console.error("Konu oylanırken hata:", e);
+      alert("Oylama sırasında bir hata oluştu.");
+    } finally {
+      likeBtn.disabled = false;
+      dislikeBtn.disabled = false;
     }
+  }
+
+  likeBtn.addEventListener("click", async () => {
+    voteTopic(1, 0);
   });
 
-  async function upvoteReply(replyId, replyUserId, likeSpanElement) {
+  dislikeBtn.addEventListener("click", async () => {
+    voteTopic(0, 1);
+  });
+
+  async function voteReply(replyId, replyUserId, likeDelta, dislikeDelta, scoreElement) {
     if (!postId || !replyId) {
       alert("Geçersiz yorum.");
       return;
@@ -833,24 +966,30 @@
 
     try {
       const replyRef = doc(db, "posts", postId, "replies", replyId);
-      await updateDoc(replyRef, {
-        likes: increment(1)
-      });
+      const payload = {};
+      if (likeDelta) payload.likes = increment(likeDelta);
+      if (dislikeDelta) payload.dislikes = increment(dislikeDelta);
+      await updateDoc(replyRef, payload);
 
-      const currentText = likeSpanElement.textContent || "";
-      const match = currentText.match(/(\d+)/);
-      const current = match ? parseInt(match[1], 10) : 0;
-      likeSpanElement.textContent = `👍 ${current + 1} beğeni`;
+      const text = scoreElement.textContent || "";
+      const m = text.match(/Skor\s(-?\d+)\s•\s👍\s(\d+)\s\/\s👎\s(\d+)/);
+      let score = m ? parseInt(m[1], 10) : 0;
+      let likes = m ? parseInt(m[2], 10) : 0;
+      let dislikes = m ? parseInt(m[3], 10) : 0;
+      likes += likeDelta;
+      dislikes += dislikeDelta;
+      score += likeDelta - dislikeDelta;
+      scoreElement.textContent = `Skor ${score} • 👍 ${likes} / 👎 ${dislikes}`;
 
-      if (replyUserId) {
+      if (likeDelta > 0 && replyUserId) {
         const userRef = doc(db, "users", replyUserId);
         updateDoc(userRef, {
           "stats.likes": increment(1)
         }).catch((e) => console.warn("Yorum sahibi like istatistiği güncellenemedi:", e));
       }
     } catch (e) {
-      console.error("Reply beğenilirken hata:", e);
-      alert("Beğeni eklenirken bir hata oluştu.");
+      console.error("Reply oylanırken hata:", e);
+      alert("Oylama sırasında bir hata oluştu.");
     }
   }
 
