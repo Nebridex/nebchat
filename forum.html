@@ -397,7 +397,8 @@
     increment,
     getDoc,
     getDocs,
-    where
+    where,
+    limit
   } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
   import {
     getAuth,
@@ -465,6 +466,7 @@
 
   const featuredTopics = [
     {
+      key: "featured-soc-onboarding",
       category: "cyber",
       title: "SOC için 30-60-90 Günlük Onboarding Planı (SIEM, Playbook, KPI)",
       nick: "BlueMentor",
@@ -474,6 +476,7 @@
       pinnedLabel: "Starter Guide"
     },
     {
+      key: "featured-k8s-hardening",
       category: "cloud",
       title: "Kubernetes Hardening Checklist: RBAC, NetworkPolicy, Secrets, Admission",
       nick: "k8s-guardian",
@@ -483,6 +486,7 @@
       pinnedLabel: "Checklist"
     },
     {
+      key: "featured-career-senior",
       category: "career",
       title: "Siber Güvenlikte Senior’a Geçiş: Portföy, Mülakat ve Maaş Pazarlığı",
       nick: "career-lab",
@@ -492,6 +496,7 @@
       pinnedLabel: "Career"
     },
     {
+      key: "featured-home-lab-network",
       category: "network",
       title: "Sıfırdan Ev Lab: VLAN Segmentasyonu + Suricata + Zeek Telemetri Akışı",
       nick: "netforensic",
@@ -643,13 +648,70 @@
   });
 
 
+  function getSignedInDisplayName() {
+    if (!currentUser) return null;
+    return currentUserProfile?.username ||
+      (currentUser.email ? currentUser.email.split("@")[0] : "Kayıtlı Kullanıcı");
+  }
+
+  async function ensureFeaturedTopicPost(topic) {
+    const key = topic.key || topic.title;
+    const q = query(
+      collection(db, "posts"),
+      where("featuredKey", "==", key),
+      limit(1)
+    );
+
+    const snap = await getDocs(q);
+    if (!snap.empty) {
+      return snap.docs[0].id;
+    }
+
+    const author = getSignedInDisplayName() || topic.nick || "NebChat";
+    const docRef = await addDoc(collection(db, "posts"), {
+      featuredKey: key,
+      isFeatured: true,
+      nick: author,
+      title: topic.title,
+      message: topic.message,
+      category: topic.category,
+      createdAt: serverTimestamp(),
+      replyCount: 0,
+      lastReplyAt: null,
+      likes: typeof topic.likes === "number" ? topic.likes : 0,
+      dislikes: 0,
+      userId: currentUser ? currentUser.uid : null,
+      solutionReplyId: null
+    });
+
+    return docRef.id;
+  }
+
+  async function openFeaturedTopic(topic, itemElement) {
+    const originalMeta = itemElement.dataset.metaText || "";
+    const metaEl = itemElement.querySelector(".topic-meta-line");
+
+    try {
+      itemElement.style.pointerEvents = "none";
+      if (metaEl) metaEl.textContent = "Konu hazırlanıyor...";
+      const topicId = await ensureFeaturedTopicPost(topic);
+      window.location.href = `topic.html?id=${encodeURIComponent(topicId)}`;
+    } catch (e) {
+      console.error("Örnek konu açılırken hata:", e);
+      if (metaEl) metaEl.textContent = originalMeta || "Konu açılamadı, tekrar dene.";
+      itemElement.style.pointerEvents = "auto";
+      alert("Örnek konu açılırken bir hata oluştu.");
+    }
+  }
+
   function renderFeaturedTopics() {
     if (!featuredTopicsList) return;
     featuredTopicsList.innerHTML = "";
 
     featuredTopics.forEach((d) => {
-      const item = document.createElement("div");
-      item.className = "topic-item";
+      const item = document.createElement("a");
+      item.className = "topic-item topic-link";
+      item.href = `topic.html?featured=${encodeURIComponent(d.key || d.title)}`;
 
       const catText = categoryLabel[d.category] || "Kategori";
 
@@ -667,12 +729,17 @@
 
       const metaEl = document.createElement("div");
       metaEl.className = "topic-meta-line";
-      metaEl.textContent = `${d.replyCount} yorum • ${d.likes} beğeni`;
+      metaEl.textContent = `${d.replyCount} yorum • ${d.likes} beğeni • Açmak için tıkla`;
+      item.dataset.metaText = metaEl.textContent;
 
       item.appendChild(titleEl);
       item.appendChild(nickEl);
       item.appendChild(previewEl);
       item.appendChild(metaEl);
+      item.addEventListener("click", (event) => {
+        event.preventDefault();
+        openFeaturedTopic(d, item);
+      });
       featuredTopicsList.appendChild(item);
     });
   }
