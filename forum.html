@@ -3,7 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>NebChat • Forum</title>
+  <title>NebChat Forum • Türkiye Tech & Security Konuları</title>
+  <meta name="description" content="NebChat forumunda Türkiye odaklı siber güvenlik, cloud, network, kariyer ve teknoloji konularını keşfedin.">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://nebchat.online/forum.html">
+  <link rel="manifest" href="/manifest.webmanifest">
+  <meta property="og:title" content="NebChat Forum • Türkiye Tech & Security Konuları">
+  <meta property="og:description" content="Anonim forumda en güncel Türkçe cyber security, cloud ve kariyer konularını takip edin.">
+  <meta property="og:url" content="https://nebchat.online/forum.html">
 
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&family=Pacifico&display=swap');
@@ -403,6 +410,7 @@
 
   const urlParams = new URLSearchParams(window.location.search);
   const initialCategory = urlParams.get("category");
+  const initialQuery = urlParams.get("q") || urlParams.get("search") || "";
 
   const LIMITS = {
     nickMin: 2,
@@ -416,6 +424,10 @@
   if (initialCategory) {
     filterCategory.value = initialCategory;
     categoryInput.value = initialCategory;
+  }
+
+  if (initialQuery) {
+    searchInput.value = initialQuery;
   }
 
   const categoryLabel = {
