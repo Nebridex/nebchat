@@ -4,6 +4,10 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>NebChat • Profilim</title>
+  <meta name="description" content="NebChat profil alanında kullanıcı adınızı yönetin, forum istatistiklerinizi görüntüleyin ve topluluk katkılarınızı takip edin.">
+  <meta name="robots" content="noindex, follow">
+  <link rel="canonical" href="https://nebchat.online/profile.html">
+  <link rel="manifest" href="/manifest.webmanifest">
 
   <style>
     @import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&family=Pacifico&display=swap");
@@ -259,6 +263,15 @@
       margin-bottom: 6px;
     }
 
+    .checkin-box {
+      margin-top: 14px;
+      border: 1px solid rgba(108, 99, 255, 0.35);
+      border-radius: 12px;
+      padding: 10px;
+      background: rgba(9, 14, 34, 0.82);
+      font-size: 12px;
+    }
+
     footer {
       margin-top: 40px;
       padding: 20px;
@@ -377,6 +390,12 @@
         Girişli yazdığın her mesaj ve aldığın beğeni buraya işler.
       </div>
 
+      <div class="checkin-box">
+        <div><strong>🔥 Günlük Check-in</strong></div>
+        <div class="hint" id="streakInfo">Seri başlatmak için bugün check-in yap.</div>
+        <button class="btn-main" id="checkinBtn" type="button">Bugün Buradayım</button>
+      </div>
+
       <div style="margin-top:16px;">
         <button class="btn-secondary" id="logoutBtn">Çıkış Yap</button>
       </div>
@@ -451,6 +470,8 @@
   const statTopics = document.getElementById("statTopics");
   const statLikes = document.getElementById("statLikes");
   const statScore = document.getElementById("statScore");
+  const streakInfo = document.getElementById("streakInfo");
+  const checkinBtn = document.getElementById("checkinBtn");
 
   let currentUser = null;
   let currentUserData = null;
@@ -633,6 +654,37 @@
     statScore.textContent = Math.round(nebScore);
   }
 
+
+  function todayKey() {
+    return new Date().toISOString().slice(0, 10);
+  }
+
+  function updateStreakUI() {
+    if (!currentUser || !streakInfo) return;
+    const key = `nebchat-streak-${currentUser.uid}`;
+    const data = JSON.parse(localStorage.getItem(key) || '{"count":0,"last":""}');
+    streakInfo.textContent = `Mevcut seri: ${data.count || 0} gün • Son check-in: ${data.last || "yok"}`;
+  }
+
+  if (checkinBtn) {
+    checkinBtn.addEventListener("click", () => {
+      if (!currentUser) return;
+      const key = `nebchat-streak-${currentUser.uid}`;
+      const data = JSON.parse(localStorage.getItem(key) || '{"count":0,"last":""}');
+      const today = todayKey();
+      if (data.last === today) {
+        streakInfo.textContent = `Bugün zaten check-in yaptın. Seri: ${data.count} gün`;
+        return;
+      }
+      const prev = new Date(Date.now() - 86400000).toISOString().slice(0,10);
+      data.count = data.last === prev ? (data.count || 0) + 1 : 1;
+      data.last = today;
+      localStorage.setItem(key, JSON.stringify(data));
+      updateStreakUI();
+    });
+  }
+
+
   onAuthStateChanged(auth, async (user) => {
     currentUser = user;
     currentUserData = null;
@@ -650,11 +702,33 @@
       authCard.style.display = "none";
       profileCard.style.display = "block";
       renderProfile();
+      updateStreakUI();
     } catch (e) {
       console.error("Profil yükleme hatası:", e);
     }
   });
 </script>
 
+
+<!-- UX50_PROFILE_ENHANCEMENTS -->
+<style>.uxp{margin-top:12px;border:1px solid rgba(108,99,255,.35);border-radius:12px;padding:10px;background:rgba(9,14,34,.82)}.uxp-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}.uxp-btn{border:1px solid rgba(108,99,255,.45);background:rgba(108,99,255,.16);color:#e8edff;border-radius:999px;padding:5px 9px;cursor:pointer;font-size:12px}.uxp-input{padding:6px 8px;border-radius:8px;border:1px solid rgba(108,99,255,.4);background:rgba(7,12,30,.9);color:#fff}</style>
+<script>
+(()=>{
+ const profile=document.getElementById('profileCard'); if(!profile) return;
+ const box=document.createElement('div'); box.className='uxp';
+ box.innerHTML=`<strong>Kişisel Ayarlar</strong><div class='uxp-row'><input class='uxp-input' id='bioInput' placeholder='Kısa bio (local)'><button class='uxp-btn' id='saveBio'>Bio Kaydet</button><span id='bioState' class='hint'></span></div><div class='uxp-row'><input class='uxp-input' id='statusEmoji' placeholder='Durum emojisi (örn 🚀)'><button class='uxp-btn' id='saveEmoji'>Emoji Kaydet</button><button class='uxp-btn' id='exportPrefs'>Ayarları dışa aktar</button><button class='uxp-btn' id='clearPrefs'>Ayarları temizle</button></div><div class='uxp-row'><button class='uxp-btn' id='goalBtn'>Günlük hedef +1</button><span class='hint' id='goalInfo'>Hedef: 0</span><button class='uxp-btn' id='resetGoal'>Hedef sıfırla</button></div>`;
+ profile.appendChild(box);
+ const uidKey=()=>`profile-local-${(document.getElementById('usernameDisplay')||{}).textContent||'guest'}`;
+ const load=()=>{const d=JSON.parse(localStorage.getItem(uidKey())||'{}');document.getElementById('bioInput').value=d.bio||'';document.getElementById('statusEmoji').value=d.emoji||'';const n=document.getElementById('usernameDisplay'); if(n&&d.emoji&&!n.textContent.startsWith(d.emoji+' ')) n.textContent=d.emoji+' '+n.textContent.replace(/^\S+\s/,'');document.getElementById('goalInfo').textContent='Hedef: '+(d.goal||0);};
+ const save=(patch)=>{const d=JSON.parse(localStorage.getItem(uidKey())||'{}');Object.assign(d,patch);localStorage.setItem(uidKey(),JSON.stringify(d));load();};
+ document.getElementById('saveBio').onclick=()=>{save({bio:document.getElementById('bioInput').value.trim()});document.getElementById('bioState').textContent='Kaydedildi';};
+ document.getElementById('saveEmoji').onclick=()=>save({emoji:document.getElementById('statusEmoji').value.trim()});
+ document.getElementById('goalBtn').onclick=()=>{const d=JSON.parse(localStorage.getItem(uidKey())||'{}');save({goal:(d.goal||0)+1});};
+ document.getElementById('resetGoal').onclick=()=>save({goal:0});
+ document.getElementById('exportPrefs').onclick=()=>{navigator.clipboard.writeText(localStorage.getItem(uidKey())||'{}').then(()=>alert('Profil ayarları kopyalandı'));};
+ document.getElementById('clearPrefs').onclick=()=>{localStorage.removeItem(uidKey());load();};
+ setInterval(load,2000);
+})();
+</script>
 </body>
 </html>

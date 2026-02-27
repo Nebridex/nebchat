@@ -3,7 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>NebChat • Forum</title>
+  <title>NebChat Forum • Türkiye Tech & Security Konuları</title>
+  <meta name="description" content="NebChat forumunda Türkiye odaklı siber güvenlik, cloud, network, kariyer ve teknoloji konularını keşfedin.">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://nebchat.online/forum.html">
+  <link rel="manifest" href="/manifest.webmanifest">
+  <meta property="og:title" content="NebChat Forum • Türkiye Tech & Security Konuları">
+  <meta property="og:description" content="Anonim forumda en güncel Türkçe cyber security, cloud ve kariyer konularını takip edin.">
+  <meta property="og:url" content="https://nebchat.online/forum.html">
 
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&family=Pacifico&display=swap');
@@ -264,6 +271,47 @@
       margin-top: 6px;
     }
 
+
+    .utility-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 8px;
+    }
+
+    .btn-ghost {
+      border: 1px solid rgba(108, 99, 255, 0.45);
+      background: rgba(7, 12, 30, 0.8);
+      color: #cfd7ff;
+      border-radius: 999px;
+      padding: 6px 10px;
+      cursor: pointer;
+      font-size: 12px;
+    }
+
+    .trending-tags {
+      margin: 10px 0 12px;
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .tag-chip {
+      border: 1px solid rgba(108, 99, 255, 0.5);
+      border-radius: 999px;
+      padding: 4px 8px;
+      font-size: 11px;
+      color: #d9e0ff;
+      background: rgba(108, 99, 255, 0.15);
+      cursor: pointer;
+    }
+
+    .bookmarked-pill {
+      margin-left: 6px;
+      font-size: 10px;
+      color: #ffe9a8;
+    }
+
     footer {
       margin-top: 40px;
       padding: 20px;
@@ -321,6 +369,11 @@
     <div class="login-indicator" id="loginIndicator">
       Giriş yaparsan forumdaki tüm yazıların KENDİ kullanıcı adınla görünür, kimse o adı kullanamaz.
     </div>
+    <div class="utility-row">
+      <button class="btn-ghost" id="saveDraftBtn" type="button">Taslağı Kaydet</button>
+      <button class="btn-ghost" id="clearDraftBtn" type="button">Taslağı Sil</button>
+      <span class="login-indicator" id="draftState">Taslak yok</span>
+    </div>
   </section>
 
   <section class="all-topics-block">
@@ -345,6 +398,11 @@
         <option value="controversial">En tartışmalı</option>
       </select>
     </div>
+    <div class="utility-row">
+      <button class="btn-ghost" id="showBookmarkedBtn" type="button">⭐ Sadece favoriler</button>
+      <span class="login-indicator" id="topicCountInfo">0 konu</span>
+    </div>
+    <div class="trending-tags" id="trendingTags"></div>
 
     <div class="topic-list" id="allTopicsList"></div>
   </section>
@@ -400,9 +458,16 @@
   const filterCategory = document.getElementById("filterCategory");
   const sortSelect = document.getElementById("sortSelect");
   const allTopicsList = document.getElementById("allTopicsList");
+  const saveDraftBtn = document.getElementById("saveDraftBtn");
+  const clearDraftBtn = document.getElementById("clearDraftBtn");
+  const draftState = document.getElementById("draftState");
+  const showBookmarkedBtn = document.getElementById("showBookmarkedBtn");
+  const topicCountInfo = document.getElementById("topicCountInfo");
+  const trendingTags = document.getElementById("trendingTags");
 
   const urlParams = new URLSearchParams(window.location.search);
   const initialCategory = urlParams.get("category");
+  const initialQuery = urlParams.get("q") || urlParams.get("search") || "";
 
   const LIMITS = {
     nickMin: 2,
@@ -416,6 +481,10 @@
   if (initialCategory) {
     filterCategory.value = initialCategory;
     categoryInput.value = initialCategory;
+  }
+
+  if (initialQuery) {
+    searchInput.value = initialQuery;
   }
 
   const categoryLabel = {
@@ -437,6 +506,9 @@
   let currentUser = null;
   let currentUserProfile = null;
   let allPosts = [];
+  let bookmarkedOnly = false;
+  const draftKey = "nebchat-topic-draft-v1";
+  const bookmarkKey = "nebchat-bookmarks-v1";
 
   function createUserBadge(isRegistered) {
     const badge = document.createElement("span");
@@ -602,6 +674,13 @@
       return true;
     });
 
+    if (bookmarkedOnly) {
+      const bookmarkMap = JSON.parse(localStorage.getItem(bookmarkKey) || "{}");
+      filtered = filtered.filter((p) => bookmarkMap[p._id]);
+    }
+
+    topicCountInfo.textContent = `${filtered.length} konu`;
+
     filtered.sort((a, b) => {
       const repliesA = typeof a.replyCount === "number" ? a.replyCount : 0;
       const repliesB = typeof b.replyCount === "number" ? b.replyCount : 0;
@@ -658,6 +737,9 @@
       const dislikeCount = typeof d.dislikes === "number" ? d.dislikes : 0;
       const scoreCount = likeCount - dislikeCount;
 
+      const bookmarkMap = JSON.parse(localStorage.getItem(bookmarkKey) || "{}");
+      const isBookmarked = Boolean(bookmarkMap[id]);
+
       const item = document.createElement("a");
       item.className = "topic-link";
       item.href = `topic.html?id=${encodeURIComponent(id)}`;
@@ -680,16 +762,93 @@
 
       const metaEl = document.createElement("div");
       metaEl.className = "topic-meta-line";
+      const readTime = Math.max(1, Math.round((previewRaw.split(/\s+/).length || 1) / 170));
       metaEl.textContent =
-        `${replyCount} yorum • 👍 ${likeCount} / 👎 ${dislikeCount} • Skor ${scoreCount}` +
+        `${replyCount} yorum • 👍 ${likeCount} / 👎 ${dislikeCount} • Skor ${scoreCount} • ⏱ ${readTime} dk okuma` +
         (timeText ? ` • Son hareket: ${timeText}` : "");
+
+      const bookmarkBtn = document.createElement("button");
+      bookmarkBtn.type = "button";
+      bookmarkBtn.className = "btn-ghost";
+      bookmarkBtn.textContent = isBookmarked ? "⭐ Favoriden çıkar" : "☆ Favoriye ekle";
+      bookmarkBtn.addEventListener("click", (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        const current = JSON.parse(localStorage.getItem(bookmarkKey) || "{}");
+        if (current[id]) delete current[id];
+        else current[id] = true;
+        localStorage.setItem(bookmarkKey, JSON.stringify(current));
+        renderAllTopics();
+      });
 
       topicItem.appendChild(titleEl);
       topicItem.appendChild(nickEl);
       topicItem.appendChild(previewEl);
       topicItem.appendChild(metaEl);
+      topicItem.appendChild(bookmarkBtn);
+      if (isBookmarked) {
+        const pill = document.createElement("span");
+        pill.className = "bookmarked-pill";
+        pill.textContent = "⭐ favori";
+        topicItem.appendChild(pill);
+      }
       item.appendChild(topicItem);
       allTopicsList.appendChild(item);
+    });
+  }
+
+
+  function saveDraft() {
+    const payload = {
+      nick: nickInput.value,
+      title: titleInput.value,
+      category: categoryInput.value,
+      message: messageInput.value,
+      at: Date.now()
+    };
+    localStorage.setItem(draftKey, JSON.stringify(payload));
+    draftState.textContent = "Taslak kaydedildi";
+  }
+
+  function loadDraft() {
+    const raw = localStorage.getItem(draftKey);
+    if (!raw) return;
+    try {
+      const data = JSON.parse(raw);
+      nickInput.value = data.nick || "";
+      titleInput.value = data.title || "";
+      categoryInput.value = data.category || "cyber";
+      messageInput.value = data.message || "";
+      draftState.textContent = "Taslak geri yüklendi";
+    } catch (e) {
+      console.warn("Taslak yüklenemedi", e);
+    }
+  }
+
+  function renderTrendingTags() {
+    if (!trendingTags) return;
+    const words = {};
+    const stop = new Set(["ve", "ile", "bir", "için", "çok", "ama", "gibi", "olan", "sonra", "daha", "güncel"]);
+    allPosts.forEach((p) => {
+      `${p.title || ""} ${p.message || ""}`
+        .toLowerCase()
+        .replace(/[^\p{L}\p{N} ]/gu, " ")
+        .split(/\s+/)
+        .filter((w) => w.length > 3 && !stop.has(w))
+        .forEach((w) => (words[w] = (words[w] || 0) + 1));
+    });
+    const top = Object.entries(words).sort((a,b)=>b[1]-a[1]).slice(0,6);
+    trendingTags.innerHTML = "";
+    top.forEach(([word,count]) => {
+      const chip = document.createElement("button");
+      chip.type = "button";
+      chip.className = "tag-chip";
+      chip.textContent = `#${word} (${count})`;
+      chip.addEventListener("click", () => {
+        searchInput.value = word;
+        renderAllTopics();
+      });
+      trendingTags.appendChild(chip);
     });
   }
 
@@ -707,16 +866,97 @@
         allPosts.push(data);
       });
       renderAllTopics();
+      renderTrendingTags();
     });
   }
 
   [searchInput, filterCategory, sortSelect].forEach((el) => {
-    el.addEventListener("input", renderAllTopics);
-    el.addEventListener("change", renderAllTopics);
+    el.addEventListener("input", () => { renderAllTopics(); renderTrendingTags(); });
+    el.addEventListener("change", () => { renderAllTopics(); renderTrendingTags(); });
   });
+
+
+  if (saveDraftBtn) saveDraftBtn.addEventListener("click", saveDraft);
+  if (clearDraftBtn) {
+    clearDraftBtn.addEventListener("click", () => {
+      localStorage.removeItem(draftKey);
+      draftState.textContent = "Taslak silindi";
+    });
+  }
+  [titleInput, messageInput, categoryInput, nickInput].forEach((el) => {
+    el.addEventListener("input", () => {
+      draftState.textContent = "Taslak düzenleniyor...";
+      localStorage.setItem(draftKey, JSON.stringify({
+        nick: nickInput.value,
+        title: titleInput.value,
+        category: categoryInput.value,
+        message: messageInput.value,
+        at: Date.now()
+      }));
+    });
+  });
+  loadDraft();
+
+  if (showBookmarkedBtn) {
+    showBookmarkedBtn.addEventListener("click", () => {
+      bookmarkedOnly = !bookmarkedOnly;
+      showBookmarkedBtn.textContent = bookmarkedOnly ? "⭐ Favoriler açık" : "⭐ Sadece favoriler";
+      renderAllTopics();
+    });
+  }
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "/" && document.activeElement !== searchInput) {
+      event.preventDefault();
+      searchInput.focus();
+    }
+  });
+
 
   listenAllTopics();
 </script>
 
+
+<!-- UX50_FORUM_ENHANCEMENTS -->
+<style>
+ .uxf-wrap{margin-top:10px}.uxf-btn{border:1px solid rgba(108,99,255,.45);background:rgba(108,99,255,.16);color:#e8edff;border-radius:999px;padding:5px 9px;cursor:pointer;font-size:12px}.uxf-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}.uxf-input{padding:6px 8px;border-radius:8px;border:1px solid rgba(108,99,255,.4);background:rgba(7,12,30,.9);color:#fff}.muted2{font-size:11px;color:#a9b4ea}
+</style>
+<script>
+(()=>{
+ const title=document.getElementById('titleInput'), msg=document.getElementById('messageInput'); if(!title||!msg) return;
+ const box=document.querySelector('.new-topic-box');
+ const wrap=document.createElement('div');wrap.className='uxf-wrap';
+ wrap.innerHTML=`<div class='uxf-row'><span class='muted2' id='titleCount'>Başlık: 0/120</span><span class='muted2' id='msgCount'>Mesaj: 0/4000</span><span class='muted2' id='readEstimate'>Okuma: 1 dk</span></div><div class='uxf-row'><button class='uxf-btn' id='tplQuestion'>Şablon: Soru</button><button class='uxf-btn' id='tplGuide'>Şablon: Rehber</button><button class='uxf-btn' id='tplNews'>Şablon: Haber</button><button class='uxf-btn' id='insertCode'>Kod bloğu ekle</button></div><div class='uxf-row'><button class='uxf-btn' id='clearComposer'>Editörü temizle</button><button class='uxf-btn' id='saveComposerSnapshot'>Snapshot al</button><button class='uxf-btn' id='restoreComposerSnapshot'>Snapshot geri yükle</button><span class='muted2' id='composerState'></span></div><div class='uxf-row'><input class='uxf-input' id='keywordAlert' placeholder='Kelime alarmı (örn: maaş)'><button class='uxf-btn' id='saveKeywordAlert'>Alarm kaydet</button><span class='muted2' id='keywordState'></span></div><div class='uxf-row'><button class='uxf-btn' id='exportBookmarks'>Favorileri dışa aktar</button><button class='uxf-btn' id='clearBookmarks'>Favorileri temizle</button><input class='uxf-input' id='importBookmarksData' placeholder='JSON yapıştır'><button class='uxf-btn' id='importBookmarks'>Favorileri içe aktar</button></div><div class='uxf-row'><button class='uxf-btn' id='rememberFilters'>Filtreleri kaydet</button><button class='uxf-btn' id='resetFilters'>Filtre sıfırla</button><button class='uxf-btn' id='randomTopicOpen'>Rastgele konu aç</button><button class='uxf-btn' id='toggleUnreadHigh'>Yeni/okunmamış vurgusu</button></div><div class='uxf-row' id='searchHistoryRow'></div>`;
+ box.appendChild(wrap);
+ const upd=()=>{document.getElementById('titleCount').textContent=`Başlık: ${title.value.length}/120`;document.getElementById('msgCount').textContent=`Mesaj: ${msg.value.length}/4000`;document.getElementById('readEstimate').textContent=`Okuma: ${Math.max(1,Math.round((msg.value.trim().split(/\s+/).filter(Boolean).length)/180))} dk`;};
+ title.addEventListener('input',upd); msg.addEventListener('input',upd); upd();
+ const templates={q:'Problem: \nNe denedim: \nBeklenen: \nGerçekleşen:',g:'Özet: \nAdım 1: \nAdım 2: \nSonuç:',n:'Kaynak linki: \nÖnemli noktalar: \nTopluluk yorumu:'};
+ document.getElementById('tplQuestion').onclick=()=>msg.value=templates.q;
+ document.getElementById('tplGuide').onclick=()=>msg.value=templates.g;
+ document.getElementById('tplNews').onclick=()=>msg.value=templates.n;
+ document.getElementById('insertCode').onclick=()=>{msg.value += '\n```\n# kod\n```\n'; upd();};
+ document.getElementById('clearComposer').onclick=()=>{title.value='';msg.value='';upd();};
+ document.getElementById('saveComposerSnapshot').onclick=()=>{localStorage.setItem('composer-snapshot',JSON.stringify({t:title.value,m:msg.value,c:(document.getElementById('categoryInput')||{}).value||'cyber'}));document.getElementById('composerState').textContent='Snapshot kaydedildi';};
+ document.getElementById('restoreComposerSnapshot').onclick=()=>{try{const d=JSON.parse(localStorage.getItem('composer-snapshot')||'{}');title.value=d.t||'';msg.value=d.m||'';const c=document.getElementById('categoryInput');if(c&&d.c)c.value=d.c;upd();document.getElementById('composerState').textContent='Snapshot yüklendi';}catch(e){}};
+ const k=document.getElementById('keywordAlert');k.value=localStorage.getItem('keyword-alert')||'';
+ document.getElementById('saveKeywordAlert').onclick=()=>{localStorage.setItem('keyword-alert',k.value.trim().toLowerCase());document.getElementById('keywordState').textContent='Kaydedildi';};
+ document.getElementById('exportBookmarks').onclick=()=>{const data=localStorage.getItem('nebchat-bookmarks-v1')||'{}';navigator.clipboard.writeText(data).then(()=>alert('Favori JSON kopyalandı'));};
+ document.getElementById('clearBookmarks').onclick=()=>{localStorage.removeItem('nebchat-bookmarks-v1');alert('Favoriler temizlendi');location.reload();};
+ document.getElementById('importBookmarks').onclick=()=>{try{JSON.parse(document.getElementById('importBookmarksData').value||'{}');localStorage.setItem('nebchat-bookmarks-v1',document.getElementById('importBookmarksData').value||'{}');alert('İçe aktarıldı');location.reload();}catch(e){alert('Geçersiz JSON')}};
+ const search=document.getElementById('searchInput'),cat=document.getElementById('filterCategory'),sort=document.getElementById('sortSelect');
+ if(localStorage.getItem('forum-filter-cat'))cat.value=localStorage.getItem('forum-filter-cat'); if(localStorage.getItem('forum-filter-sort'))sort.value=localStorage.getItem('forum-filter-sort'); if(localStorage.getItem('forum-filter-q'))search.value=localStorage.getItem('forum-filter-q');
+ document.getElementById('rememberFilters').onclick=()=>{localStorage.setItem('forum-filter-cat',cat.value);localStorage.setItem('forum-filter-sort',sort.value);localStorage.setItem('forum-filter-q',search.value);alert('Filtreler kaydedildi');};
+ document.getElementById('resetFilters').onclick=()=>{['forum-filter-cat','forum-filter-sort','forum-filter-q'].forEach(k=>localStorage.removeItem(k));location.href='forum.html';};
+ document.getElementById('randomTopicOpen').onclick=()=>{const links=[...document.querySelectorAll('.topic-link')]; if(!links.length) return; links[Math.floor(Math.random()*links.length)].click();};
+ let unreadOn=localStorage.getItem('unread-highlight')==='1';
+ document.getElementById('toggleUnreadHigh').onclick=()=>{unreadOn=!unreadOn;localStorage.setItem('unread-highlight',unreadOn?'1':'0');markReadState();};
+ const markReadState=()=>{const seen=JSON.parse(localStorage.getItem('seen-topics')||'{}');document.querySelectorAll('.topic-link').forEach(a=>{const id=(a.getAttribute('href')||'').split('id=')[1]||'';if(!id) return; if(unreadOn && !seen[id]) a.style.outline='1px solid rgba(126,255,181,.6)'; else a.style.outline='none'; a.onclick=()=>{seen[id]=Date.now();localStorage.setItem('seen-topics',JSON.stringify(seen));};});};
+ setInterval(markReadState,1200);
+ const alarm=localStorage.getItem('keyword-alert'); if(alarm){setInterval(()=>{const txt=[...document.querySelectorAll('.topic-title')].map(e=>e.textContent.toLowerCase()); if(txt.some(t=>t.includes(alarm))){document.title='🔔 '+alarm+' bulundu';}},3000);}
+ const sh=JSON.parse(localStorage.getItem('search-history')||'[]'); if(search.value){sh.unshift(search.value);localStorage.setItem('search-history',JSON.stringify([...new Set(sh)].slice(0,8)));}
+ const row=document.getElementById('searchHistoryRow'); row.innerHTML='<span class="muted2">Arama geçmişi:</span>'; (JSON.parse(localStorage.getItem('search-history')||'[]')).forEach(q=>{const b=document.createElement('button');b.className='uxf-btn';b.textContent=q;b.onclick=()=>{search.value=q;search.dispatchEvent(new Event('input'))};row.appendChild(b);});
+ document.addEventListener('keydown',(e)=>{const links=[...document.querySelectorAll('.topic-link')]; if(!links.length) return; let i=links.findIndex(l=>l===document.activeElement); if(e.key==='j'){e.preventDefault();(links[Math.min(links.length-1,i+1)]||links[0]).focus();} if(e.key==='k'){e.preventDefault();(links[Math.max(0,i-1)]||links[0]).focus();}});
+})();
+</script>
 </body>
 </html>

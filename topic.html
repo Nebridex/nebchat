@@ -4,6 +4,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>NebChat • Konu Detayı</title>
+  <meta name="description" content="NebChat konu detay sayfasında anonim forum tartışmalarını okuyun, yanıtlayın ve Türkçe teknoloji topluluğuna katılın.">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://nebchat.online/topic.html">
+  <link rel="manifest" href="/manifest.webmanifest">
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css">
 
@@ -1123,5 +1127,33 @@
   }
 </script>
 
+
+<!-- UX50_TOPIC_ENHANCEMENTS -->
+<style>.uxt{margin-top:12px;border:1px solid rgba(108,99,255,.35);border-radius:12px;padding:10px;background:rgba(9,14,34,.82)}.uxt-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}.uxt-btn{border:1px solid rgba(108,99,255,.45);background:rgba(108,99,255,.16);color:#e8edff;border-radius:999px;padding:5px 9px;cursor:pointer;font-size:12px}.uxt-input{padding:6px 8px;border-radius:8px;border:1px solid rgba(108,99,255,.4);background:rgba(7,12,30,.9);color:#fff}</style>
+<script>
+(()=>{
+ const reply=document.querySelector('.reply-box'); if(!reply) return;
+ const panel=document.createElement('div'); panel.className='uxt';
+ panel.innerHTML=`<strong>Yanıt Yardımcıları</strong><div class='uxt-row'><button class='uxt-btn' id='saveReplyDraft'>Yanıt taslağını kaydet</button><button class='uxt-btn' id='loadReplyDraft'>Taslağı yükle</button><button class='uxt-btn' id='clearReplyDraft'>Taslağı sil</button><span class='info-text' id='replyDraftState'></span></div><div class='uxt-row'><button class='uxt-btn' id='quoteTopicBtn'>Konuyu alıntıla</button><button class='uxt-btn' id='copyTopicUrlBtn2'>Link kopyala</button><button class='uxt-btn' id='focusReplyBtn'>Yanıta odaklan</button><button class='uxt-btn' id='toggleReplyDense'>Sıkı görünüm</button></div><div class='uxt-row'><input class='uxt-input' id='replySearchInput' placeholder='Yanıtlarda ara'><button class='uxt-btn' id='replySearchBtn'>Ara</button><button class='uxt-btn' id='clearReplySearch'>Temizle</button><button class='uxt-btn' id='collapseAllReplies'>Yanıtları daralt</button></div><div class='uxt-row'><button class='uxt-btn' id='expandAllReplies'>Yanıtları genişlet</button><button class='uxt-btn' id='randomReplyJump'>Rastgele yanıta git</button><span class='info-text' id='replyHelperInfo'></span></div>`;
+ reply.prepend(panel);
+ const msg=document.getElementById('message'), nick=document.getElementById('nickname'); const key='topic-reply-draft-'+location.search;
+ const state=document.getElementById('replyDraftState');
+ document.getElementById('saveReplyDraft').onclick=()=>{localStorage.setItem(key,JSON.stringify({m:msg?.value||'',n:nick?.value||''}));state.textContent='Kaydedildi';};
+ document.getElementById('loadReplyDraft').onclick=()=>{try{const d=JSON.parse(localStorage.getItem(key)||'{}');if(msg)msg.value=d.m||'';if(nick)nick.value=d.n||'';state.textContent='Yüklendi';}catch(e){}};
+ document.getElementById('clearReplyDraft').onclick=()=>{localStorage.removeItem(key);state.textContent='Silindi';};
+ document.getElementById('quoteTopicBtn').onclick=()=>{const t=(document.getElementById('topicTitle')||{}).textContent||'';const body=(document.getElementById('topicMessage')||{}).innerText||''; if(msg) msg.value=`> ${t}\n> ${body.slice(0,200).replace(/\n/g,' ')}...\n\n`+(msg.value||'');};
+ document.getElementById('copyTopicUrlBtn2').onclick=()=>navigator.clipboard.writeText(location.href).then(()=>alert('Kopyalandı'));
+ document.getElementById('focusReplyBtn').onclick=()=>msg&&msg.focus();
+ document.getElementById('toggleReplyDense').onclick=()=>{document.body.classList.toggle('reply-dense'); const st=document.getElementById('denseStyle')||Object.assign(document.createElement('style'),{id:'denseStyle'}); st.textContent='body.reply-dense .msg-item{padding:8px;margin-bottom:6px}'; document.head.appendChild(st);};
+ const filterReplies=(q)=>{document.querySelectorAll('.msg-item').forEach(el=>{el.style.display=el.innerText.toLowerCase().includes(q)?'':'none';});};
+ document.getElementById('replySearchBtn').onclick=()=>filterReplies((document.getElementById('replySearchInput').value||'').toLowerCase().trim());
+ document.getElementById('clearReplySearch').onclick=()=>{document.getElementById('replySearchInput').value='';filterReplies('');};
+ document.getElementById('collapseAllReplies').onclick=()=>{document.querySelectorAll('.msg-text').forEach(el=>el.style.display='none');};
+ document.getElementById('expandAllReplies').onclick=()=>{document.querySelectorAll('.msg-text').forEach(el=>el.style.display='block');};
+ document.getElementById('randomReplyJump').onclick=()=>{const r=[...document.querySelectorAll('.msg-item')]; if(!r.length) return; const pick=r[Math.floor(Math.random()*r.length)]; pick.scrollIntoView({behavior:'smooth',block:'center'}); pick.style.outline='1px solid rgba(126,255,181,.8)'; setTimeout(()=>pick.style.outline='none',1500);};
+ document.addEventListener('keydown',(e)=>{if(e.key==='r' && document.activeElement!==msg){e.preventDefault();msg&&msg.focus();}});
+ const replies=[...document.querySelectorAll('.msg-item')].length; document.getElementById('replyHelperInfo').textContent='Toplam yanıt: '+replies;
+})();
+</script>
 </body>
 </html>
