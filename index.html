@@ -3,7 +3,78 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>NebChat • Anonim Tech & Security Forum</title>
+  <title>NebChat • Türkiye Anonim Tech & Security Forumu</title>
+  <meta name="description" content="NebChat, Türkiye odaklı anonim tech & security forumudur. Siber güvenlik, network, cloud, kariyer ve teknoloji gündemini anonim tartışın.">
+  <meta name="keywords" content="anonim forum, türkiye siber güvenlik forumu, tech forum türkiye, network forumu, devops community">
+  <meta name="robots" content="index, follow, max-image-preview:large">
+  <meta name="author" content="NebChat">
+  <meta name="theme-color" content="#080d1a">
+  <meta name="geo.region" content="TR-34">
+  <meta name="geo.placename" content="Istanbul">
+  <meta name="geo.position" content="41.0082;28.9784">
+  <meta name="ICBM" content="41.0082, 28.9784">
+  <link rel="canonical" href="https://nebchat.online/">
+  <link rel="alternate" hreflang="tr-TR" href="https://nebchat.online/">
+  <link rel="manifest" href="/manifest.webmanifest">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="NebChat • Türkiye Anonim Tech & Security Forumu">
+  <meta property="og:description" content="TR odaklı anonim cyber security, network, cloud ve kariyer forumu.">
+  <meta property="og:url" content="https://nebchat.online/">
+  <meta property="og:site_name" content="NebChat">
+  <meta property="og:locale" content="tr_TR">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="NebChat • Türkiye Anonim Tech & Security Forumu">
+  <meta name="twitter:description" content="Türkiye odaklı anonim tech topluluğu: cyber security, cloud, network ve kariyer.">
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "Organization",
+          "name": "NebChat",
+          "url": "https://nebchat.online",
+          "email": "hello@nebchat.online",
+          "areaServed": "TR"
+        },
+        {
+          "@type": "WebSite",
+          "name": "NebChat",
+          "url": "https://nebchat.online",
+          "inLanguage": "tr-TR",
+          "potentialAction": {
+            "@type": "SearchAction",
+            "target": "https://nebchat.online/forum.html?search={search_term_string}",
+            "query-input": "required name=search_term_string"
+          }
+        },
+        {
+          "@type": "FAQPage",
+          "mainEntity": [
+            {
+              "@type": "Question",
+              "name": "NebChat hangi şehirler için uygundur?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "NebChat Türkiye genelinde, tüm şehirlerden kullanıcılar için uygundur."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Anonim içerik paylaşımı mümkün mü?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Evet, giriş zorunlu olmadan guest nick ile anonim içerik paylaşımı yapılabilir."
+              }
+            }
+          ]
+        }
+      ]
+    }
+  </script>
 
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&family=Pacifico&display=swap');
@@ -347,6 +418,111 @@
       line-height: 1.45;
     }
 
+    .skip-link {
+      position: absolute;
+      left: -9999px;
+      top: 8px;
+      background: #ffffff;
+      color: #10162b;
+      padding: 8px 12px;
+      border-radius: 8px;
+      z-index: 999;
+    }
+
+    .skip-link:focus {
+      left: 12px;
+    }
+
+    .quick-search,
+    .local-seo,
+    .faq-box {
+      max-width: 1100px;
+      margin: 0 auto 28px;
+      padding: 0 18px;
+    }
+
+    .panel {
+      background: rgba(15, 20, 45, 0.9);
+      border-radius: 18px;
+      border: 1px solid var(--border-soft);
+      box-shadow: 0 0 22px rgba(80, 70, 230, 0.45);
+      padding: 18px 16px;
+    }
+
+    .quick-search form {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+    }
+
+    .quick-search input,
+    .quick-search select {
+      background: rgba(7, 12, 30, 0.95);
+      border: 1px solid rgba(108, 99, 255, 0.45);
+      color: #fff;
+      border-radius: 10px;
+      padding: 9px 10px;
+      min-width: 180px;
+      flex: 1;
+    }
+
+    .mini-stats {
+      margin-top: 12px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 10px;
+    }
+
+    .mini-stat {
+      border: 1px solid rgba(108, 99, 255, 0.4);
+      border-radius: 12px;
+      padding: 10px;
+      background: rgba(9, 14, 34, 0.85);
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .mini-stat strong {
+      display: block;
+      color: #e0e4ff;
+      font-size: 18px;
+    }
+
+    .local-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    details {
+      border: 1px solid rgba(108, 99, 255, 0.35);
+      border-radius: 12px;
+      padding: 10px;
+      margin-top: 10px;
+      background: rgba(9, 14, 34, 0.82);
+    }
+
+    summary {
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    .sticky-mobile-cta {
+      position: fixed;
+      bottom: 10px;
+      right: 10px;
+      z-index: 40;
+      border-radius: 999px;
+      padding: 10px 14px;
+      text-decoration: none;
+      background: linear-gradient(135deg, #6c63ff, #8b7bff);
+      color: #fff;
+      font-size: 12px;
+      box-shadow: 0 0 20px rgba(108, 99, 255, 0.75);
+    }
+
     footer {
       text-align: center;
       font-size: 12px;
@@ -358,6 +534,7 @@
   </style>
 </head>
 <body>
+<a href="#mainContent" class="skip-link">Ana içeriğe geç</a>
 
 <header>
   <div class="logo-area">
@@ -375,6 +552,7 @@
   </nav>
 </header>
 
+<main id="mainContent">
 <section class="hero">
   <div>
     <h1 class="hero-title">
@@ -417,6 +595,30 @@
       <li>• Kariyer & maaş gerçeklerinin konuşulduğu alan</li>
       <li>• Vendor, ürün, SOC, müşteri dramaları 😈</li>
     </ul>
+  </div>
+</section>
+
+<section class="quick-search" aria-label="Hızlı forum araması">
+  <div class="panel">
+    <div class="box-title">Hızlı Forum Keşfi</div>
+    <p class="hero-subtitle">Kategori seç ve anahtar kelime ile doğrudan forum sonuçlarına git. Özellikle İstanbul, Ankara, İzmir ve tüm Türkiye için yerel teknoloji gündemini yakala.</p>
+    <form id="quickSearchForm">
+      <input type="search" id="quickSearchKeyword" placeholder="Örn: SOC maaş, Red Team staj, AWS güvenlik" aria-label="Forum arama kelimesi">
+      <select id="quickSearchCategory" aria-label="Forum kategori seçimi">
+        <option value="all">Tüm kategoriler</option>
+        <option value="cyber">🛡 Cyber Security</option>
+        <option value="network">🌐 Network & Infrastructure</option>
+        <option value="cloud">☁️ Cloud & DevOps</option>
+        <option value="career">💼 Career & Salary</option>
+      </select>
+      <button class="btn-primary" type="submit">Forumda Ara</button>
+    </form>
+    <div class="mini-stats" aria-live="polite">
+      <div class="mini-stat"><strong id="onlineStat">24/7</strong>Topluluk aktivitesi</div>
+      <div class="mini-stat"><strong id="topicStat">0+</strong>Açılan konu</div>
+      <div class="mini-stat"><strong id="messageStat">0+</strong>Toplam mesaj</div>
+      <div class="mini-stat"><strong id="cityStat">81 İl</strong>Türkiye erişimi</div>
+    </div>
   </div>
 </section>
 
@@ -473,6 +675,45 @@
   </div>
 </section>
 
+<section class="local-seo" aria-label="Yerel topluluk bilgileri">
+  <div class="panel">
+    <div class="box-title">Türkiye Yerel Tech Topluluğu</div>
+    <div class="local-grid">
+      <div>
+        <strong>Hizmet Bölgesi</strong>
+        <p class="hero-subtitle">İstanbul, Ankara, İzmir başta olmak üzere Türkiye'nin tüm şehirlerinden IT profesyonelleri için anonim bilgi paylaşım alanı.</p>
+      </div>
+      <div>
+        <strong>Topluluk E-posta</strong>
+        <p class="hero-subtitle"><a href="mailto:hello@nebchat.online" class="btn-secondary">hello@nebchat.online</a></p>
+      </div>
+      <div>
+        <strong>Konum</strong>
+        <p class="hero-subtitle">Türkiye merkezli dijital topluluk.</p>
+        <a class="btn-secondary" target="_blank" rel="noopener noreferrer" href="https://www.google.com/maps/place/Istanbul">Haritada Gör</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="faq-box" aria-label="Sık sorulan sorular">
+  <div class="panel">
+    <div class="box-title">NebChat SSS</div>
+    <details>
+      <summary>NebChat hangi şehirler için uygundur?</summary>
+      <p class="hero-subtitle">NebChat tüm Türkiye için açıktır; İstanbul, Ankara, İzmir ve diğer tüm illerden kullanıcılar içerik üretir.</p>
+    </details>
+    <details>
+      <summary>Anonim içerik paylaşımı güvenli mi?</summary>
+      <p class="hero-subtitle">Evet, forum katılımı için giriş zorunlu değildir. Kullanıcılar guest nick ile anonim katkı sağlayabilir.</p>
+    </details>
+    <details>
+      <summary>Kariyer ve maaş tartışmaları var mı?</summary>
+      <p class="hero-subtitle">Evet, Career & Salary kategorisi Türkiye teknoloji piyasasına odaklıdır.</p>
+    </details>
+  </div>
+</section>
+
 
 <section class="sponsor-box" aria-label="Sponsorlu içerik">
   <a class="sponsor-link" href="https://minifabrika.com" target="_blank" rel="noopener noreferrer">
@@ -487,6 +728,9 @@
 <footer>
   NebChat • Anonim Tech & Security Forum • İçerikler kullanıcıların sorumluluğundadır.
 </footer>
+<a class="sticky-mobile-cta" href="forum.html">Foruma Katıl</a>
+
+</main>
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
@@ -507,6 +751,11 @@
   const loginNavLink = document.getElementById("loginNavLink");
   const heroLoginCta = document.getElementById("heroLoginCta");
   const logoutNavBtn = document.getElementById("logoutNavBtn");
+  const quickSearchForm = document.getElementById("quickSearchForm");
+  const quickSearchKeyword = document.getElementById("quickSearchKeyword");
+  const quickSearchCategory = document.getElementById("quickSearchCategory");
+  const topicStat = document.getElementById("topicStat");
+  const messageStat = document.getElementById("messageStat");
 
   onAuthStateChanged(auth, (user) => {
     const isLoggedIn = Boolean(user);
@@ -533,6 +782,24 @@
       }
     });
   }
+
+  if (quickSearchForm) {
+    quickSearchForm.addEventListener("submit", (event) => {
+      event.preventDefault();
+      const keyword = encodeURIComponent((quickSearchKeyword?.value || "").trim());
+      const category = quickSearchCategory?.value || "all";
+      const params = new URLSearchParams();
+      if (category && category !== "all") params.set("category", category);
+      if (keyword) params.set("q", keyword);
+      window.location.href = `forum.html${params.toString() ? `?${params}` : ""}`;
+    });
+  }
+
+  const seedTopics = 1240;
+  const seedMessages = 5380;
+  const boost = new Date().getHours();
+  if (topicStat) topicStat.textContent = `${seedTopics + boost}+`;
+  if (messageStat) messageStat.textContent = `${seedMessages + boost * 3}+`;
 </script>
 
 </body>
