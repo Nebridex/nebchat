@@ -959,34 +959,60 @@
 })();
 </script>
 
-<!-- UX60_EASY_USE -->
+<!-- UX70_EASY_USE -->
 <style>
-  .ux60-fab{position:fixed;right:14px;bottom:14px;z-index:99;border:1px solid rgba(108,99,255,.55);background:#151c30;color:#e7ebff;padding:10px 12px;border-radius:999px;cursor:pointer;font-size:12px}
-  .ux60-panel{position:fixed;right:14px;bottom:60px;z-index:99;width:min(320px,90vw);background:#0f1630;border:1px solid rgba(108,99,255,.45);border-radius:14px;padding:12px;display:none;box-shadow:0 8px 30px rgba(0,0,0,.35)}
-  .ux60-panel.open{display:block}.ux60-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
-  .ux60-link,.ux60-btn{border:1px solid rgba(108,99,255,.45);background:rgba(108,99,255,.14);color:#e8edff;border-radius:999px;padding:6px 10px;font-size:12px;text-decoration:none;cursor:pointer}
-  .ux60-input{width:100%;padding:8px;border-radius:9px;border:1px solid rgba(108,99,255,.4);background:#0a1228;color:#fff;margin-top:8px}
-  body.ux60-large{font-size:18px} body.ux60-contrast{filter:contrast(1.12) saturate(1.05)}
+  .ux70-fab{position:fixed;right:14px;bottom:14px;z-index:99;border:1px solid rgba(108,99,255,.55);background:#151c30;color:#e7ebff;padding:10px 12px;border-radius:999px;cursor:pointer;font-size:12px}
+  .ux70-panel{position:fixed;right:14px;bottom:60px;z-index:99;width:min(340px,92vw);background:#0f1630;border:1px solid rgba(108,99,255,.45);border-radius:14px;padding:12px;display:none;box-shadow:0 8px 30px rgba(0,0,0,.35)}
+  .ux70-panel.open{display:block}.ux70-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+  .ux70-link,.ux70-btn,.ux70-chip{border:1px solid rgba(108,99,255,.45);background:rgba(108,99,255,.14);color:#e8edff;border-radius:999px;padding:6px 10px;font-size:12px;text-decoration:none;cursor:pointer}
+  .ux70-input{width:100%;padding:8px;border-radius:9px;border:1px solid rgba(108,99,255,.4);background:#0a1228;color:#fff;margin-top:8px}
+  .ux70-muted{opacity:.8;font-size:11px;margin-top:8px;display:block}
 </style>
 <script>
 (()=>{
   const routes=[{t:'Ana Sayfa',u:'index.html'},{t:'Forum Konuları',u:'forum.html'},{t:'Profil & Ayarlar',u:'profile.html'}];
-  const fab=document.createElement('button'); fab.className='ux60-fab'; fab.type='button'; fab.textContent='⚡ Kolay Erişim';
-  const panel=document.createElement('section'); panel.className='ux60-panel';
-  panel.innerHTML="<strong>Hızlı Gezinme</strong><input class='ux60-input' id='ux60Search' placeholder='Sayfa ara (örn: forum)' aria-label='Hızlı sayfa arama'><div class='ux60-row' id='ux60Links'></div><div class='ux60-row'><button class='ux60-btn' id='ux60Large' type='button'>Büyük Yazı</button><button class='ux60-btn' id='ux60Contrast' type='button'>Yüksek Kontrast</button><button class='ux60-btn' id='ux60Top' type='button'>Yukarı Çık</button></div><small style='opacity:.8;display:block;margin-top:8px'>Kısayol: Alt+K</small>";
+  const fab=document.createElement('button'); fab.className='ux70-fab'; fab.type='button'; fab.textContent='⚡ Kolay Erişim';
+  const panel=document.createElement('section'); panel.className='ux70-panel';
+  panel.innerHTML="<strong>Hızlı Gezinme</strong><input class='ux70-input' id='ux70Search' placeholder='Sayfa ara (örn: forum)' aria-label='Hızlı sayfa arama'><div class='ux70-row' id='ux70Links'></div><div class='ux70-row'><button class='ux70-btn' id='ux70CopyLink' type='button'>Bu sayfa linkini kopyala</button></div><div class='ux70-row' id='ux70Recent'></div><small class='ux70-muted'>Kapatmak için ESC kullan.</small>";
   document.body.appendChild(panel); document.body.appendChild(fab);
-  const linksEl=panel.querySelector('#ux60Links'); const search=panel.querySelector('#ux60Search');
-  const render=(q='')=>{linksEl.innerHTML=''; routes.filter(r=>r.t.toLowerCase().includes(q.toLowerCase())).forEach(r=>{const a=document.createElement('a');a.className='ux60-link';a.href=r.u;a.textContent=r.t+' → '+r.u;linksEl.appendChild(a);});};
+
+  const linksEl=panel.querySelector('#ux70Links');
+  const search=panel.querySelector('#ux70Search');
+  const recentEl=panel.querySelector('#ux70Recent');
+
+  const render=(q='')=>{
+    linksEl.innerHTML='';
+    routes.filter(r=>r.t.toLowerCase().includes(q.toLowerCase())).forEach(r=>{
+      const a=document.createElement('a');
+      a.className='ux70-link';
+      a.href=r.u;
+      a.textContent=r.t+' → '+r.u;
+      linksEl.appendChild(a);
+    });
+  };
+
+  const updateRecent=()=>{
+    const key='ux70-recent-pages';
+    const current={t:document.title.split('•')[0].trim()||'Sayfa',u:location.pathname.split('/').pop()||'index.html',at:Date.now()};
+    const list=JSON.parse(localStorage.getItem(key)||'[]');
+    const next=[current,...list.filter(i=>i.u!==current.u)].slice(0,5);
+    localStorage.setItem(key,JSON.stringify(next));
+    recentEl.innerHTML='<span class="ux70-muted">Son ziyaretler:</span>';
+    next.forEach(i=>{const a=document.createElement('a');a.href=i.u;a.className='ux70-chip';a.textContent=i.t;a.title=i.u;recentEl.appendChild(a);});
+  };
+
   render();
-  const toggle=()=>panel.classList.toggle('open'); fab.onclick=toggle;
+  updateRecent();
+
+  fab.onclick=()=>panel.classList.toggle('open');
   search.oninput=()=>render(search.value||'');
-  panel.querySelector('#ux60Top').onclick=()=>window.scrollTo({top:0,behavior:'smooth'});
-  const KEY_L='ux60-large', KEY_C='ux60-contrast';
-  const applyPrefs=()=>{document.body.classList.toggle('ux60-large',localStorage.getItem(KEY_L)==='1');document.body.classList.toggle('ux60-contrast',localStorage.getItem(KEY_C)==='1');};
-  panel.querySelector('#ux60Large').onclick=()=>{localStorage.setItem(KEY_L,localStorage.getItem(KEY_L)==='1'?'0':'1');applyPrefs();};
-  panel.querySelector('#ux60Contrast').onclick=()=>{localStorage.setItem(KEY_C,localStorage.getItem(KEY_C)==='1'?'0':'1');applyPrefs();};
-  applyPrefs();
-  document.addEventListener('keydown',(e)=>{if(e.altKey&&e.key.toLowerCase()==='k'){e.preventDefault();toggle();} if(e.key==='Escape') panel.classList.remove('open');});
+
+  panel.querySelector('#ux70CopyLink').onclick=async()=>{
+    try { await navigator.clipboard.writeText(location.href); alert('Sayfa linki kopyalandı.'); }
+    catch (e) { alert('Link kopyalanamadı.'); }
+  };
+
+  document.addEventListener('keydown',(e)=>{ if(e.key==='Escape') panel.classList.remove('open'); });
 })();
 </script>
 </body>
