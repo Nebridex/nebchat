@@ -433,10 +433,7 @@
       left: 12px;
     }
 
-    .quick-search,
-    .local-seo,
-    .faq-box,
-    .community-lab {
+    .quick-search {
       max-width: 1100px;
       margin: 0 auto 28px;
       padding: 0 18px;
@@ -510,20 +507,6 @@
       font-weight: 600;
     }
 
-    .sticky-mobile-cta {
-      position: fixed;
-      bottom: 10px;
-      right: 10px;
-      z-index: 40;
-      border-radius: 999px;
-      padding: 10px 14px;
-      text-decoration: none;
-      background: linear-gradient(135deg, #6c63ff, #8b7bff);
-      color: #fff;
-      font-size: 12px;
-      box-shadow: 0 0 20px rgba(108, 99, 255, 0.75);
-    }
-
 
     .lab-grid {
       display: grid;
@@ -565,6 +548,84 @@
       flex-wrap: wrap;
     }
 
+
+    .superapp-zone {
+      max-width: 1100px;
+      margin: 0 auto 24px;
+      padding: 0 18px;
+    }
+
+    .superapp-panel {
+      background: rgba(13, 19, 43, 0.95);
+      border: 1px solid rgba(108, 99, 255, 0.4);
+      border-radius: 18px;
+      box-shadow: 0 0 22px rgba(80, 70, 230, 0.3);
+      padding: 16px;
+    }
+
+    .mode-switch {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
+
+    .mode-btn {
+      border: 1px solid rgba(108, 99, 255, 0.5);
+      background: rgba(108, 99, 255, 0.16);
+      color: #e3e9ff;
+      border-radius: 999px;
+      padding: 7px 12px;
+      cursor: pointer;
+      font-size: 12px;
+    }
+
+    .mode-btn.active {
+      background: rgba(108, 99, 255, 0.45);
+      border-color: rgba(160, 155, 255, 0.9);
+    }
+
+    .miniapp-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .miniapp-card {
+      display: block;
+      text-decoration: none;
+      color: inherit;
+      border: 1px solid rgba(108, 99, 255, 0.35);
+      border-radius: 12px;
+      background: rgba(8, 13, 30, 0.9);
+      padding: 10px;
+    }
+
+    .miniapp-card strong { display: block; margin-bottom: 6px; }
+    .miniapp-card span { font-size: 12px; color: #b4bdf0; }
+
+    .mission-list {
+      list-style: none;
+      margin-top: 10px;
+      display: grid;
+      gap: 8px;
+    }
+
+    .mission-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      background: rgba(8, 13, 30, 0.9);
+      border: 1px solid rgba(108, 99, 255, 0.35);
+      border-radius: 10px;
+      padding: 8px 10px;
+      font-size: 12px;
+    }
+
+    .mission-item.done { border-color: rgba(60, 220, 160, 0.55); }
+
     footer {
       text-align: center;
       font-size: 12px;
@@ -587,9 +648,9 @@
   </div>
 
   <nav class="menu">
-    <a href="forum.html">Forum</a>
+    <a href="forum.html">Forum Konuları</a>
     <a href="profile.html#auth" id="loginNavLink">Giriş / Kayıt</a>
-    <a href="profile.html">Profilim</a>
+    <a href="profile.html">Profil & Ayarlar</a>
     <button id="themeToggleBtn" aria-label="Tema değiştir">🌙 Tema</button>
     <button id="logoutNavBtn" style="display:none;">Çıkış Yap</button>
   </nav>
@@ -616,10 +677,10 @@
 
     <div class="hero-actions">
       <a href="forum.html" class="btn-primary">
-        Foruma Gir
+        Konuları Gör → forum.html
       </a>
       <a href="profile.html#auth" class="btn-secondary" id="heroLoginCta">
-        Hesap Oluştur / Giriş Yap
+        Hesap İşlemleri → profile.html
       </a>
     </div>
     <div class="hero-note">
@@ -718,79 +779,51 @@
   </div>
 </section>
 
-<section class="local-seo" aria-label="Yerel topluluk bilgileri">
-  <div class="panel">
-    <div class="box-title">Türkiye Yerel Tech Topluluğu</div>
-    <div class="local-grid">
-      <div>
-        <strong>Hizmet Bölgesi</strong>
-        <p class="hero-subtitle">İstanbul, Ankara, İzmir başta olmak üzere Türkiye'nin tüm şehirlerinden IT profesyonelleri için anonim bilgi paylaşım alanı.</p>
-      </div>
-      <div>
-        <strong>Topluluk E-posta</strong>
-        <p class="hero-subtitle"><a href="mailto:hello@nebchat.online" class="btn-secondary">hello@nebchat.online</a></p>
-      </div>
-      <div>
-        <strong>Konum</strong>
-        <p class="hero-subtitle">Türkiye merkezli dijital topluluk.</p>
-        <a class="btn-secondary" target="_blank" rel="noopener noreferrer" href="https://www.google.com/maps/place/Istanbul">Haritada Gör</a>
-      </div>
+
+
+<section class="superapp-zone" aria-label="Super app mod seçimi">
+  <div class="superapp-panel">
+    <div class="box-title">1) Akıllı Mod Seçici (Super App Giriş Noktası)</div>
+    <p class="hero-subtitle">Hedefini seç, sistem seni doğru akışa yönlendirsin.</p>
+    <div class="mode-switch" id="modeSwitch">
+      <button class="mode-btn active" type="button" data-mode="security">SOC / Security Operasyon</button>
+      <button class="mode-btn" type="button" data-mode="career">Kariyer & Maaş</button>
+      <button class="mode-btn" type="button" data-mode="learning">Öğrenme / Rehber</button>
+    </div>
+    <p class="hero-subtitle" id="modeHint">Seçili mod: SOC / Security Operasyon • En sıcak güvenlik başlıklarına git.</p>
+    <a class="btn-primary" id="modePrimaryCta" href="forum.html?category=cyber">Mod Akışını Aç</a>
+  </div>
+</section>
+
+<section class="superapp-zone" aria-label="Mini app launcher">
+  <div class="superapp-panel">
+    <div class="box-title">2) Mini App Launcher</div>
+    <p class="hero-subtitle">Forumu tek ürün yerine birden çok modülden oluşan super app gibi kullan.</p>
+    <div class="miniapp-grid">
+      <a class="miniapp-card" href="forum.html?category=cyber"><strong>🛡 Threat Feed</strong><span>Güvenlik gündemi ve analiz konuları</span></a>
+      <a class="miniapp-card" href="forum.html?category=career"><strong>💼 Career Board</strong><span>Maaş, iş değişimi, mülakat taktikleri</span></a>
+      <a class="miniapp-card" href="forum.html?category=cloud"><strong>☁️ Cloud Ops</strong><span>Bulut güvenliği ve operasyonel pratikler</span></a>
+      <a class="miniapp-card" href="forum.html?category=network"><strong>🌐 Network Desk</strong><span>Altyapı ve troubleshooting başlıkları</span></a>
+      <a class="miniapp-card" href="forum.html?category=products"><strong>📦 Vendor Watch</strong><span>Ürün/marka kıyasları ve saha deneyimleri</span></a>
+      <a class="miniapp-card" href="profile.html"><strong>👤 Identity Hub</strong><span>Profil, istatistik ve kişisel ayarlar</span></a>
     </div>
   </div>
 </section>
 
-<section class="faq-box" aria-label="Sık sorulan sorular">
-  <div class="panel">
-    <div class="box-title">NebChat SSS</div>
-    <details>
-      <summary>NebChat hangi şehirler için uygundur?</summary>
-      <p class="hero-subtitle">NebChat tüm Türkiye için açıktır; İstanbul, Ankara, İzmir ve diğer tüm illerden kullanıcılar içerik üretir.</p>
-    </details>
-    <details>
-      <summary>Anonim içerik paylaşımı güvenli mi?</summary>
-      <p class="hero-subtitle">Evet, forum katılımı için giriş zorunlu değildir. Kullanıcılar guest nick ile anonim katkı sağlayabilir.</p>
-    </details>
-    <details>
-      <summary>Kariyer ve maaş tartışmaları var mı?</summary>
-      <p class="hero-subtitle">Evet, Career & Salary kategorisi Türkiye teknoloji piyasasına odaklıdır.</p>
-    </details>
-  </div>
-</section>
-
-
-<section class="community-lab" aria-label="Topluluk zaman geçirme alanı">
-  <div class="panel">
-    <div class="box-title">NebChat Community Lab</div>
-    <div class="lab-grid">
-      <div class="lab-card">
-        <strong>🎯 Günün Mikro Görevi</strong>
-        <p id="dailyChallenge" class="muted">Yükleniyor...</p>
-        <a class="btn-secondary" id="challengeCta" href="forum.html?category=tech">Görevle ilgili konu aç</a>
-      </div>
-      <div class="lab-card">
-        <strong>⏱ Focus Timer (25:00)</strong>
-        <div class="timer" id="focusTimer">25:00</div>
-        <div class="btn-row">
-          <button class="btn-secondary" id="timerStartBtn" type="button">Başlat</button>
-          <button class="btn-secondary" id="timerResetBtn" type="button">Sıfırla</button>
-        </div>
-      </div>
-      <div class="lab-card">
-        <strong>🎲 Konu Ruleti</strong>
-        <p class="muted">Takıldığında rastgele bir kategoriye ışınlan.</p>
-        <button class="btn-primary" id="topicRouletteBtn" type="button">Rastgele Kategori Aç</button>
-      </div>
-      <div class="lab-card">
-        <strong>🗳 Topluluk Nabzı</strong>
-        <p class="muted" id="pulseQuestion">Bu hafta ne konuşalım?</p>
-        <div class="vote-row">
-          <button class="btn-secondary pulseVote" data-vote="maas" type="button">💼 Maaş</button>
-          <button class="btn-secondary pulseVote" data-vote="ai" type="button">🤖 AI</button>
-          <button class="btn-secondary pulseVote" data-vote="offsec" type="button">🛡 OffSec</button>
-        </div>
-        <p class="muted" id="pulseResult">Henüz oy yok.</p>
-      </div>
+<section class="superapp-zone" aria-label="Görev merkezi">
+  <div class="superapp-panel">
+    <div class="box-title">3) Görev Merkezi + Streak (Conversion Loop)</div>
+    <p class="hero-subtitle">Her gün 3 küçük görev tamamla, topluluk streak’ini büyüt.</p>
+    <div class="utility-row">
+      <span class="badge" id="missionProgressBadge">Tamamlanan: 0/3</span>
+      <span class="badge" id="missionStreakBadge">Streak: 0 gün</span>
+      <button class="btn-secondary" type="button" id="resetMissionBtn">Bugünü Sıfırla</button>
     </div>
+    <ul class="mission-list" id="missionList">
+      <li class="mission-item" data-mission="m1"><span>Bir güvenlik konusunu favorile</span><button class="btn-secondary" type="button">Tamamla</button></li>
+      <li class="mission-item" data-mission="m2"><span>Bir konu başlığında arama yap</span><button class="btn-secondary" type="button">Tamamla</button></li>
+      <li class="mission-item" data-mission="m3"><span>Yeni bir tartışma başlatmak için taslak oluştur</span><button class="btn-secondary" type="button">Tamamla</button></li>
+    </ul>
   </div>
 </section>
 
@@ -807,8 +840,6 @@
 <footer>
   NebChat • Anonim Tech & Security Forum • İçerikler kullanıcıların sorumluluğundadır.
 </footer>
-<a class="sticky-mobile-cta" href="forum.html">Foruma Katıl</a>
-
 </main>
 
 <script type="module">
@@ -836,29 +867,12 @@
   const topicStat = document.getElementById("topicStat");
   const messageStat = document.getElementById("messageStat");
   const themeToggleBtn = document.getElementById("themeToggleBtn");
-  const dailyChallenge = document.getElementById("dailyChallenge");
-  const challengeCta = document.getElementById("challengeCta");
-  const timerStartBtn = document.getElementById("timerStartBtn");
-  const timerResetBtn = document.getElementById("timerResetBtn");
-  const focusTimer = document.getElementById("focusTimer");
-  const topicRouletteBtn = document.getElementById("topicRouletteBtn");
-  const pulseVotes = document.querySelectorAll(".pulseVote");
-  const pulseResult = document.getElementById("pulseResult");
 
   onAuthStateChanged(auth, (user) => {
     const isLoggedIn = Boolean(user);
-
-    if (loginNavLink) {
-      loginNavLink.style.display = isLoggedIn ? "none" : "inline-flex";
-    }
-
-    if (heroLoginCta) {
-      heroLoginCta.style.display = isLoggedIn ? "none" : "inline-flex";
-    }
-
-    if (logoutNavBtn) {
-      logoutNavBtn.style.display = isLoggedIn ? "inline-flex" : "none";
-    }
+    if (loginNavLink) loginNavLink.style.display = isLoggedIn ? "none" : "inline-flex";
+    if (heroLoginCta) heroLoginCta.style.display = isLoggedIn ? "none" : "inline-flex";
+    if (logoutNavBtn) logoutNavBtn.style.display = isLoggedIn ? "inline-flex" : "none";
   });
 
   if (logoutNavBtn) {
@@ -889,14 +903,19 @@
   if (topicStat) topicStat.textContent = `${seedTopics + boost}+`;
   if (messageStat) messageStat.textContent = `${seedMessages + boost * 3}+`;
 
+  const themes = {
+    dark: "radial-gradient(circle at top, #141d3d 0, #080d1a 50%)",
+    light: "linear-gradient(160deg, #eef2ff 0%, #d9e0ff 55%, #cbd6ff 100%)"
+  };
 
-  const themes = { dark: "radial-gradient(circle at top, #141d3d 0, #080d1a 50%)", light: "linear-gradient(160deg, #eef2ff 0%, #d9e0ff 55%, #cbd6ff 100%)" };
-  const storedTheme = localStorage.getItem("nebchat-theme") || "dark";
   function applyTheme(theme) {
     document.body.style.background = themes[theme] || themes.dark;
     if (themeToggleBtn) themeToggleBtn.textContent = theme === "light" ? "🌞 Açık" : "🌙 Koyu";
   }
+
+  const storedTheme = localStorage.getItem("nebchat-theme") || "dark";
   applyTheme(storedTheme);
+
   if (themeToggleBtn) {
     themeToggleBtn.addEventListener("click", () => {
       const next = (localStorage.getItem("nebchat-theme") || "dark") === "dark" ? "light" : "dark";
@@ -905,110 +924,168 @@
     });
   }
 
-  const challenges = [
-    { text: "En iyi SOC onboarding checklist’ini yaz.", category: "cyber" },
-    { text: "Cloud maliyet düşürme tüyosu paylaş.", category: "cloud" },
-    { text: "Kariyerinde kırılma yaratan bir teknik beceri anlat.", category: "career" },
-    { text: "Haftanın network troubleshooting hikayesini aç.", category: "network" }
-  ];
-  const today = new Date().getDate() % challenges.length;
-  const challenge = challenges[today];
-  if (dailyChallenge) dailyChallenge.textContent = challenge.text;
-  if (challengeCta) challengeCta.href = `forum.html?category=${challenge.category}`;
+  const modeSwitch = document.getElementById("modeSwitch");
+  const modeHint = document.getElementById("modeHint");
+  const modePrimaryCta = document.getElementById("modePrimaryCta");
 
-  let timerValue = 25 * 60;
-  let timerId = null;
-  function renderTimer() {
-    const min = String(Math.floor(timerValue / 60)).padStart(2, "0");
-    const sec = String(timerValue % 60).padStart(2, "0");
-    if (focusTimer) focusTimer.textContent = `${min}:${sec}`;
-  }
-  renderTimer();
-  if (timerStartBtn) {
-    timerStartBtn.addEventListener("click", () => {
-      if (timerId) return;
-      timerId = setInterval(() => {
-        timerValue -= 1;
-        if (timerValue <= 0) {
-          timerValue = 0;
-          clearInterval(timerId);
-          timerId = null;
-          alert("Focus tamamlandı! 5 dk mola ver ☕");
-        }
-        renderTimer();
-      }, 1000);
-    });
-  }
-  if (timerResetBtn) {
-    timerResetBtn.addEventListener("click", () => {
-      clearInterval(timerId);
-      timerId = null;
-      timerValue = 25 * 60;
-      renderTimer();
-    });
-  }
+  const modeMap = {
+    security: { hint: "Seçili mod: SOC / Security Operasyon • En sıcak güvenlik başlıklarına git.", href: "forum.html?category=cyber" },
+    career: { hint: "Seçili mod: Kariyer & Maaş • Maaş benchmark ve iş geçiş tartışmalarına git.", href: "forum.html?category=career" },
+    learning: { hint: "Seçili mod: Öğrenme / Rehber • Rehber, teknik bilgi ve how-to içeriklerine git.", href: "forum.html?category=tech" }
+  };
 
-  if (topicRouletteBtn) {
-    topicRouletteBtn.addEventListener("click", () => {
-      const categories = ["cyber", "network", "cloud", "career", "products", "anon", "tech", "community"];
-      const pick = categories[Math.floor(Math.random() * categories.length)];
-      window.location.href = `forum.html?category=${pick}`;
+  if (modeSwitch && modeHint && modePrimaryCta) {
+    modeSwitch.addEventListener("click", (event) => {
+      const button = event.target.closest(".mode-btn");
+      if (!button) return;
+      const mode = button.dataset.mode;
+      const item = modeMap[mode];
+      if (!item) return;
+      modeSwitch.querySelectorAll(".mode-btn").forEach((btn) => btn.classList.remove("active"));
+      button.classList.add("active");
+      modeHint.textContent = item.hint;
+      modePrimaryCta.href = item.href;
+      localStorage.setItem("nebchat-superapp-mode", mode);
     });
-  }
 
-  function updatePulseResult() {
-    const data = JSON.parse(localStorage.getItem("nebchat-pulse") || "{}");
-    const total = Object.values(data).reduce((acc, val) => acc + val, 0);
-    if (!pulseResult) return;
-    if (!total) {
-      pulseResult.textContent = "Henüz oy yok.";
-      return;
+    const savedMode = localStorage.getItem("nebchat-superapp-mode");
+    if (savedMode && modeMap[savedMode]) {
+      const btn = modeSwitch.querySelector(`[data-mode="${savedMode}"]`);
+      if (btn) btn.click();
     }
-    pulseResult.textContent = `Toplam ${total} oy • Maaş: ${data.maas || 0}, AI: ${data.ai || 0}, OffSec: ${data.offsec || 0}`;
   }
-  pulseVotes.forEach((btn) => {
-    btn.addEventListener("click", () => {
-      const key = btn.dataset.vote;
-      const data = JSON.parse(localStorage.getItem("nebchat-pulse") || "{}");
-      data[key] = (data[key] || 0) + 1;
-      localStorage.setItem("nebchat-pulse", JSON.stringify(data));
-      updatePulseResult();
+
+  const missionList = document.getElementById("missionList");
+  const missionProgressBadge = document.getElementById("missionProgressBadge");
+  const missionStreakBadge = document.getElementById("missionStreakBadge");
+  const resetMissionBtn = document.getElementById("resetMissionBtn");
+
+  function getMissionState() {
+    const today = new Date().toISOString().slice(0, 10);
+    const state = JSON.parse(localStorage.getItem("nebchat-missions") || "{}");
+    if (state.date !== today) {
+      state.date = today;
+      state.done = [];
+    }
+    return state;
+  }
+
+  function setMissionState(state) {
+    localStorage.setItem("nebchat-missions", JSON.stringify(state));
+  }
+
+  function updateMissionUI() {
+    if (!missionList || !missionProgressBadge || !missionStreakBadge) return;
+    const state = getMissionState();
+    const doneSet = new Set(state.done || []);
+    missionList.querySelectorAll(".mission-item").forEach((item) => {
+      const id = item.dataset.mission;
+      item.classList.toggle("done", doneSet.has(id));
     });
-  });
-  updatePulseResult();
+
+    const total = missionList.querySelectorAll(".mission-item").length;
+    const doneCount = doneSet.size;
+    missionProgressBadge.textContent = `Tamamlanan: ${doneCount}/${total}`;
+
+    const streakData = JSON.parse(localStorage.getItem("nebchat-mission-streak") || "{\"count\":0,\"last\":\"\"}");
+    missionStreakBadge.textContent = `Streak: ${streakData.count || 0} gün`;
+  }
+
+  if (missionList) {
+    missionList.addEventListener("click", (event) => {
+      const btn = event.target.closest("button");
+      const item = event.target.closest(".mission-item");
+      if (!btn || !item) return;
+      const state = getMissionState();
+      const id = item.dataset.mission;
+      const done = new Set(state.done || []);
+      done.add(id);
+      state.done = [...done];
+      setMissionState(state);
+
+      const total = missionList.querySelectorAll(".mission-item").length;
+      if (done.size === total) {
+        const today = new Date().toISOString().slice(0, 10);
+        const streak = JSON.parse(localStorage.getItem("nebchat-mission-streak") || "{\"count\":0,\"last\":\"\"}");
+        if (streak.last !== today) {
+          streak.count = Number(streak.count || 0) + 1;
+          streak.last = today;
+          localStorage.setItem("nebchat-mission-streak", JSON.stringify(streak));
+        }
+      }
+      updateMissionUI();
+    });
+  }
+
+  if (resetMissionBtn) {
+    resetMissionBtn.addEventListener("click", () => {
+      const state = getMissionState();
+      state.done = [];
+      setMissionState(state);
+      updateMissionUI();
+    });
+  }
+
+  updateMissionUI();
 
 </script>
 
-
-<!-- UX50_INDEX_ENHANCEMENTS -->
+<!-- UX70_EASY_USE -->
 <style>
-  .ux50-panel{max-width:1100px;margin:0 auto 24px;padding:0 18px}.ux50-card{background:rgba(14,18,40,.95);border:1px solid rgba(108,99,255,.35);border-radius:14px;padding:12px;color:#dce3ff}.ux50-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}.ux50-btn{border:1px solid rgba(108,99,255,.45);background:rgba(108,99,255,.16);color:#e8edff;border-radius:999px;padding:6px 10px;cursor:pointer;font-size:12px}.ux50-input{padding:7px 9px;border-radius:10px;border:1px solid rgba(108,99,255,.4);background:rgba(7,12,30,.9);color:#fff}.ux50-tip{font-size:12px;color:#aab6ef}.ux50-chip{padding:3px 8px;border:1px solid rgba(108,99,255,.35);border-radius:999px;font-size:11px}#backToTop{position:fixed;left:10px;bottom:10px;z-index:40} 
+  .ux70-fab{position:fixed;right:14px;bottom:14px;z-index:99;border:1px solid rgba(108,99,255,.55);background:#151c30;color:#e7ebff;padding:10px 12px;border-radius:999px;cursor:pointer;font-size:12px}
+  .ux70-panel{position:fixed;right:14px;bottom:60px;z-index:99;width:min(340px,92vw);background:#0f1630;border:1px solid rgba(108,99,255,.45);border-radius:14px;padding:12px;display:none;box-shadow:0 8px 30px rgba(0,0,0,.35)}
+  .ux70-panel.open{display:block}.ux70-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+  .ux70-link,.ux70-btn,.ux70-chip{border:1px solid rgba(108,99,255,.45);background:rgba(108,99,255,.14);color:#e8edff;border-radius:999px;padding:6px 10px;font-size:12px;text-decoration:none;cursor:pointer}
+  .ux70-input{width:100%;padding:8px;border-radius:9px;border:1px solid rgba(108,99,255,.4);background:#0a1228;color:#fff;margin-top:8px}
+  .ux70-muted{opacity:.8;font-size:11px;margin-top:8px;display:block}
 </style>
 <script>
 (()=>{
- const main=document.getElementById('mainContent'); if(!main) return;
- const panel=document.createElement('section'); panel.className='ux50-panel';
- panel.innerHTML=`<div class="ux50-card"><strong>Community Toolbox</strong><div class="ux50-tip" id="uxGreet"></div><div class="ux50-row"><button class="ux50-btn" id="copyHomeUrl">Ana sayfa linkini kopyala</button><button class="ux50-btn" id="surpriseMeBtn">Sürpriz kategori</button><button class="ux50-btn" id="toggleCompactBtn">Kompakt mod</button><button class="ux50-btn" id="toggleMotionBtn">Animasyon azalt</button><button class="ux50-btn" id="resetPulseBtn">Nabız oylarını sıfırla</button></div><div class="ux50-row"><input class="ux50-input" id="homeNoteInput" placeholder="Topluluk notunu yaz"><button class="ux50-btn" id="saveHomeNote">Notu Kaydet</button><span class="ux50-tip" id="homeNoteState"></span></div><div class="ux50-row" id="homeHistory"></div><div class="ux50-row"><span class="ux50-chip" id="sessionTime">Oturum: 0 dk</span><span class="ux50-chip" id="homeViews">Görüntüleme: 0</span><span class="ux50-chip" id="dailyTip"></span></div></div>`;
- const sponsor=document.querySelector('.sponsor-box'); if(sponsor) sponsor.before(panel);
- const greet=document.getElementById('uxGreet'); const h=new Date().getHours(); greet.textContent=h<12?'Günaydın!':'İyi '+(h<18?'günler':'akşamlar')+' 👋 NebChat topluluğu seni bekliyor.';
- const tips=['Bugün bir kişiye teknik mentorluk ver.','Kısa ama faydalı bir konu aç.','Karmaşık konuyu sade anlat.','Bir tartışmada kaynak paylaş.'];
- document.getElementById('dailyTip').textContent='İpucu: '+tips[new Date().getDate()%tips.length];
- const views=Number(localStorage.getItem('home-views')||0)+1; localStorage.setItem('home-views',views); document.getElementById('homeViews').textContent='Görüntüleme: '+views;
- const start=Date.now(); setInterval(()=>{const m=Math.floor((Date.now()-start)/60000); const el=document.getElementById('sessionTime'); if(el) el.textContent='Oturum: '+m+' dk';},10000);
- document.getElementById('copyHomeUrl').onclick=async()=>{try{await navigator.clipboard.writeText(location.href);alert('Link kopyalandı');}catch(e){}};
- document.getElementById('surpriseMeBtn').onclick=()=>{const c=['cyber','network','cloud','career','products','anon','tech','community'];location.href='forum.html?category='+c[Math.floor(Math.random()*c.length)]};
- document.getElementById('toggleCompactBtn').onclick=()=>{document.body.classList.toggle('compact-mode');localStorage.setItem('compact-mode',document.body.classList.contains('compact-mode')?'1':'0')};
- if(localStorage.getItem('compact-mode')==='1') document.body.classList.add('compact-mode');
- const st=document.createElement('style');st.textContent='body.compact-mode .hero, body.compact-mode .sections{margin-top:16px} body.compact-mode .box,body.compact-mode .panel{padding:12px}';document.head.appendChild(st);
- document.getElementById('toggleMotionBtn').onclick=()=>{const rm=localStorage.getItem('reduce-motion')==='1';localStorage.setItem('reduce-motion',rm?'0':'1');location.reload();};
- if(localStorage.getItem('reduce-motion')==='1'){const rs=document.createElement('style');rs.textContent='*{animation:none!important;transition:none!important;scroll-behavior:auto!important}';document.head.appendChild(rs);}
- document.getElementById('resetPulseBtn').onclick=()=>{localStorage.removeItem('nebchat-pulse');alert('Topluluk nabzı sıfırlandı.');};
- const noteInput=document.getElementById('homeNoteInput'); const noteState=document.getElementById('homeNoteState'); noteInput.value=localStorage.getItem('home-note')||'';
- document.getElementById('saveHomeNote').onclick=()=>{localStorage.setItem('home-note',noteInput.value.trim());noteState.textContent='Kaydedildi';};
- const key='recent-pages'; const list=JSON.parse(localStorage.getItem(key)||'[]'); list.unshift({t:'Ana Sayfa',u:'index.html',at:Date.now()}); const uniq=[]; const seen=new Set(); for(const i of list){if(!seen.has(i.u)){seen.add(i.u);uniq.push(i)} if(uniq.length>=5) break;} localStorage.setItem(key,JSON.stringify(uniq));
- const hist=document.getElementById('homeHistory'); hist.innerHTML='<span class="ux50-tip">Son ziyaretler:</span>'; uniq.forEach(i=>{const a=document.createElement('a');a.href=i.u;a.className='ux50-chip';a.textContent=i.t;hist.appendChild(a);});
- const top=document.createElement('button');top.id='backToTop';top.className='ux50-btn';top.textContent='⬆ Yukarı';top.onclick=()=>window.scrollTo({top:0,behavior:'smooth'});document.body.appendChild(top);
+  const routes=[{t:'Ana Sayfa',u:'index.html'},{t:'Forum Konuları',u:'forum.html'},{t:'Profil & Ayarlar',u:'profile.html'}];
+  const fab=document.createElement('button'); fab.className='ux70-fab'; fab.type='button'; fab.textContent='⚡ Kolay Erişim';
+  const panel=document.createElement('section'); panel.className='ux70-panel';
+  panel.innerHTML="<strong>Hızlı Gezinme</strong><input class='ux70-input' id='ux70Search' placeholder='Sayfa ara (örn: forum)' aria-label='Hızlı sayfa arama'><div class='ux70-row' id='ux70Links'></div><div class='ux70-row'><button class='ux70-btn' id='ux70CopyLink' type='button'>Bu sayfa linkini kopyala</button></div><div class='ux70-row' id='ux70Recent'></div><small class='ux70-muted'>Kapatmak için ESC kullan.</small>";
+  document.body.appendChild(panel); document.body.appendChild(fab);
+
+  const linksEl=panel.querySelector('#ux70Links');
+  const search=panel.querySelector('#ux70Search');
+  const recentEl=panel.querySelector('#ux70Recent');
+
+  const render=(q='')=>{
+    linksEl.innerHTML='';
+    routes.filter(r=>r.t.toLowerCase().includes(q.toLowerCase())).forEach(r=>{
+      const a=document.createElement('a');
+      a.className='ux70-link';
+      a.href=r.u;
+      a.textContent=r.t+' → '+r.u;
+      linksEl.appendChild(a);
+    });
+  };
+
+  const updateRecent=()=>{
+    const key='ux70-recent-pages';
+    const current={t:document.title.split('•')[0].trim()||'Sayfa',u:location.pathname.split('/').pop()||'index.html',at:Date.now()};
+    const list=JSON.parse(localStorage.getItem(key)||'[]');
+    const next=[current,...list.filter(i=>i.u!==current.u)].slice(0,5);
+    localStorage.setItem(key,JSON.stringify(next));
+    recentEl.innerHTML='<span class="ux70-muted">Son ziyaretler:</span>';
+    next.forEach(i=>{const a=document.createElement('a');a.href=i.u;a.className='ux70-chip';a.textContent=i.t;a.title=i.u;recentEl.appendChild(a);});
+  };
+
+  render();
+  updateRecent();
+
+  fab.onclick=()=>panel.classList.toggle('open');
+  search.oninput=()=>render(search.value||'');
+
+  panel.querySelector('#ux70CopyLink').onclick=async()=>{
+    try { await navigator.clipboard.writeText(location.href); alert('Sayfa linki kopyalandı.'); }
+    catch (e) { alert('Link kopyalanamadı.'); }
+  };
+
+  document.addEventListener('keydown',(e)=>{ if(e.key==='Escape') panel.classList.remove('open'); });
 })();
 </script>
+
 </body>
 </html>

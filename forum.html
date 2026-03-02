@@ -319,6 +319,7 @@
       font-size: 13px;
       color: #8189c4;
     }
+
   </style>
 </head>
 
@@ -346,12 +347,12 @@
     <div class="new-topic-title">Yeni Konu Aç</div>
 
     <div class="form-row">
-      <input type="text" id="nickInput" placeholder="Takma adın (guest kullanıcılar için)" minlength="2" maxlength="24" autocomplete="nickname">
-      <input type="text" id="titleInput" placeholder="Konu başlığı (ör: SIEM Rule Tuning)" minlength="6" maxlength="120">
+      <input type="text" id="nickInput" placeholder="Takma adın (guest kullanıcılar için)" minlength="2" maxlength="24" autocomplete="nickname" aria-label="Konu açan kullanıcı takma adı">
+      <input type="text" id="titleInput" placeholder="Konu başlığı (ör: SIEM Rule Tuning)" minlength="6" maxlength="120" aria-label="Konu başlığı">
     </div>
 
     <div class="form-row">
-      <select id="categoryInput" class="select-category">
+      <select id="categoryInput" class="select-category" aria-label="Konu kategorisi">
         <option value="cyber">🛡 Cyber Security</option>
         <option value="network">🌐 Network & Infrastructure</option>
         <option value="cloud">☁️ Cloud & DevOps</option>
@@ -363,7 +364,7 @@
       </select>
     </div>
 
-    <textarea id="messageInput" placeholder="Mesajını yaz..." minlength="12" maxlength="4000"></textarea>
+    <textarea id="messageInput" placeholder="Mesajını yaz..." minlength="12" maxlength="4000" aria-label="Konu mesajı"></textarea>
 
     <button class="btn-main" id="sendBtn">Konuyu Gönder</button>
     <div class="login-indicator" id="loginIndicator">
@@ -375,11 +376,10 @@
       <span class="login-indicator" id="draftState">Taslak yok</span>
     </div>
   </section>
-
   <section class="all-topics-block">
     <div class="filter-bar">
-      <input type="text" id="searchInput" placeholder="Başlık / mesaj / nick ara...">
-      <select id="filterCategory">
+      <input type="text" id="searchInput" placeholder="Başlık / mesaj / nick ara..." aria-label="Forum arama kelimesi">
+      <select id="filterCategory" aria-label="Forum kategori filtresi">
         <option value="all">Tüm kategoriler</option>
         <option value="cyber">🛡 Cyber Security</option>
         <option value="network">🌐 Network & Infrastructure</option>
@@ -390,7 +390,7 @@
         <option value="tech">💡 Tech Discussions</option>
         <option value="community">🎭 Off-Topic / Community</option>
       </select>
-      <select id="sortSelect">
+      <select id="sortSelect" aria-label="Forum sıralama seçimi">
         <option value="newest">En yeni</option>
         <option value="mostReplies">En çok yorum</option>
         <option value="mostLikes">En çok beğeni</option>
@@ -463,6 +463,7 @@
   const draftState = document.getElementById("draftState");
   const showBookmarkedBtn = document.getElementById("showBookmarkedBtn");
   const topicCountInfo = document.getElementById("topicCountInfo");
+
   const trendingTags = document.getElementById("trendingTags");
 
   const urlParams = new URLSearchParams(window.location.search);
@@ -912,7 +913,6 @@
     }
   });
 
-
   listenAllTopics();
 </script>
 
@@ -926,7 +926,7 @@
  const title=document.getElementById('titleInput'), msg=document.getElementById('messageInput'); if(!title||!msg) return;
  const box=document.querySelector('.new-topic-box');
  const wrap=document.createElement('div');wrap.className='uxf-wrap';
- wrap.innerHTML=`<div class='uxf-row'><span class='muted2' id='titleCount'>Başlık: 0/120</span><span class='muted2' id='msgCount'>Mesaj: 0/4000</span><span class='muted2' id='readEstimate'>Okuma: 1 dk</span></div><div class='uxf-row'><button class='uxf-btn' id='tplQuestion'>Şablon: Soru</button><button class='uxf-btn' id='tplGuide'>Şablon: Rehber</button><button class='uxf-btn' id='tplNews'>Şablon: Haber</button><button class='uxf-btn' id='insertCode'>Kod bloğu ekle</button></div><div class='uxf-row'><button class='uxf-btn' id='clearComposer'>Editörü temizle</button><button class='uxf-btn' id='saveComposerSnapshot'>Snapshot al</button><button class='uxf-btn' id='restoreComposerSnapshot'>Snapshot geri yükle</button><span class='muted2' id='composerState'></span></div><div class='uxf-row'><input class='uxf-input' id='keywordAlert' placeholder='Kelime alarmı (örn: maaş)'><button class='uxf-btn' id='saveKeywordAlert'>Alarm kaydet</button><span class='muted2' id='keywordState'></span></div><div class='uxf-row'><button class='uxf-btn' id='exportBookmarks'>Favorileri dışa aktar</button><button class='uxf-btn' id='clearBookmarks'>Favorileri temizle</button><input class='uxf-input' id='importBookmarksData' placeholder='JSON yapıştır'><button class='uxf-btn' id='importBookmarks'>Favorileri içe aktar</button></div><div class='uxf-row'><button class='uxf-btn' id='rememberFilters'>Filtreleri kaydet</button><button class='uxf-btn' id='resetFilters'>Filtre sıfırla</button><button class='uxf-btn' id='randomTopicOpen'>Rastgele konu aç</button><button class='uxf-btn' id='toggleUnreadHigh'>Yeni/okunmamış vurgusu</button></div><div class='uxf-row' id='searchHistoryRow'></div>`;
+ wrap.innerHTML=`<div class='uxf-row'><span class='muted2' id='titleCount'>Başlık: 0/120</span><span class='muted2' id='msgCount'>Mesaj: 0/4000</span><span class='muted2' id='readEstimate'>Okuma: 1 dk</span></div><div class='uxf-row'><button class='uxf-btn' id='tplQuestion'>Şablon: Soru</button><button class='uxf-btn' id='tplGuide'>Şablon: Rehber</button><button class='uxf-btn' id='tplNews'>Şablon: Haber</button><button class='uxf-btn' id='insertCode'>Kod bloğu ekle</button></div><div class='uxf-row'><button class='uxf-btn' id='clearComposer'>Editörü temizle</button><button class='uxf-btn' id='saveComposerSnapshot'>Snapshot al</button><button class='uxf-btn' id='restoreComposerSnapshot'>Snapshot geri yükle</button><span class='muted2' id='composerState'></span></div><div class='uxf-row'><input class='uxf-input' id='keywordAlert' placeholder='Kelime alarmı (örn: maaş)' aria-label='Kelime alarmı girdisi'><button class='uxf-btn' id='saveKeywordAlert'>Alarm kaydet</button><span class='muted2' id='keywordState'></span></div><div class='uxf-row'><button class='uxf-btn' id='exportBookmarks'>Favorileri dışa aktar</button><button class='uxf-btn' id='clearBookmarks'>Favorileri temizle</button><input class='uxf-input' id='importBookmarksData' placeholder='JSON yapıştır' aria-label='Favori JSON içe aktarma verisi'><button class='uxf-btn' id='importBookmarks'>Favorileri içe aktar</button></div><div class='uxf-row'><button class='uxf-btn' id='rememberFilters'>Filtreleri kaydet</button><button class='uxf-btn' id='resetFilters'>Filtre sıfırla</button><button class='uxf-btn' id='randomTopicOpen'>Rastgele konu aç</button><button class='uxf-btn' id='toggleUnreadHigh'>Yeni/okunmamış vurgusu</button></div><div class='uxf-row' id='searchHistoryRow'></div>`;
  box.appendChild(wrap);
  const upd=()=>{document.getElementById('titleCount').textContent=`Başlık: ${title.value.length}/120`;document.getElementById('msgCount').textContent=`Mesaj: ${msg.value.length}/4000`;document.getElementById('readEstimate').textContent=`Okuma: ${Math.max(1,Math.round((msg.value.trim().split(/\s+/).filter(Boolean).length)/180))} dk`;};
  title.addEventListener('input',upd); msg.addEventListener('input',upd); upd();
@@ -956,6 +956,63 @@
  const sh=JSON.parse(localStorage.getItem('search-history')||'[]'); if(search.value){sh.unshift(search.value);localStorage.setItem('search-history',JSON.stringify([...new Set(sh)].slice(0,8)));}
  const row=document.getElementById('searchHistoryRow'); row.innerHTML='<span class="muted2">Arama geçmişi:</span>'; (JSON.parse(localStorage.getItem('search-history')||'[]')).forEach(q=>{const b=document.createElement('button');b.className='uxf-btn';b.textContent=q;b.onclick=()=>{search.value=q;search.dispatchEvent(new Event('input'))};row.appendChild(b);});
  document.addEventListener('keydown',(e)=>{const links=[...document.querySelectorAll('.topic-link')]; if(!links.length) return; let i=links.findIndex(l=>l===document.activeElement); if(e.key==='j'){e.preventDefault();(links[Math.min(links.length-1,i+1)]||links[0]).focus();} if(e.key==='k'){e.preventDefault();(links[Math.max(0,i-1)]||links[0]).focus();}});
+})();
+</script>
+
+<!-- UX70_EASY_USE -->
+<style>
+  .ux70-fab{position:fixed;right:14px;bottom:14px;z-index:99;border:1px solid rgba(108,99,255,.55);background:#151c30;color:#e7ebff;padding:10px 12px;border-radius:999px;cursor:pointer;font-size:12px}
+  .ux70-panel{position:fixed;right:14px;bottom:60px;z-index:99;width:min(340px,92vw);background:#0f1630;border:1px solid rgba(108,99,255,.45);border-radius:14px;padding:12px;display:none;box-shadow:0 8px 30px rgba(0,0,0,.35)}
+  .ux70-panel.open{display:block}.ux70-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+  .ux70-link,.ux70-btn,.ux70-chip{border:1px solid rgba(108,99,255,.45);background:rgba(108,99,255,.14);color:#e8edff;border-radius:999px;padding:6px 10px;font-size:12px;text-decoration:none;cursor:pointer}
+  .ux70-input{width:100%;padding:8px;border-radius:9px;border:1px solid rgba(108,99,255,.4);background:#0a1228;color:#fff;margin-top:8px}
+  .ux70-muted{opacity:.8;font-size:11px;margin-top:8px;display:block}
+</style>
+<script>
+(()=>{
+  const routes=[{t:'Ana Sayfa',u:'index.html'},{t:'Forum Konuları',u:'forum.html'},{t:'Profil & Ayarlar',u:'profile.html'}];
+  const fab=document.createElement('button'); fab.className='ux70-fab'; fab.type='button'; fab.textContent='⚡ Kolay Erişim';
+  const panel=document.createElement('section'); panel.className='ux70-panel';
+  panel.innerHTML="<strong>Hızlı Gezinme</strong><input class='ux70-input' id='ux70Search' placeholder='Sayfa ara (örn: forum)' aria-label='Hızlı sayfa arama'><div class='ux70-row' id='ux70Links'></div><div class='ux70-row'><button class='ux70-btn' id='ux70CopyLink' type='button'>Bu sayfa linkini kopyala</button></div><div class='ux70-row' id='ux70Recent'></div><small class='ux70-muted'>Kapatmak için ESC kullan.</small>";
+  document.body.appendChild(panel); document.body.appendChild(fab);
+
+  const linksEl=panel.querySelector('#ux70Links');
+  const search=panel.querySelector('#ux70Search');
+  const recentEl=panel.querySelector('#ux70Recent');
+
+  const render=(q='')=>{
+    linksEl.innerHTML='';
+    routes.filter(r=>r.t.toLowerCase().includes(q.toLowerCase())).forEach(r=>{
+      const a=document.createElement('a');
+      a.className='ux70-link';
+      a.href=r.u;
+      a.textContent=r.t+' → '+r.u;
+      linksEl.appendChild(a);
+    });
+  };
+
+  const updateRecent=()=>{
+    const key='ux70-recent-pages';
+    const current={t:document.title.split('•')[0].trim()||'Sayfa',u:location.pathname.split('/').pop()||'index.html',at:Date.now()};
+    const list=JSON.parse(localStorage.getItem(key)||'[]');
+    const next=[current,...list.filter(i=>i.u!==current.u)].slice(0,5);
+    localStorage.setItem(key,JSON.stringify(next));
+    recentEl.innerHTML='<span class="ux70-muted">Son ziyaretler:</span>';
+    next.forEach(i=>{const a=document.createElement('a');a.href=i.u;a.className='ux70-chip';a.textContent=i.t;a.title=i.u;recentEl.appendChild(a);});
+  };
+
+  render();
+  updateRecent();
+
+  fab.onclick=()=>panel.classList.toggle('open');
+  search.oninput=()=>render(search.value||'');
+
+  panel.querySelector('#ux70CopyLink').onclick=async()=>{
+    try { await navigator.clipboard.writeText(location.href); alert('Sayfa linki kopyalandı.'); }
+    catch (e) { alert('Link kopyalanamadı.'); }
+  };
+
+  document.addEventListener('keydown',(e)=>{ if(e.key==='Escape') panel.classList.remove('open'); });
 })();
 </script>
 </body>

@@ -716,7 +716,7 @@
 (()=>{
  const profile=document.getElementById('profileCard'); if(!profile) return;
  const box=document.createElement('div'); box.className='uxp';
- box.innerHTML=`<strong>Kişisel Ayarlar</strong><div class='uxp-row'><input class='uxp-input' id='bioInput' placeholder='Kısa bio (local)'><button class='uxp-btn' id='saveBio'>Bio Kaydet</button><span id='bioState' class='hint'></span></div><div class='uxp-row'><input class='uxp-input' id='statusEmoji' placeholder='Durum emojisi (örn 🚀)'><button class='uxp-btn' id='saveEmoji'>Emoji Kaydet</button><button class='uxp-btn' id='exportPrefs'>Ayarları dışa aktar</button><button class='uxp-btn' id='clearPrefs'>Ayarları temizle</button></div><div class='uxp-row'><button class='uxp-btn' id='goalBtn'>Günlük hedef +1</button><span class='hint' id='goalInfo'>Hedef: 0</span><button class='uxp-btn' id='resetGoal'>Hedef sıfırla</button></div>`;
+ box.innerHTML=`<strong>Kişisel Ayarlar</strong><div class='uxp-row'><input class='uxp-input' id='bioInput' placeholder='Kısa bio (local)' aria-label='Kısa biyografi'><button class='uxp-btn' id='saveBio'>Bio Kaydet</button><span id='bioState' class='hint'></span></div><div class='uxp-row'><input class='uxp-input' id='statusEmoji' placeholder='Durum emojisi (örn 🚀)' aria-label='Durum emojisi'><button class='uxp-btn' id='saveEmoji'>Emoji Kaydet</button><button class='uxp-btn' id='exportPrefs'>Ayarları dışa aktar</button><button class='uxp-btn' id='clearPrefs'>Ayarları temizle</button></div><div class='uxp-row'><button class='uxp-btn' id='goalBtn'>Günlük hedef +1</button><span class='hint' id='goalInfo'>Hedef: 0</span><button class='uxp-btn' id='resetGoal'>Hedef sıfırla</button></div>`;
  profile.appendChild(box);
  const uidKey=()=>`profile-local-${(document.getElementById('usernameDisplay')||{}).textContent||'guest'}`;
  const load=()=>{const d=JSON.parse(localStorage.getItem(uidKey())||'{}');document.getElementById('bioInput').value=d.bio||'';document.getElementById('statusEmoji').value=d.emoji||'';const n=document.getElementById('usernameDisplay'); if(n&&d.emoji&&!n.textContent.startsWith(d.emoji+' ')) n.textContent=d.emoji+' '+n.textContent.replace(/^\S+\s/,'');document.getElementById('goalInfo').textContent='Hedef: '+(d.goal||0);};
@@ -728,6 +728,63 @@
  document.getElementById('exportPrefs').onclick=()=>{navigator.clipboard.writeText(localStorage.getItem(uidKey())||'{}').then(()=>alert('Profil ayarları kopyalandı'));};
  document.getElementById('clearPrefs').onclick=()=>{localStorage.removeItem(uidKey());load();};
  setInterval(load,2000);
+})();
+</script>
+
+<!-- UX70_EASY_USE -->
+<style>
+  .ux70-fab{position:fixed;right:14px;bottom:14px;z-index:99;border:1px solid rgba(108,99,255,.55);background:#151c30;color:#e7ebff;padding:10px 12px;border-radius:999px;cursor:pointer;font-size:12px}
+  .ux70-panel{position:fixed;right:14px;bottom:60px;z-index:99;width:min(340px,92vw);background:#0f1630;border:1px solid rgba(108,99,255,.45);border-radius:14px;padding:12px;display:none;box-shadow:0 8px 30px rgba(0,0,0,.35)}
+  .ux70-panel.open{display:block}.ux70-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+  .ux70-link,.ux70-btn,.ux70-chip{border:1px solid rgba(108,99,255,.45);background:rgba(108,99,255,.14);color:#e8edff;border-radius:999px;padding:6px 10px;font-size:12px;text-decoration:none;cursor:pointer}
+  .ux70-input{width:100%;padding:8px;border-radius:9px;border:1px solid rgba(108,99,255,.4);background:#0a1228;color:#fff;margin-top:8px}
+  .ux70-muted{opacity:.8;font-size:11px;margin-top:8px;display:block}
+</style>
+<script>
+(()=>{
+  const routes=[{t:'Ana Sayfa',u:'index.html'},{t:'Forum Konuları',u:'forum.html'},{t:'Profil & Ayarlar',u:'profile.html'}];
+  const fab=document.createElement('button'); fab.className='ux70-fab'; fab.type='button'; fab.textContent='⚡ Kolay Erişim';
+  const panel=document.createElement('section'); panel.className='ux70-panel';
+  panel.innerHTML="<strong>Hızlı Gezinme</strong><input class='ux70-input' id='ux70Search' placeholder='Sayfa ara (örn: forum)' aria-label='Hızlı sayfa arama'><div class='ux70-row' id='ux70Links'></div><div class='ux70-row'><button class='ux70-btn' id='ux70CopyLink' type='button'>Bu sayfa linkini kopyala</button></div><div class='ux70-row' id='ux70Recent'></div><small class='ux70-muted'>Kapatmak için ESC kullan.</small>";
+  document.body.appendChild(panel); document.body.appendChild(fab);
+
+  const linksEl=panel.querySelector('#ux70Links');
+  const search=panel.querySelector('#ux70Search');
+  const recentEl=panel.querySelector('#ux70Recent');
+
+  const render=(q='')=>{
+    linksEl.innerHTML='';
+    routes.filter(r=>r.t.toLowerCase().includes(q.toLowerCase())).forEach(r=>{
+      const a=document.createElement('a');
+      a.className='ux70-link';
+      a.href=r.u;
+      a.textContent=r.t+' → '+r.u;
+      linksEl.appendChild(a);
+    });
+  };
+
+  const updateRecent=()=>{
+    const key='ux70-recent-pages';
+    const current={t:document.title.split('•')[0].trim()||'Sayfa',u:location.pathname.split('/').pop()||'index.html',at:Date.now()};
+    const list=JSON.parse(localStorage.getItem(key)||'[]');
+    const next=[current,...list.filter(i=>i.u!==current.u)].slice(0,5);
+    localStorage.setItem(key,JSON.stringify(next));
+    recentEl.innerHTML='<span class="ux70-muted">Son ziyaretler:</span>';
+    next.forEach(i=>{const a=document.createElement('a');a.href=i.u;a.className='ux70-chip';a.textContent=i.t;a.title=i.u;recentEl.appendChild(a);});
+  };
+
+  render();
+  updateRecent();
+
+  fab.onclick=()=>panel.classList.toggle('open');
+  search.oninput=()=>render(search.value||'');
+
+  panel.querySelector('#ux70CopyLink').onclick=async()=>{
+    try { await navigator.clipboard.writeText(location.href); alert('Sayfa linki kopyalandı.'); }
+    catch (e) { alert('Link kopyalanamadı.'); }
+  };
+
+  document.addEventListener('keydown',(e)=>{ if(e.key==='Escape') panel.classList.remove('open'); });
 })();
 </script>
 </body>

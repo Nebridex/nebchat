@@ -442,7 +442,7 @@
   <section class="messages-box">
     <div class="reply-toolbar">
       <div class="section-title" style="margin-bottom:0;">Yanıtlar</div>
-      <select id="replySortSelect">
+      <select id="replySortSelect" aria-label="Yanıt sıralama seçimi">
         <option value="top">En faydalı (skor)</option>
         <option value="newest">En yeni</option>
         <option value="oldest">En eski</option>
@@ -455,9 +455,9 @@
   <section class="reply-box">
     <div class="section-title">Cevap Yaz</div>
     <div class="form-row">
-      <input type="text" id="nickname" placeholder="Takma adın (guest için)" minlength="2" maxlength="24" autocomplete="nickname">
+      <input type="text" id="nickname" placeholder="Takma adın (guest için)" minlength="2" maxlength="24" autocomplete="nickname" aria-label="Yanıt takma adı">
     </div>
-    <textarea id="message" placeholder="Mesajını yaz... (Markdown destekli)" minlength="12" maxlength="4000"></textarea>
+    <textarea id="message" placeholder="Mesajını yaz... (Markdown destekli)" minlength="12" maxlength="4000" aria-label="Yanıt mesajı"></textarea>
     <button class="btn-main" id="replyBtn">Gönder</button>
     <div class="info-text">
       Markdown destekli. Kod için ``` blokları kullanabilirsin.
@@ -1134,7 +1134,7 @@
 (()=>{
  const reply=document.querySelector('.reply-box'); if(!reply) return;
  const panel=document.createElement('div'); panel.className='uxt';
- panel.innerHTML=`<strong>Yanıt Yardımcıları</strong><div class='uxt-row'><button class='uxt-btn' id='saveReplyDraft'>Yanıt taslağını kaydet</button><button class='uxt-btn' id='loadReplyDraft'>Taslağı yükle</button><button class='uxt-btn' id='clearReplyDraft'>Taslağı sil</button><span class='info-text' id='replyDraftState'></span></div><div class='uxt-row'><button class='uxt-btn' id='quoteTopicBtn'>Konuyu alıntıla</button><button class='uxt-btn' id='copyTopicUrlBtn2'>Link kopyala</button><button class='uxt-btn' id='focusReplyBtn'>Yanıta odaklan</button><button class='uxt-btn' id='toggleReplyDense'>Sıkı görünüm</button></div><div class='uxt-row'><input class='uxt-input' id='replySearchInput' placeholder='Yanıtlarda ara'><button class='uxt-btn' id='replySearchBtn'>Ara</button><button class='uxt-btn' id='clearReplySearch'>Temizle</button><button class='uxt-btn' id='collapseAllReplies'>Yanıtları daralt</button></div><div class='uxt-row'><button class='uxt-btn' id='expandAllReplies'>Yanıtları genişlet</button><button class='uxt-btn' id='randomReplyJump'>Rastgele yanıta git</button><span class='info-text' id='replyHelperInfo'></span></div>`;
+ panel.innerHTML=`<strong>Yanıt Yardımcıları</strong><div class='uxt-row'><button class='uxt-btn' id='saveReplyDraft'>Yanıt taslağını kaydet</button><button class='uxt-btn' id='loadReplyDraft'>Taslağı yükle</button><button class='uxt-btn' id='clearReplyDraft'>Taslağı sil</button><span class='info-text' id='replyDraftState'></span></div><div class='uxt-row'><button class='uxt-btn' id='quoteTopicBtn'>Konuyu alıntıla</button><button class='uxt-btn' id='copyTopicUrlBtn2'>Link kopyala</button><button class='uxt-btn' id='focusReplyBtn'>Yanıta odaklan</button><button class='uxt-btn' id='toggleReplyDense'>Sıkı görünüm</button></div><div class='uxt-row'><input class='uxt-input' id='replySearchInput' placeholder='Yanıtlarda ara' aria-label='Yanıtlarda arama'><button class='uxt-btn' id='replySearchBtn'>Ara</button><button class='uxt-btn' id='clearReplySearch'>Temizle</button><button class='uxt-btn' id='collapseAllReplies'>Yanıtları daralt</button></div><div class='uxt-row'><button class='uxt-btn' id='expandAllReplies'>Yanıtları genişlet</button><button class='uxt-btn' id='randomReplyJump'>Rastgele yanıta git</button><span class='info-text' id='replyHelperInfo'></span></div>`;
  reply.prepend(panel);
  const msg=document.getElementById('message'), nick=document.getElementById('nickname'); const key='topic-reply-draft-'+location.search;
  const state=document.getElementById('replyDraftState');
@@ -1153,6 +1153,63 @@
  document.getElementById('randomReplyJump').onclick=()=>{const r=[...document.querySelectorAll('.msg-item')]; if(!r.length) return; const pick=r[Math.floor(Math.random()*r.length)]; pick.scrollIntoView({behavior:'smooth',block:'center'}); pick.style.outline='1px solid rgba(126,255,181,.8)'; setTimeout(()=>pick.style.outline='none',1500);};
  document.addEventListener('keydown',(e)=>{if(e.key==='r' && document.activeElement!==msg){e.preventDefault();msg&&msg.focus();}});
  const replies=[...document.querySelectorAll('.msg-item')].length; document.getElementById('replyHelperInfo').textContent='Toplam yanıt: '+replies;
+})();
+</script>
+
+<!-- UX70_EASY_USE -->
+<style>
+  .ux70-fab{position:fixed;right:14px;bottom:14px;z-index:99;border:1px solid rgba(108,99,255,.55);background:#151c30;color:#e7ebff;padding:10px 12px;border-radius:999px;cursor:pointer;font-size:12px}
+  .ux70-panel{position:fixed;right:14px;bottom:60px;z-index:99;width:min(340px,92vw);background:#0f1630;border:1px solid rgba(108,99,255,.45);border-radius:14px;padding:12px;display:none;box-shadow:0 8px 30px rgba(0,0,0,.35)}
+  .ux70-panel.open{display:block}.ux70-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+  .ux70-link,.ux70-btn,.ux70-chip{border:1px solid rgba(108,99,255,.45);background:rgba(108,99,255,.14);color:#e8edff;border-radius:999px;padding:6px 10px;font-size:12px;text-decoration:none;cursor:pointer}
+  .ux70-input{width:100%;padding:8px;border-radius:9px;border:1px solid rgba(108,99,255,.4);background:#0a1228;color:#fff;margin-top:8px}
+  .ux70-muted{opacity:.8;font-size:11px;margin-top:8px;display:block}
+</style>
+<script>
+(()=>{
+  const routes=[{t:'Ana Sayfa',u:'index.html'},{t:'Forum Konuları',u:'forum.html'},{t:'Profil & Ayarlar',u:'profile.html'}];
+  const fab=document.createElement('button'); fab.className='ux70-fab'; fab.type='button'; fab.textContent='⚡ Kolay Erişim';
+  const panel=document.createElement('section'); panel.className='ux70-panel';
+  panel.innerHTML="<strong>Hızlı Gezinme</strong><input class='ux70-input' id='ux70Search' placeholder='Sayfa ara (örn: forum)' aria-label='Hızlı sayfa arama'><div class='ux70-row' id='ux70Links'></div><div class='ux70-row'><button class='ux70-btn' id='ux70CopyLink' type='button'>Bu sayfa linkini kopyala</button></div><div class='ux70-row' id='ux70Recent'></div><small class='ux70-muted'>Kapatmak için ESC kullan.</small>";
+  document.body.appendChild(panel); document.body.appendChild(fab);
+
+  const linksEl=panel.querySelector('#ux70Links');
+  const search=panel.querySelector('#ux70Search');
+  const recentEl=panel.querySelector('#ux70Recent');
+
+  const render=(q='')=>{
+    linksEl.innerHTML='';
+    routes.filter(r=>r.t.toLowerCase().includes(q.toLowerCase())).forEach(r=>{
+      const a=document.createElement('a');
+      a.className='ux70-link';
+      a.href=r.u;
+      a.textContent=r.t+' → '+r.u;
+      linksEl.appendChild(a);
+    });
+  };
+
+  const updateRecent=()=>{
+    const key='ux70-recent-pages';
+    const current={t:document.title.split('•')[0].trim()||'Sayfa',u:location.pathname.split('/').pop()||'index.html',at:Date.now()};
+    const list=JSON.parse(localStorage.getItem(key)||'[]');
+    const next=[current,...list.filter(i=>i.u!==current.u)].slice(0,5);
+    localStorage.setItem(key,JSON.stringify(next));
+    recentEl.innerHTML='<span class="ux70-muted">Son ziyaretler:</span>';
+    next.forEach(i=>{const a=document.createElement('a');a.href=i.u;a.className='ux70-chip';a.textContent=i.t;a.title=i.u;recentEl.appendChild(a);});
+  };
+
+  render();
+  updateRecent();
+
+  fab.onclick=()=>panel.classList.toggle('open');
+  search.oninput=()=>render(search.value||'');
+
+  panel.querySelector('#ux70CopyLink').onclick=async()=>{
+    try { await navigator.clipboard.writeText(location.href); alert('Sayfa linki kopyalandı.'); }
+    catch (e) { alert('Link kopyalanamadı.'); }
+  };
+
+  document.addEventListener('keydown',(e)=>{ if(e.key==='Escape') panel.classList.remove('open'); });
 })();
 </script>
 </body>
