@@ -272,6 +272,51 @@
       font-size: 12px;
     }
 
+
+    .status-box {
+      margin-top: 10px;
+      padding: 8px 10px;
+      border-radius: 10px;
+      border: 1px solid rgba(108, 99, 255, 0.35);
+      background: rgba(9, 14, 34, 0.82);
+      font-size: 12px;
+      color: #cfd8ff;
+      display: none;
+    }
+
+    .status-box.error {
+      border-color: rgba(255, 120, 120, 0.55);
+      color: #ffd2d2;
+      background: rgba(44, 14, 24, 0.82);
+    }
+
+    .status-box.success {
+      border-color: rgba(90, 220, 170, 0.55);
+      color: #d6ffe9;
+      background: rgba(12, 42, 34, 0.82);
+    }
+
+    .action-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
+
+    .btn-ghost {
+      padding: 7px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(108, 99, 255, 0.45);
+      background: rgba(108, 99, 255, 0.15);
+      color: #dce3ff;
+      font-size: 12px;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
     footer {
       margin-top: 40px;
       padding: 20px;
@@ -309,13 +354,15 @@
       <div id="loginForm">
         <div class="form-row">
           <label for="loginEmail">E-posta</label>
-          <input type="email" id="loginEmail" autocomplete="email" />
+          <input type="email" id="loginEmail" autocomplete="email" required />
         </div>
         <div class="form-row">
           <label for="loginPassword">Şifre</label>
-          <input type="password" id="loginPassword" autocomplete="current-password" />
+          <input type="password" id="loginPassword" autocomplete="current-password" required />
         </div>
         <button class="btn-main" id="loginBtn">Giriş Yap</button>
+        <div class="action-row"><button class="btn-ghost" id="forgotPasswordBtn" type="button">Şifremi Unuttum</button></div>
+        <div class="status-box" id="authStatus" aria-live="polite"></div>
         <div class="hint">
           Giriş yaptıktan sonra forumda yazdığın tüm mesajlar
           <strong>kayıtlı kullanıcı adı</strong> ile görünecek.
@@ -325,17 +372,18 @@
       <div id="registerForm" style="display:none;">
         <div class="form-row">
           <label for="regEmail">E-posta</label>
-          <input type="email" id="regEmail" autocomplete="email" />
+          <input type="email" id="regEmail" autocomplete="email" required />
         </div>
         <div class="form-row">
           <label for="regPassword">Şifre (min 6 karakter)</label>
-          <input type="password" id="regPassword" autocomplete="new-password" />
+          <input type="password" id="regPassword" autocomplete="new-password" required minlength="6" />
         </div>
         <div class="form-row">
           <label for="regUsername">Kullanıcı adı (forumdaki nick’in)</label>
           <input type="text" id="regUsername" placeholder="Nebride" minlength="3" maxlength="20" autocomplete="username" />
         </div>
         <button class="btn-main" id="registerBtn">Kayıt Ol</button>
+        <div class="status-box" id="registerStatus" aria-live="polite"></div>
         <div class="hint">
           • Kullanıcı adın benzersizdir, başkası kullanamaz.<br />
           • Harf/rakam, 3–20 karakter, boşluk yok. “Nebride” gibi.
@@ -396,8 +444,13 @@
         <button class="btn-main" id="checkinBtn" type="button">Bugün Buradayım</button>
       </div>
 
+      <div class="action-row">
+        <a class="btn-ghost" href="forum.html">Forumda Devam Et</a>
+        <a class="btn-ghost" href="index.html">Ana Sayfa</a>
+      </div>
+      <div class="status-box" id="profileStatus" aria-live="polite"></div>
       <div style="margin-top:16px;">
-        <button class="btn-secondary" id="logoutBtn">Çıkış Yap</button>
+        <button class="btn-secondary" id="logoutBtn" type="button">Çıkış Yap</button>
       </div>
     </div>
   </div>
@@ -414,7 +467,8 @@
     onAuthStateChanged,
     signOut,
     createUserWithEmailAndPassword,
-    signInWithEmailAndPassword
+    signInWithEmailAndPassword,
+    sendPasswordResetEmail
   } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
   import {
     getFirestore,
@@ -451,11 +505,14 @@
   const loginEmail = document.getElementById("loginEmail");
   const loginPassword = document.getElementById("loginPassword");
   const loginBtn = document.getElementById("loginBtn");
+  const forgotPasswordBtn = document.getElementById("forgotPasswordBtn");
+  const authStatus = document.getElementById("authStatus");
 
   const regEmail = document.getElementById("regEmail");
   const regPassword = document.getElementById("regPassword");
   const regUsername = document.getElementById("regUsername");
   const registerBtn = document.getElementById("registerBtn");
+  const registerStatus = document.getElementById("registerStatus");
 
   const profileCard = document.getElementById("profileCard");
   const authCard = document.getElementById("authCard");
@@ -465,6 +522,7 @@
   const usernameEdit = document.getElementById("usernameEdit");
   const updateUsernameBtn = document.getElementById("updateUsernameBtn");
   const logoutBtn = document.getElementById("logoutBtn");
+  const profileStatus = document.getElementById("profileStatus");
 
   const statMessages = document.getElementById("statMessages");
   const statTopics = document.getElementById("statTopics");
@@ -475,6 +533,13 @@
 
   let currentUser = null;
   let currentUserData = null;
+
+  function setStatus(el, message, type = "") {
+    if (!el) return;
+    el.textContent = message || "";
+    el.className = "status-box" + (type ? ` ${type}` : "");
+    el.style.display = message ? "block" : "none";
+  }
 
   function switchTab(mode) {
     if (mode === "login") {
@@ -552,13 +617,14 @@
       const email = loginEmail.value.trim();
       const pass = loginPassword.value;
       if (!email || !pass) {
-        alert("E-posta ve şifre zorunlu.");
+        setStatus(authStatus, "E-posta ve şifre zorunlu.", "error");
         return;
       }
       await signInWithEmailAndPassword(auth, email, pass);
+      setStatus(authStatus, "Giriş başarılı, profilin yükleniyor...", "success");
     } catch (e) {
       console.error("Giriş hatası:", e);
-      alert("Giriş hatası: " + e.message);
+      setStatus(authStatus, "Giriş hatası: " + e.message, "error");
     }
   });
 
@@ -569,15 +635,15 @@
       const username = regUsername.value.trim();
 
       if (!email || !pass || !username) {
-        alert("Tüm alanlar zorunlu.");
+        setStatus(registerStatus, "Tüm alanlar zorunlu.", "error");
         return;
       }
       if (!validateUsername(username)) {
-        alert("Kullanıcı adı 3-20 karakter olmalı ve sadece harf/rakam (Türkçe dahil)/_/./- içerebilir.");
+        setStatus(registerStatus, "Kullanıcı adı 3-20 karakter olmalı ve sadece harf/rakam (Türkçe dahil)/_/./- içerebilir.", "error");
         return;
       }
       if (await isUsernameTaken(username)) {
-        alert("Bu kullanıcı adı zaten alınmış.");
+        setStatus(registerStatus, "Bu kullanıcı adı zaten alınmış.", "error");
         return;
       }
 
@@ -593,22 +659,39 @@
           likes: 0
         }
       });
+      setStatus(registerStatus, "Kayıt başarılı, giriş yapıldı.", "success");
       // onAuthStateChanged devreye girecek
     } catch (e) {
       console.error("Kayıt hatası:", e);
-      alert("Kayıt hatası: " + e.message);
+      setStatus(registerStatus, "Kayıt hatası: " + e.message, "error");
     }
   });
+
+  if (forgotPasswordBtn) {
+    forgotPasswordBtn.addEventListener("click", async () => {
+      const email = (loginEmail.value || "").trim();
+      if (!email) {
+        setStatus(authStatus, "Şifre sıfırlama için önce e-posta adresini gir.", "error");
+        return;
+      }
+      try {
+        await sendPasswordResetEmail(auth, email);
+        setStatus(authStatus, "Şifre sıfırlama linki e-posta adresine gönderildi.", "success");
+      } catch (e) {
+        setStatus(authStatus, "Şifre sıfırlama hatası: " + e.message, "error");
+      }
+    });
+  }
 
   updateUsernameBtn.addEventListener("click", async () => {
     if (!currentUser) return;
     const newName = usernameEdit.value.trim();
     if (!validateUsername(newName)) {
-      alert("Kullanıcı adı 3-20 karakter olmalı ve sadece harf/rakam (Türkçe dahil)/_/./- içerebilir.");
+      setStatus(profileStatus, "Kullanıcı adı 3-20 karakter olmalı ve sadece harf/rakam (Türkçe dahil)/_/./- içerebilir.", "error");
       return;
     }
     if (await isUsernameTaken(newName, currentUser.uid)) {
-      alert("Bu kullanıcı adı zaten başka biri tarafından kullanılıyor.");
+      setStatus(profileStatus, "Bu kullanıcı adı zaten başka biri tarafından kullanılıyor.", "error");
       return;
     }
     const ref = doc(db, "users", currentUser.uid);
@@ -619,7 +702,7 @@
     currentUserData.username = newName;
     currentUserData.usernameLower = newName.toLowerCase();
     renderProfile();
-    alert("Kullanıcı adın güncellendi.");
+    setStatus(profileStatus, "Kullanıcı adın güncellendi.", "success");
   });
 
   logoutBtn.addEventListener("click", async () => {
@@ -627,7 +710,7 @@
       await signOut(auth);
     } catch (e) {
       console.error("Çıkış hatası:", e);
-      alert("Çıkış yapılırken hata oluştu.");
+      setStatus(profileStatus, "Çıkış yapılırken hata oluştu.", "error");
     }
   });
 
@@ -690,6 +773,7 @@
     currentUserData = null;
 
     if (!user) {
+      setStatus(profileStatus, "");
       authCard.style.display = "block";
       profileCard.style.display = "none";
       return;
@@ -699,6 +783,8 @@
       const data = await ensureUserDoc(user);
       currentUserData = data;
 
+      setStatus(authStatus, "");
+      setStatus(registerStatus, "");
       authCard.style.display = "none";
       profileCard.style.display = "block";
       renderProfile();
