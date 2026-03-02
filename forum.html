@@ -346,12 +346,12 @@
     <div class="new-topic-title">Yeni Konu Aç</div>
 
     <div class="form-row">
-      <input type="text" id="nickInput" placeholder="Takma adın (guest kullanıcılar için)" minlength="2" maxlength="24" autocomplete="nickname">
-      <input type="text" id="titleInput" placeholder="Konu başlığı (ör: SIEM Rule Tuning)" minlength="6" maxlength="120">
+      <input type="text" id="nickInput" placeholder="Takma adın (guest kullanıcılar için)" minlength="2" maxlength="24" autocomplete="nickname" aria-label="Konu açan kullanıcı takma adı">
+      <input type="text" id="titleInput" placeholder="Konu başlığı (ör: SIEM Rule Tuning)" minlength="6" maxlength="120" aria-label="Konu başlığı">
     </div>
 
     <div class="form-row">
-      <select id="categoryInput" class="select-category">
+      <select id="categoryInput" class="select-category" aria-label="Konu kategorisi">
         <option value="cyber">🛡 Cyber Security</option>
         <option value="network">🌐 Network & Infrastructure</option>
         <option value="cloud">☁️ Cloud & DevOps</option>
@@ -363,7 +363,7 @@
       </select>
     </div>
 
-    <textarea id="messageInput" placeholder="Mesajını yaz..." minlength="12" maxlength="4000"></textarea>
+    <textarea id="messageInput" placeholder="Mesajını yaz..." minlength="12" maxlength="4000" aria-label="Konu mesajı"></textarea>
 
     <button class="btn-main" id="sendBtn">Konuyu Gönder</button>
     <div class="login-indicator" id="loginIndicator">
@@ -378,8 +378,8 @@
 
   <section class="all-topics-block">
     <div class="filter-bar">
-      <input type="text" id="searchInput" placeholder="Başlık / mesaj / nick ara...">
-      <select id="filterCategory">
+      <input type="text" id="searchInput" placeholder="Başlık / mesaj / nick ara..." aria-label="Forum arama kelimesi">
+      <select id="filterCategory" aria-label="Forum kategori filtresi">
         <option value="all">Tüm kategoriler</option>
         <option value="cyber">🛡 Cyber Security</option>
         <option value="network">🌐 Network & Infrastructure</option>
@@ -390,7 +390,7 @@
         <option value="tech">💡 Tech Discussions</option>
         <option value="community">🎭 Off-Topic / Community</option>
       </select>
-      <select id="sortSelect">
+      <select id="sortSelect" aria-label="Forum sıralama seçimi">
         <option value="newest">En yeni</option>
         <option value="mostReplies">En çok yorum</option>
         <option value="mostLikes">En çok beğeni</option>
@@ -926,7 +926,7 @@
  const title=document.getElementById('titleInput'), msg=document.getElementById('messageInput'); if(!title||!msg) return;
  const box=document.querySelector('.new-topic-box');
  const wrap=document.createElement('div');wrap.className='uxf-wrap';
- wrap.innerHTML=`<div class='uxf-row'><span class='muted2' id='titleCount'>Başlık: 0/120</span><span class='muted2' id='msgCount'>Mesaj: 0/4000</span><span class='muted2' id='readEstimate'>Okuma: 1 dk</span></div><div class='uxf-row'><button class='uxf-btn' id='tplQuestion'>Şablon: Soru</button><button class='uxf-btn' id='tplGuide'>Şablon: Rehber</button><button class='uxf-btn' id='tplNews'>Şablon: Haber</button><button class='uxf-btn' id='insertCode'>Kod bloğu ekle</button></div><div class='uxf-row'><button class='uxf-btn' id='clearComposer'>Editörü temizle</button><button class='uxf-btn' id='saveComposerSnapshot'>Snapshot al</button><button class='uxf-btn' id='restoreComposerSnapshot'>Snapshot geri yükle</button><span class='muted2' id='composerState'></span></div><div class='uxf-row'><input class='uxf-input' id='keywordAlert' placeholder='Kelime alarmı (örn: maaş)'><button class='uxf-btn' id='saveKeywordAlert'>Alarm kaydet</button><span class='muted2' id='keywordState'></span></div><div class='uxf-row'><button class='uxf-btn' id='exportBookmarks'>Favorileri dışa aktar</button><button class='uxf-btn' id='clearBookmarks'>Favorileri temizle</button><input class='uxf-input' id='importBookmarksData' placeholder='JSON yapıştır'><button class='uxf-btn' id='importBookmarks'>Favorileri içe aktar</button></div><div class='uxf-row'><button class='uxf-btn' id='rememberFilters'>Filtreleri kaydet</button><button class='uxf-btn' id='resetFilters'>Filtre sıfırla</button><button class='uxf-btn' id='randomTopicOpen'>Rastgele konu aç</button><button class='uxf-btn' id='toggleUnreadHigh'>Yeni/okunmamış vurgusu</button></div><div class='uxf-row' id='searchHistoryRow'></div>`;
+ wrap.innerHTML=`<div class='uxf-row'><span class='muted2' id='titleCount'>Başlık: 0/120</span><span class='muted2' id='msgCount'>Mesaj: 0/4000</span><span class='muted2' id='readEstimate'>Okuma: 1 dk</span></div><div class='uxf-row'><button class='uxf-btn' id='tplQuestion'>Şablon: Soru</button><button class='uxf-btn' id='tplGuide'>Şablon: Rehber</button><button class='uxf-btn' id='tplNews'>Şablon: Haber</button><button class='uxf-btn' id='insertCode'>Kod bloğu ekle</button></div><div class='uxf-row'><button class='uxf-btn' id='clearComposer'>Editörü temizle</button><button class='uxf-btn' id='saveComposerSnapshot'>Snapshot al</button><button class='uxf-btn' id='restoreComposerSnapshot'>Snapshot geri yükle</button><span class='muted2' id='composerState'></span></div><div class='uxf-row'><input class='uxf-input' id='keywordAlert' placeholder='Kelime alarmı (örn: maaş)' aria-label='Kelime alarmı girdisi'><button class='uxf-btn' id='saveKeywordAlert'>Alarm kaydet</button><span class='muted2' id='keywordState'></span></div><div class='uxf-row'><button class='uxf-btn' id='exportBookmarks'>Favorileri dışa aktar</button><button class='uxf-btn' id='clearBookmarks'>Favorileri temizle</button><input class='uxf-input' id='importBookmarksData' placeholder='JSON yapıştır' aria-label='Favori JSON içe aktarma verisi'><button class='uxf-btn' id='importBookmarks'>Favorileri içe aktar</button></div><div class='uxf-row'><button class='uxf-btn' id='rememberFilters'>Filtreleri kaydet</button><button class='uxf-btn' id='resetFilters'>Filtre sıfırla</button><button class='uxf-btn' id='randomTopicOpen'>Rastgele konu aç</button><button class='uxf-btn' id='toggleUnreadHigh'>Yeni/okunmamış vurgusu</button></div><div class='uxf-row' id='searchHistoryRow'></div>`;
  box.appendChild(wrap);
  const upd=()=>{document.getElementById('titleCount').textContent=`Başlık: ${title.value.length}/120`;document.getElementById('msgCount').textContent=`Mesaj: ${msg.value.length}/4000`;document.getElementById('readEstimate').textContent=`Okuma: ${Math.max(1,Math.round((msg.value.trim().split(/\s+/).filter(Boolean).length)/180))} dk`;};
  title.addEventListener('input',upd); msg.addEventListener('input',upd); upd();

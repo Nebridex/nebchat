@@ -442,7 +442,7 @@
   <section class="messages-box">
     <div class="reply-toolbar">
       <div class="section-title" style="margin-bottom:0;">Yanıtlar</div>
-      <select id="replySortSelect">
+      <select id="replySortSelect" aria-label="Yanıt sıralama seçimi">
         <option value="top">En faydalı (skor)</option>
         <option value="newest">En yeni</option>
         <option value="oldest">En eski</option>
@@ -455,9 +455,9 @@
   <section class="reply-box">
     <div class="section-title">Cevap Yaz</div>
     <div class="form-row">
-      <input type="text" id="nickname" placeholder="Takma adın (guest için)" minlength="2" maxlength="24" autocomplete="nickname">
+      <input type="text" id="nickname" placeholder="Takma adın (guest için)" minlength="2" maxlength="24" autocomplete="nickname" aria-label="Yanıt takma adı">
     </div>
-    <textarea id="message" placeholder="Mesajını yaz... (Markdown destekli)" minlength="12" maxlength="4000"></textarea>
+    <textarea id="message" placeholder="Mesajını yaz... (Markdown destekli)" minlength="12" maxlength="4000" aria-label="Yanıt mesajı"></textarea>
     <button class="btn-main" id="replyBtn">Gönder</button>
     <div class="info-text">
       Markdown destekli. Kod için ``` blokları kullanabilirsin.
@@ -1134,7 +1134,7 @@
 (()=>{
  const reply=document.querySelector('.reply-box'); if(!reply) return;
  const panel=document.createElement('div'); panel.className='uxt';
- panel.innerHTML=`<strong>Yanıt Yardımcıları</strong><div class='uxt-row'><button class='uxt-btn' id='saveReplyDraft'>Yanıt taslağını kaydet</button><button class='uxt-btn' id='loadReplyDraft'>Taslağı yükle</button><button class='uxt-btn' id='clearReplyDraft'>Taslağı sil</button><span class='info-text' id='replyDraftState'></span></div><div class='uxt-row'><button class='uxt-btn' id='quoteTopicBtn'>Konuyu alıntıla</button><button class='uxt-btn' id='copyTopicUrlBtn2'>Link kopyala</button><button class='uxt-btn' id='focusReplyBtn'>Yanıta odaklan</button><button class='uxt-btn' id='toggleReplyDense'>Sıkı görünüm</button></div><div class='uxt-row'><input class='uxt-input' id='replySearchInput' placeholder='Yanıtlarda ara'><button class='uxt-btn' id='replySearchBtn'>Ara</button><button class='uxt-btn' id='clearReplySearch'>Temizle</button><button class='uxt-btn' id='collapseAllReplies'>Yanıtları daralt</button></div><div class='uxt-row'><button class='uxt-btn' id='expandAllReplies'>Yanıtları genişlet</button><button class='uxt-btn' id='randomReplyJump'>Rastgele yanıta git</button><span class='info-text' id='replyHelperInfo'></span></div>`;
+ panel.innerHTML=`<strong>Yanıt Yardımcıları</strong><div class='uxt-row'><button class='uxt-btn' id='saveReplyDraft'>Yanıt taslağını kaydet</button><button class='uxt-btn' id='loadReplyDraft'>Taslağı yükle</button><button class='uxt-btn' id='clearReplyDraft'>Taslağı sil</button><span class='info-text' id='replyDraftState'></span></div><div class='uxt-row'><button class='uxt-btn' id='quoteTopicBtn'>Konuyu alıntıla</button><button class='uxt-btn' id='copyTopicUrlBtn2'>Link kopyala</button><button class='uxt-btn' id='focusReplyBtn'>Yanıta odaklan</button><button class='uxt-btn' id='toggleReplyDense'>Sıkı görünüm</button></div><div class='uxt-row'><input class='uxt-input' id='replySearchInput' placeholder='Yanıtlarda ara' aria-label='Yanıtlarda arama'><button class='uxt-btn' id='replySearchBtn'>Ara</button><button class='uxt-btn' id='clearReplySearch'>Temizle</button><button class='uxt-btn' id='collapseAllReplies'>Yanıtları daralt</button></div><div class='uxt-row'><button class='uxt-btn' id='expandAllReplies'>Yanıtları genişlet</button><button class='uxt-btn' id='randomReplyJump'>Rastgele yanıta git</button><span class='info-text' id='replyHelperInfo'></span></div>`;
  reply.prepend(panel);
  const msg=document.getElementById('message'), nick=document.getElementById('nickname'); const key='topic-reply-draft-'+location.search;
  const state=document.getElementById('replyDraftState');
