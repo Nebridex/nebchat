@@ -227,7 +227,7 @@
 
     .stats-grid {
       display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
+      grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 10px;
       margin-top: 12px;
     }
@@ -432,6 +432,14 @@
           <div class="stat-label">NebScore</div>
           <div class="stat-value" id="statScore">0</div>
         </div>
+        <div class="stat-box">
+          <div class="stat-label">Trust</div>
+          <div class="stat-value" id="statTrust">0</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-label">Takip</div>
+          <div class="stat-value" id="statFollowed">0</div>
+        </div>
       </div>
       <div class="nebscore-text">
         NebScore = likes × 2 + messages × 1.5 + topics × 3<br />
@@ -528,6 +536,8 @@
   const statTopics = document.getElementById("statTopics");
   const statLikes = document.getElementById("statLikes");
   const statScore = document.getElementById("statScore");
+  const statTrust = document.getElementById("statTrust");
+  const statFollowed = document.getElementById("statFollowed");
   const streakInfo = document.getElementById("streakInfo");
   const checkinBtn = document.getElementById("checkinBtn");
 
@@ -735,6 +745,14 @@
     statTopics.textContent = topics;
     statLikes.textContent = likes;
     statScore.textContent = Math.round(nebScore);
+
+    const reports = JSON.parse(localStorage.getItem("nebchat-reports") || "{}");
+    const reportCount = Object.keys(reports).length;
+    const trust = Math.max(0, Math.round(nebScore - reportCount * 2));
+    if (statTrust) statTrust.textContent = trust;
+
+    const followed = JSON.parse(localStorage.getItem("nebchat-followed-topics") || "{}");
+    if (statFollowed) statFollowed.textContent = Object.keys(followed).length;
   }
 
 

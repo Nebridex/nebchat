@@ -401,6 +401,37 @@
       opacity: 0.85;
     }
 
+
+    .reply-helper-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 8px;
+    }
+
+    .reply-helper-row button {
+      border: 1px solid rgba(108, 99, 255, 0.45);
+      background: rgba(108, 99, 255, 0.16);
+      color: #e8edff;
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    .reply-status {
+      margin-top: 8px;
+      padding: 8px 10px;
+      border-radius: 10px;
+      border: 1px solid rgba(108, 99, 255, 0.35);
+      background: rgba(9, 14, 34, 0.82);
+      font-size: 12px;
+      display: none;
+    }
+
+    .reply-status.error { border-color: rgba(255,120,120,.55); color: #ffd2d2; }
+    .reply-status.success { border-color: rgba(90,220,170,.55); color: #d6ffe9; }
+
     footer {
       margin-top: 40px;
       padding: 20px;
@@ -459,6 +490,12 @@
     </div>
     <textarea id="message" placeholder="Mesajını yaz... (Markdown destekli)" minlength="12" maxlength="4000" aria-label="Yanıt mesajı"></textarea>
     <button class="btn-main" id="replyBtn">Gönder</button>
+    <div class="reply-helper-row">
+      <button type="button" id="quoteLastBtn">Son yanıtı alıntıla</button>
+      <button type="button" id="mentionAuthorBtn">Konu sahibini etiketle</button>
+      <button type="button" id="followTopicBtn">Konuyu takip et</button>
+    </div>
+    <div class="reply-status" id="replyStatus" aria-live="polite"></div>
     <div class="info-text">
       Markdown destekli. Kod için ``` blokları kullanabilirsin.
       <div class="login-indicator" id="replyLoginInfo">
@@ -543,6 +580,10 @@
   const topicScorePill = document.getElementById("topicScorePill");
   const replySortSelect = document.getElementById("replySortSelect");
   const replyLoginInfo = document.getElementById("replyLoginInfo");
+  const replyStatus = document.getElementById("replyStatus");
+  const quoteLastBtn = document.getElementById("quoteLastBtn");
+  const mentionAuthorBtn = document.getElementById("mentionAuthorBtn");
+  const followTopicBtn = document.getElementById("followTopicBtn");
 
   const LIMITS = {
     nickMin: 2,
@@ -578,6 +619,13 @@
         window.hljs.highlightElement(codeBlock);
       });
     }
+  }
+
+  function setReplyStatus(message, type = "") {
+    if (!replyStatus) return;
+    replyStatus.textContent = message || "";
+    replyStatus.className = "reply-status" + (type ? ` ${type}` : "");
+    replyStatus.style.display = message ? "block" : "none";
   }
 
   function createUserBadge(isRegistered) {
@@ -785,6 +833,7 @@
     const q = query(repliesRef, orderBy("createdAt", "asc"));
 
     onSnapshot(q, (snapshot) => {
+      const prevCount = latestReplies.length;
       latestReplies = [];
       snapshot.forEach((docSnap) => {
         latestReplies.push({
@@ -793,6 +842,9 @@
         });
       });
       renderReplies();
+      if (prevCount && latestReplies.length > prevCount) {
+        setReplyStatus("Yeni yanıtlar geldi.", "success");
+      }
     });
 
     if (replySortSelect) {
@@ -866,9 +918,20 @@
       voteReply(data.id, data.userId || null, "dislike", scoreSpan, upvoteBtn, downvoteBtn);
     });
 
+    const reportBtn = document.createElement("button");
+    reportBtn.textContent = "Raporla";
+    reportBtn.addEventListener("click", () => {
+      const key = "nebchat-reports";
+      const reportMap = JSON.parse(localStorage.getItem(key) || "{}");
+      reportMap[`reply:${data.id}`] = Date.now();
+      localStorage.setItem(key, JSON.stringify(reportMap));
+      setReplyStatus("Yanıt raporlandı. Moderasyon kuyruğuna eklendi.", "success");
+    });
+
     actions.appendChild(scoreSpan);
     actions.appendChild(upvoteBtn);
     actions.appendChild(downvoteBtn);
+    actions.appendChild(reportBtn);
 
     if (loadedPost && currentUser && loadedPost.userId === currentUser.uid) {
       const solutionBtn = document.createElement("button");
@@ -896,9 +959,43 @@
     return wrapper;
   }
 
+
+  if (quoteLastBtn) {
+    quoteLastBtn.addEventListener("click", () => {
+      const last = latestReplies[latestReplies.length - 1];
+      if (!last?.message) return;
+      messageInput.value = `> ${String(last.message).split("\n").join("\n> ")}\n\n` + (messageInput.value || "");
+      messageInput.focus();
+    });
+  }
+
+  if (mentionAuthorBtn) {
+    mentionAuthorBtn.addEventListener("click", () => {
+      const author = loadedPost?.nick || "konu-sahibi";
+      messageInput.value = `@${author} ` + (messageInput.value || "");
+      messageInput.focus();
+    });
+  }
+
+  if (followTopicBtn) {
+    const followKey = "nebchat-followed-topics";
+    const updateFollowBtn = () => {
+      const m = JSON.parse(localStorage.getItem(followKey) || "{}");
+      const followed = Boolean(m[postId]);
+      followTopicBtn.textContent = followed ? "Takipten Çıkar" : "Konuyu takip et";
+    };
+    followTopicBtn.addEventListener("click", () => {
+      const m = JSON.parse(localStorage.getItem(followKey) || "{}");
+      if (m[postId]) delete m[postId]; else m[postId] = { at: Date.now(), title: loadedPost?.title || "Konu" };
+      localStorage.setItem(followKey, JSON.stringify(m));
+      updateFollowBtn();
+    });
+    updateFollowBtn();
+  }
+
   replyBtn.addEventListener("click", async () => {
     if (!postId) {
-      alert("Geçersiz konu.");
+      setReplyStatus("Geçersiz konu.", "error");
       return;
     }
 
@@ -906,12 +1003,12 @@
     const text = messageInput.value.trim();
 
     if (!text) {
-      alert("Lütfen yorum alanını doldur.");
+      setReplyStatus("Lütfen yorum alanını doldur.", "error");
       return;
     }
 
     if (text.length < LIMITS.messageMin || text.length > LIMITS.messageMax) {
-      alert(`Yorum ${LIMITS.messageMin}-${LIMITS.messageMax} karakter arasında olmalı.`);
+      setReplyStatus(`Yorum ${LIMITS.messageMin}-${LIMITS.messageMax} karakter arasında olmalı.`, "error");
       return;
     }
 
@@ -922,11 +1019,11 @@
     } else {
       nick = nicknameInput.value.trim();
       if (!validateGuestNick(nick)) {
-        alert(`Geçerli bir takma ad gir (${LIMITS.nickMin}-${LIMITS.nickMax} karakter, sadece harf/rakam (Türkçe dahil)/_/./-).`);
+        setReplyStatus(`Geçerli bir takma ad gir (${LIMITS.nickMin}-${LIMITS.nickMax} karakter, sadece harf/rakam (Türkçe dahil)/_/./-).`, "error");
         return;
       }
       if (await isNickReserved(nick)) {
-        alert("Bu nick kayıtlı bir kullanıcıya ait. Farklı bir takma ad kullan.");
+        setReplyStatus("Bu nick kayıtlı bir kullanıcıya ait. Farklı bir takma ad kullan.", "error");
         return;
       }
     }
@@ -957,9 +1054,10 @@
       }
 
       messageInput.value = "";
+      setReplyStatus("Yanıt gönderildi.", "success");
     } catch (e) {
       console.error("Yorum eklenirken hata:", e);
-      alert("Yorum eklenirken bir hata oluştu.");
+      setReplyStatus("Yorum eklenirken bir hata oluştu.", "error");
     } finally {
       replyBtn.disabled = false;
     }
@@ -967,7 +1065,7 @@
 
   async function voteTopic(action) {
     if (!postId || !loadedPost) {
-      alert("Geçersiz konu.");
+      setReplyStatus("Geçersiz konu.", "error");
       return;
     }
 
@@ -1022,7 +1120,7 @@
       applyTopicVoteVisual();
     } catch (e) {
       console.error("Konu oylanırken hata:", e);
-      alert("Oylama sırasında bir hata oluştu.");
+      setReplyStatus("Oylama sırasında bir hata oluştu.", "error");
     } finally {
       likeBtn.disabled = false;
       dislikeBtn.disabled = false;
@@ -1099,7 +1197,7 @@
       downvoteBtn.classList.toggle("active", nextVote === "dislike");
     } catch (e) {
       console.error("Reply oylanırken hata:", e);
-      alert("Oylama sırasında bir hata oluştu.");
+      setReplyStatus("Oylama sırasında bir hata oluştu.", "error");
     } finally {
       upvoteBtn.disabled = false;
       downvoteBtn.disabled = false;
@@ -1110,7 +1208,7 @@
     if (!postId || !loadedPost) return;
 
     if (!currentUser || loadedPost.userId !== currentUser.uid) {
-      alert("Sadece konuyu açan kişi çözümü işaretleyebilir.");
+      setReplyStatus("Sadece konuyu açan kişi çözümü işaretleyebilir.", "error");
       return;
     }
 
@@ -1122,7 +1220,7 @@
       loadedPost.solutionReplyId = replyId;
     } catch (e) {
       console.error("Çözüm işaretlenirken hata:", e);
-      alert("Çözüm işaretlenirken bir hata oluştu.");
+      setReplyStatus("Çözüm işaretlenirken bir hata oluştu.", "error");
     }
   }
 </script>

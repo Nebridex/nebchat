@@ -165,6 +165,43 @@
       opacity: 0.85;
     }
 
+
+    .composer-tools {
+      margin-top: 10px;
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .composer-tools button {
+      border: 1px solid rgba(108, 99, 255, 0.45);
+      background: rgba(108, 99, 255, 0.15);
+      color: #e3e9ff;
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    .composer-quality {
+      margin-top: 8px;
+      font-size: 12px;
+      color: #a9b4ea;
+    }
+
+    .composer-status {
+      margin-top: 8px;
+      padding: 8px 10px;
+      border-radius: 10px;
+      border: 1px solid rgba(108, 99, 255, 0.35);
+      background: rgba(9, 14, 34, 0.82);
+      font-size: 12px;
+      display: none;
+    }
+
+    .composer-status.error { border-color: rgba(255,120,120,.55); color: #ffd2d2; }
+    .composer-status.success { border-color: rgba(90,220,170,.55); color: #d6ffe9; }
+
     .all-topics-block {
       margin-top: 28px;
       padding: 18px 16px 16px;
@@ -366,6 +403,14 @@
 
     <textarea id="messageInput" placeholder="Mesajını yaz..." minlength="12" maxlength="4000" aria-label="Konu mesajı"></textarea>
 
+    <div class="composer-tools">
+      <button type="button" id="tplQuestionBtn">Şablon: Soru</button>
+      <button type="button" id="tplExperienceBtn">Şablon: Deneyim</button>
+      <button type="button" id="tplResourceBtn">Şablon: Kaynak</button>
+    </div>
+    <div class="composer-quality" id="composerQuality">Kalite sinyali: Başlık ve içerik bekleniyor.</div>
+    <div class="composer-status" id="composerStatus" aria-live="polite"></div>
+
     <button class="btn-main" id="sendBtn">Konuyu Gönder</button>
     <div class="login-indicator" id="loginIndicator">
       Giriş yaparsan forumdaki tüm yazıların KENDİ kullanıcı adınla görünür, kimse o adı kullanamaz.
@@ -453,6 +498,11 @@
   const messageInput = document.getElementById("messageInput");
   const sendBtn = document.getElementById("sendBtn");
   const loginIndicator = document.getElementById("loginIndicator");
+  const tplQuestionBtn = document.getElementById("tplQuestionBtn");
+  const tplExperienceBtn = document.getElementById("tplExperienceBtn");
+  const tplResourceBtn = document.getElementById("tplResourceBtn");
+  const composerQuality = document.getElementById("composerQuality");
+  const composerStatus = document.getElementById("composerStatus");
 
   const searchInput = document.getElementById("searchInput");
   const filterCategory = document.getElementById("filterCategory");
@@ -510,6 +560,29 @@
   let bookmarkedOnly = false;
   const draftKey = "nebchat-topic-draft-v1";
   const bookmarkKey = "nebchat-bookmarks-v1";
+
+
+  function setComposerStatus(message, type = "") {
+    if (!composerStatus) return;
+    composerStatus.textContent = message || "";
+    composerStatus.className = "composer-status" + (type ? ` ${type}` : "");
+    composerStatus.style.display = message ? "block" : "none";
+  }
+
+  function updateComposerQuality() {
+    if (!composerQuality) return;
+    const t = (titleInput.value || "").trim();
+    const m = (messageInput.value || "").trim();
+    const words = m ? m.split(/\s+/).filter(Boolean).length : 0;
+    if (!t && !m) {
+      composerQuality.textContent = "Kalite sinyali: Başlık ve içerik bekleniyor.";
+      return;
+    }
+    const score = [t.length >= 12, words >= 40, /
+/.test(m)].filter(Boolean).length;
+    const labels = ["Zayıf", "Orta", "İyi", "Çok iyi"];
+    composerQuality.textContent = `Kalite sinyali: ${labels[score]} • Başlık ${t.length} karakter • İçerik ${words} kelime`;
+  }
 
   function createUserBadge(isRegistered) {
     const badge = document.createElement("span");
@@ -581,6 +654,21 @@
     nickInput.placeholder = `${username} (kayıtlı kullanıcı adı)`;
   });
 
+
+  const starterTemplates = {
+    question: "Problemim:\nNe denedim:\nBeklenen sonuç:\nGerçekleşen:",
+    experience: "Senaryo:\nKullandığım çözüm:\nKarşılaştığım zorluk:\nÖnerim:",
+    resource: "Kaynak linki:\nÖzet:\nNeden önemli:\nTopluluk sorusu:"
+  };
+
+  tplQuestionBtn?.addEventListener("click", () => { messageInput.value = starterTemplates.question; updateComposerQuality(); messageInput.focus(); });
+  tplExperienceBtn?.addEventListener("click", () => { messageInput.value = starterTemplates.experience; updateComposerQuality(); messageInput.focus(); });
+  tplResourceBtn?.addEventListener("click", () => { messageInput.value = starterTemplates.resource; updateComposerQuality(); messageInput.focus(); });
+
+  titleInput?.addEventListener("input", updateComposerQuality);
+  messageInput?.addEventListener("input", updateComposerQuality);
+  updateComposerQuality();
+
   sendBtn.addEventListener("click", async () => {
     let nick;
     const title = titleInput.value.trim();
@@ -588,13 +676,13 @@
     const category = categoryInput.value;
 
     if (!title || !message) {
-      alert("Başlık ve mesaj zorunlu.");
+      setComposerStatus("Başlık ve mesaj zorunlu.", "error");
       return;
     }
 
     const validationError = validateTopicInput(title, message);
     if (validationError) {
-      alert(validationError);
+      setComposerStatus(validationError, "error");
       return;
     }
 
@@ -604,11 +692,11 @@
     } else {
       nick = nickInput.value.trim();
       if (!validateGuestNick(nick)) {
-        alert(`Geçerli bir takma ad gir (${LIMITS.nickMin}-${LIMITS.nickMax} karakter, sadece harf/rakam (Türkçe dahil)/_/./-).`);
+        setComposerStatus(`Geçerli bir takma ad gir (${LIMITS.nickMin}-${LIMITS.nickMax} karakter, sadece harf/rakam (Türkçe dahil)/_/./-).`, "error");
         return;
       }
       if (await isNickReserved(nick)) {
-        alert("Bu nick kayıtlı bir kullanıcıya ait. Farklı bir takma ad kullan.");
+        setComposerStatus("Bu nick kayıtlı bir kullanıcıya ait. Farklı bir takma ad kullan.", "error");
         return;
       }
     }
@@ -639,9 +727,11 @@
 
       titleInput.value = "";
       messageInput.value = "";
+      setComposerStatus("Konu başarıyla gönderildi.", "success");
+      updateComposerQuality();
     } catch (e) {
       console.error("Konu eklenirken hata:", e);
-      alert("Konu eklenirken bir hata oluştu.");
+      setComposerStatus("Konu eklenirken bir hata oluştu.", "error");
     } finally {
       sendBtn.disabled = false;
     }
