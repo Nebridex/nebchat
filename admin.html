@@ -1,0 +1,24 @@
+<!DOCTYPE html><html lang="tr"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Editör Paneli | NebChat</title><meta name="description" content="NebChat editör/admin paneli.">
+<meta name="robots" content="noindex,nofollow"><link rel="stylesheet" href="css/styles.css"></head><body>
+<header class="site-header" data-site-header></header>
+<main class="container"><section id="adminGate" class="section hidden"><div class="notice error">Bu sayfaya erişmek için giriş yapmalısınız.</div></section>
+<section id="adminPanel" class="section hidden">
+<div class="panel">
+  <h1>Editör Paneli</h1>
+  <p class="muted">Yazı oluşturma, başlangıç verisi ve yorum moderasyonu.</p>
+  <div class="hero-actions">
+    <button id="seedBtn" class="btn ghost" type="button">Örnek içerikleri Firestore'a aktar</button>
+    <button id="importTop10Btn" class="btn primary" type="button">İlk 10 makaleyi Firestore'a yükle</button>
+  </div>
+  <div id="adminStatus" class="notice" style="margin-top:.8rem;"></div>
+</div>
+<div class="grid-2 section">
+<form id="articleForm" class="panel"><h2>Yeni Makale</h2><input name="slug" placeholder="slug" required><input name="title" placeholder="Başlık" required><input name="excerpt" placeholder="Özet" required><input name="coverImageUrl" placeholder="Kapak görsel URL" required><input name="category" placeholder="category slug" required><input name="authorName" placeholder="Yazar adı" required><input name="tags" placeholder="etiket1, etiket2"><input name="publishedAt" type="datetime-local"><input name="readingTime" type="number" placeholder="Okuma süresi (dk)"><select name="status"><option value="draft">Taslak</option><option value="published">Yayınlandı</option></select><label><input name="featured" type="checkbox"> Ana sayfada öne çıkar</label><input name="seoTitle" placeholder="SEO başlık"><input name="seoDescription" placeholder="SEO açıklama"><textarea name="bodyMarkdown" placeholder="Makale içeriği (markdown)"></textarea><button class="btn primary" type="submit">Kaydet</button></form>
+<div class="panel"><h2>Yorum Moderasyonu</h2><div id="commentModeration"></div></div>
+</div>
+</section></main>
+<footer class="site-footer" data-site-footer></footer>
+<script type="module" src="js/admin.js"></script>
+</body></html>
