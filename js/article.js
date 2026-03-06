@@ -20,7 +20,12 @@ let lastSubmitTime = 0;
 const article = await fetchArticleBySlug(slug);
 if (!article) {
   wrap.innerHTML = '<div class="notice error">Makale bulunamadı.</div>';
-  throw new Error('article missing');
+}
+
+if (!article) {
+  relatedWrap.innerHTML = '<div class="card muted">İlgili içerik bulunamadı.</div>';
+  form.classList.add('hidden');
+  return;
 }
 
 setSEO({ title: `${article.title} | NebChat`, description: article.seoDescription || article.excerpt });

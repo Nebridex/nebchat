@@ -1,5 +1,5 @@
 import { db, serverTimestamp } from './firebase.js';
-import { CATEGORY_LIST, SEED_ARTICLES } from './content.js';
+import { CATEGORY_LIST } from './content.js';
 import {
   addDoc, collection, doc, getDoc, getDocs, limit, orderBy, query, setDoc, updateDoc, where
 } from 'https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js';
@@ -34,35 +34,14 @@ function mapArticle(docSnap) {
   };
 }
 
-
-let externalSeedArticlesCache = null;
-
-async function getSeedArticles() {
-  if (externalSeedArticlesCache) return externalSeedArticlesCache;
-  try {
-    const response = await fetch('./seed/articles.seed.json', { cache: 'no-store' });
-    if (!response.ok) throw new Error(`seed json ${response.status}`);
-    const payload = await response.json();
-    if (Array.isArray(payload?.articles) && payload.articles.length) {
-      externalSeedArticlesCache = payload.articles;
-      return externalSeedArticlesCache;
-    }
-  } catch (error) {
-    console.warn('Harici seed dosyası okunamadı, js/content fallback kullanılacak:', error);
+async function loadSeedArticlesForImportOnly() {
+  const response = await fetch('./seed/articles.seed.json', { cache: 'no-store' });
+  if (!response.ok) throw new Error(`seed json ${response.status}`);
+  const payload = await response.json();
+  if (!Array.isArray(payload?.articles) || !payload.articles.length) {
+    throw new Error('seed articles dosyası boş veya hatalı');
   }
-  externalSeedArticlesCache = SEED_ARTICLES;
-  return externalSeedArticlesCache;
-}
-
-function seedToArticle(article, idx = 0) {
-  const fallbackDate = new Date(Date.now() - idx * 86400000);
-  return {
-    ...article,
-    id: `seed-${article.slug || idx}`,
-    publishedAtDate: article.publishedAt ? new Date(article.publishedAt) : fallbackDate,
-    html: article.bodyHtml || markdownToHtml(article.bodyMarkdown || ''),
-    views: article.views || 0
-  };
+  return payload.articles;
 }
 
 export async function fetchCategories() {
@@ -71,7 +50,7 @@ export async function fetchCategories() {
     if (snap.empty) return CATEGORY_LIST;
     return snap.docs.map((d) => d.data());
   } catch (error) {
-    console.warn('Kategori sorgusu başarısız, fallback kullanılıyor:', error);
+    console.warn('Kategori sorgusu başarısız, statik kategori listesi kullanılıyor:', error);
     return CATEGORY_LIST;
   }
 }
@@ -83,12 +62,10 @@ export async function fetchArticles({ category = '', search = '', sort = 'newest
     const snap = await getDocs(q);
     rows = snap.docs.map(mapArticle);
   } catch (error) {
-    console.warn('Makale sorgusu başarısız, seed fallback kullanılıyor:', error);
+    console.warn('Makale sorgusu başarısız:', error);
+    return [];
   }
-  if (!rows.length) {
-    const seeds = await getSeedArticles();
-    rows = seeds.map((a, i) => seedToArticle(a, i));
-  }
+
   if (category) rows = rows.filter((a) => a.category === category);
   if (search) {
     const s = search.toLowerCase();
@@ -100,15 +77,13 @@ export async function fetchArticles({ category = '', search = '', sort = 'newest
 
 export async function fetchArticleBySlug(slug) {
   try {
-    const snap = await getDocs(query(collection(db, 'articles'), where('slug', '==', slug), limit(1)));
+    const snap = await getDocs(query(collection(db, 'articles'), where('slug', '==', slug), where('status', '==', 'published'), limit(1)));
     if (!snap.empty) return mapArticle(snap.docs[0]);
+    return null;
   } catch (error) {
-    console.warn('Makale detayı sorgusu başarısız, seed fallback deneniyor:', error);
+    console.warn('Makale detayı sorgusu başarısız:', error);
+    return null;
   }
-  const seeds = await getSeedArticles();
-  const seed = seeds.find((a) => a.slug === slug);
-  if (seed) return seedToArticle(seed);
-  return null;
 }
 
 export async function fetchComments(articleSlug) {
@@ -148,7 +123,7 @@ export async function seedInitialDataIfEmpty() {
   const articleCheck = await getDocs(query(collection(db, 'articles'), limit(1)));
   if (!articleCheck.empty) return false;
   await Promise.all(CATEGORY_LIST.map((c, idx) => setDoc(doc(collection(db, 'categories')), { ...c, order: idx + 1, isVisible: true })));
-  const seeds = await getSeedArticles();
+  const seeds = await loadSeedArticlesForImportOnly();
   await Promise.all(seeds.map((a) => setDoc(doc(collection(db, 'articles')), {
     ...a,
     bodyHtml: a.bodyHtml || markdownToHtml(a.bodyMarkdown || ''),
