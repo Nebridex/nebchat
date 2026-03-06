@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Makale Arşivi | NebChat</title>
+  <meta name="description" content="NebChat siber güvenlik makale arşivi. Kategori filtresi, arama ve popülerlik sıralamasıyla içerik keşfedin.">
+  <link rel="canonical" href="https://nebchat.online/archive.html">
+  <meta property="og:title" content="Makale Arşivi | NebChat"><meta property="og:type" content="website">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+<header class="site-header" data-site-header></header>
+<main class="container">
+  <section class="section">
+    <h1>Makale Arşivi</h1>
+    <p class="lead">Yayınlanan tüm içerikleri kategori, anahtar kelime ve popülerlik sinyaline göre filtreleyin.</p>
+    <form id="archiveForm" class="searchbar">
+      <input id="searchInput" type="search" placeholder="Örn: ransomware, CVE, veri ihlali">
+      <select id="sortInput"><option value="newest">En yeni</option><option value="popular">En popüler</option></select>
+      <button class="btn primary" type="submit">Uygula</button>
+    </form>
+    <div id="categoryFilters" class="searchbar"></div>
+    <div id="archiveList" class="grid-3"></div>
+    <div style="margin-top:1rem;"><button id="loadMoreBtn" class="btn ghost hidden">Daha fazla yükle</button></div>
+  </section>
+</main>
+<footer class="site-footer" data-site-footer></footer>
+<script type="module" src="js/archive.js"></script>
+</body>
+</html>
