@@ -34,6 +34,15 @@ function mapArticle(docSnap) {
   };
 }
 
+
+
+function sortByPublishedAtDesc(rows = []) {
+  return [...rows].sort((a, b) => {
+    const da = a.publishedAtDate ? a.publishedAtDate.getTime() : 0;
+    const db = b.publishedAtDate ? b.publishedAtDate.getTime() : 0;
+    return db - da;
+  });
+}
 async function loadSeedArticlesForImportOnly() {
   const response = await fetch('./seed/articles.seed.json', { cache: 'no-store' });
   if (!response.ok) throw new Error(`seed json ${response.status}`);
@@ -58,7 +67,8 @@ export async function fetchCategories() {
 export async function fetchArticles({ category = '', search = '', sort = 'newest', max = 24 } = {}) {
   let rows = [];
   try {
-    const q = query(collection(db, 'articles'), where('status', '==', 'published'), orderBy('publishedAt', 'desc'), limit(max));
+    // orderBy kaldırıldı: kompozit index bağımlılığını düşürmek için sıralama client-side yapılıyor.
+    const q = query(collection(db, 'articles'), where('status', '==', 'published'), limit(Math.max(max, 100)));
     const snap = await getDocs(q);
     rows = snap.docs.map(mapArticle);
   } catch (error) {
@@ -71,15 +81,24 @@ export async function fetchArticles({ category = '', search = '', sort = 'newest
     const s = search.toLowerCase();
     rows = rows.filter((a) => [a.title, a.excerpt, ...(a.tags || [])].join(' ').toLowerCase().includes(s));
   }
-  if (sort === 'popular') rows.sort((a, b) => (b.views || 0) - (a.views || 0));
-  return rows;
+
+  if (sort === 'popular') {
+    rows.sort((a, b) => (b.views || 0) - (a.views || 0));
+  } else {
+    rows = sortByPublishedAtDesc(rows);
+  }
+
+  return rows.slice(0, max);
 }
 
 export async function fetchArticleBySlug(slug) {
   try {
-    const snap = await getDocs(query(collection(db, 'articles'), where('slug', '==', slug), where('status', '==', 'published'), limit(1)));
-    if (!snap.empty) return mapArticle(snap.docs[0]);
-    return null;
+    // where(slug)+where(status) kombinasyonu bazı projelerde index gerektirebilir.
+    // Önce slug ile çekip status kontrolünü client-side yapıyoruz.
+    const snap = await getDocs(query(collection(db, 'articles'), where('slug', '==', slug), limit(1)));
+    if (snap.empty) return null;
+    const article = mapArticle(snap.docs[0]);
+    return article.status === 'published' ? article : null;
   } catch (error) {
     console.warn('Makale detayı sorgusu başarısız:', error);
     return null;
