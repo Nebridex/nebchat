@@ -34,6 +34,26 @@ function mapArticle(docSnap) {
   };
 }
 
+
+let externalSeedArticlesCache = null;
+
+async function getSeedArticles() {
+  if (externalSeedArticlesCache) return externalSeedArticlesCache;
+  try {
+    const response = await fetch('./seed/articles.seed.json', { cache: 'no-store' });
+    if (!response.ok) throw new Error(`seed json ${response.status}`);
+    const payload = await response.json();
+    if (Array.isArray(payload?.articles) && payload.articles.length) {
+      externalSeedArticlesCache = payload.articles;
+      return externalSeedArticlesCache;
+    }
+  } catch (error) {
+    console.warn('Harici seed dosyası okunamadı, js/content fallback kullanılacak:', error);
+  }
+  externalSeedArticlesCache = SEED_ARTICLES;
+  return externalSeedArticlesCache;
+}
+
 function seedToArticle(article, idx = 0) {
   const fallbackDate = new Date(Date.now() - idx * 86400000);
   return {
@@ -66,7 +86,8 @@ export async function fetchArticles({ category = '', search = '', sort = 'newest
     console.warn('Makale sorgusu başarısız, seed fallback kullanılıyor:', error);
   }
   if (!rows.length) {
-    rows = SEED_ARTICLES.map((a, i) => seedToArticle(a, i));
+    const seeds = await getSeedArticles();
+    rows = seeds.map((a, i) => seedToArticle(a, i));
   }
   if (category) rows = rows.filter((a) => a.category === category);
   if (search) {
@@ -84,7 +105,8 @@ export async function fetchArticleBySlug(slug) {
   } catch (error) {
     console.warn('Makale detayı sorgusu başarısız, seed fallback deneniyor:', error);
   }
-  const seed = SEED_ARTICLES.find((a) => a.slug === slug);
+  const seeds = await getSeedArticles();
+  const seed = seeds.find((a) => a.slug === slug);
   if (seed) return seedToArticle(seed);
   return null;
 }
@@ -126,7 +148,8 @@ export async function seedInitialDataIfEmpty() {
   const articleCheck = await getDocs(query(collection(db, 'articles'), limit(1)));
   if (!articleCheck.empty) return false;
   await Promise.all(CATEGORY_LIST.map((c, idx) => setDoc(doc(collection(db, 'categories')), { ...c, order: idx + 1, isVisible: true })));
-  await Promise.all(SEED_ARTICLES.map((a) => setDoc(doc(collection(db, 'articles')), {
+  const seeds = await getSeedArticles();
+  await Promise.all(seeds.map((a) => setDoc(doc(collection(db, 'articles')), {
     ...a,
     bodyHtml: a.bodyHtml || markdownToHtml(a.bodyMarkdown || ''),
     createdAt: serverTimestamp(),

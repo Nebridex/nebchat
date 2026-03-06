@@ -28,13 +28,15 @@
 <script type="module">
   import('./js/archive.js').catch(async (error) => {
     console.warn('Ana arşiv modülü yüklenemedi, seed fallback UI gösteriliyor:', error);
-    const [{ SEED_ARTICLES, CATEGORY_LIST }, common] = await Promise.all([
-      import('./js/content.js'),
-      import('./js/common.js')
-    ]);
+    const { SEED_ARTICLES, CATEGORY_LIST } = await import('./js/content.js');
 
-    common.injectHeaderFooter();
-    common.initAuthNav();
+    try {
+      const common = await import('./js/common.js');
+      common.injectHeaderFooter();
+      common.initAuthNav();
+    } catch (commonError) {
+      console.warn('Fallback header/auth modülü yüklenemedi, içerik render devam ediyor:', commonError);
+    }
 
     const params = new URLSearchParams(location.search);
     const searchInput = document.getElementById('searchInput');
