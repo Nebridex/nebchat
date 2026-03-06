@@ -18,3 +18,7 @@ NebChat artık forum değil; Türkiye odaklı modern bir siber güvenlik yayın 
 - Storage: kapak görselleri için hazır
 
 Kurallar/index önerileri için: `FIREBASE_SETUP.md`
+
+
+## Seed İçerik
+- Firestore import için 12 adet uzun-form başlangıç makalesi: `seed/articles.seed.json`
