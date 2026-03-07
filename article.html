@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Makale | NebChat</title>
+  <meta name="description" content="NebChat makale detay sayfası.">
+  <link rel="canonical" href="https://nebchat.online/article.html">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="Makale | NebChat">
+  <meta property="og:description" content="NebChat siber güvenlik makalesi.">
+  <meta property="og:url" content="https://nebchat.online/article.html">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Makale | NebChat">
+  <meta name="twitter:description" content="NebChat siber güvenlik makalesi.">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+<div id="readingProgress" class="progress"></div>
+<header class="site-header" data-site-header></header>
+<main class="container article-layout">
+  <section>
+    <div id="articleWrap"><div class="card">Makale yükleniyor…</div></div>
+    <section class="article-body comments">
+      <h2>Yorumlar (<span id="commentCount">0</span>)</h2>
+      <form id="commentForm">
+        <textarea name="body" placeholder="Görüşünüzü yazın (en az 12 karakter)"></textarea>
+        <button class="btn primary" type="submit">Yorumu gönder</button>
+        <div id="commentMessage" class="muted" style="margin-top:.5rem;"></div>
+      </form>
+      <div id="commentsWrap"></div>
+    </section>
+  </section>
+  <aside class="sidebar">
+    <div class="panel">
+      <h3>İlgili Makaleler</h3>
+      <div id="relatedArticles"></div>
+    </div>
+  </aside>
+</main>
+<footer class="site-footer" data-site-footer></footer>
+<script type="module" src="js/article.js"></script>
+</body>
+</html>
