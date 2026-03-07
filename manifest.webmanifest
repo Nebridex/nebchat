@@ -1,0 +1,13 @@
+{
+  "name": "NebChat",
+  "short_name": "NebChat",
+  "lang": "tr-TR",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#070b14",
+  "theme_color": "#070b14",
+  "description": "Türkiye odaklı siber güvenlik yayın platformu.",
+  "categories": ["technology", "news", "security"],
+  "icons": []
+}
