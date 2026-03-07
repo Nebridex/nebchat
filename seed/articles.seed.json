@@ -1,0 +1,256 @@
+{
+  "articles": [
+    {
+      "title": "Ransomware Saldırısında İlk 6 Saat: Operasyonel Hatalar ve Doğru Müdahale Çerçevesi",
+      "slug": "ransomware-saldirisinda-ilk-6-saat-operasyonel-cerceve",
+      "excerpt": "Ransomware olaylarında teknik hız kadar karar disiplini de belirleyicidir; ilk saatlerde yapılan hatalar ikinci kriz dalgasına dönüşebilir.",
+      "category": "ransomware",
+      "tags": [
+        "ransomware",
+        "incident-response",
+        "forensics",
+        "business-continuity"
+      ],
+      "authorName": "NebChat Editör",
+      "authorSlug": "nebchat-editor",
+      "status": "published",
+      "featured": true,
+      "readingTime": 14,
+      "seoTitle": "Ransomware Saldırısında İlk 6 Saatte Ne Yapılmalı?",
+      "seoDescription": "Ransomware olaylarında ilk 6 saat için izolasyon, delil koruma, iletişim ve güvenli geri dönüş adımlarını anlatan kapsamlı rehber.",
+      "coverImagePrompt": "Cyber incident response command room, analysts coordinating ransomware containment, realistic editorial style, no text",
+      "bodyHtml": "<p>Ransomware saldırılarında ilk 6 saat, kurumun yalnızca teknik değil yönetsel dayanıklılığını da test eder. Birçok ekip bu aşamada ya aşırı agresif izolasyona giderek iş sürekliliğini kırar ya da üretim baskısı nedeniyle saldırının yayılımını küçümser. Doğru yaklaşım, kontrollü izolasyon ile kanıt disiplinini birlikte yürütmektir.</p><h2>İlk 30 Dakika: Yayılımı Durdurma</h2><p>Bu fazda öncelik kök neden analizi değil, aktif hasarı azaltmaktır. Etkilenen ağ segmentleri ayrılır, riskli yönetici oturumları sonlandırılır, uzaktan yönetim kanalları geçici olarak kısıtlanır. Yedekleme altyapısına erişim sıkılaştırılmazsa saldırgan ikinci dalgada en kritik savunma hattını da devre dışı bırakabilir.</p><ul><li>Etkilenen sistemleri iş kritikliği ile eşleştirerek izole edin.</li><li>Domain admin ve servis hesaplarında acil güvenlik kontrolü yapın.</li><li>Yedekleme ve felaket kurtarma bileşenlerini korumaya alın.</li></ul><h2>30-120 Dakika: Olay Komuta Yapısı</h2><p>Ransomware olayları yalnızca SOC ekibiyle yönetilemez. BT operasyon, hukuk, iletişim ve iş birimi temsilcilerinden oluşan olay komuta yapısı kurulmadığında kararlar parçalanır. Bu parçalanma teknik gecikmeden daha pahalıdır; çünkü aynı anda hem üretim hem itibar hem de regülasyon riski büyür.</p><h2>2-4 Saat: Delil ve Kapsam Yönetimi</h2><p>Yaygın hata, sistemleri hızla yeniden kurarken forensik izleri kaybetmektir. Oysa log zinciri, kimlik olayları, ağ akışı ve uç nokta telemetrisi korunmadan yapılan iyileştirme, ikinci bulaşı önleyemez. Delil disiplini sadece hukuki gereklilik değil, teknik doğruluk gerekliliğidir.</p><h2>4-6 Saat: Geri Dönüş Önceliklendirmesi</h2><p>Hangi sistemin önce açılacağı teknik değil iş etkisi sorusudur. Gelir etkisi, müşteri etkisi, bağımlılık yoğunluğu ve regülasyon baskısı birlikte değerlendirilmelidir. Hızlı ama kontrolsüz açılış, çoğu kurumda ikinci kesinti dalgasını üretir.</p><h2>Sonuç</h2><p>Ransomware krizinde başarı, en hızlı sistemi açan ekip olmak değildir. Başarı; hasarı sınırlayan, delili koruyan, iletişimi yöneten ve kontrollü geri dönüş sağlayan kurum modelidir.</p>"
+    },
+    {
+      "title": "SOC Ekipleri Neden Alarm Altında Körleşir? Detection Engineering ile Gürültüden Sinyale Geçiş",
+      "slug": "soc-ekipleri-alarm-altinda-korlesme-detection-engineering",
+      "excerpt": "Alarm hacmi arttıkça güvenlik artmıyor olabilir. SOC performansını kural sayısı değil, tespit mühendisliği kalitesi belirler.",
+      "category": "soc-detection",
+      "tags": [
+        "soc",
+        "siem",
+        "detection-engineering",
+        "alert-fatigue"
+      ],
+      "authorName": "NebChat Editör",
+      "authorSlug": "nebchat-editor",
+      "status": "published",
+      "featured": true,
+      "readingTime": 13,
+      "seoTitle": "SOC Alarm Yorgunluğu Nasıl Azaltılır?",
+      "seoDescription": "Detection engineering yaklaşımıyla SOC ekiplerinde alarm körlüğünü azaltma, doğru metrik seçimi ve use-case yönetimi rehberi.",
+      "coverImagePrompt": "Modern SOC analysts tuning detections on large screens, realistic enterprise setting, no text",
+      "bodyHtml": "<p>Bir SOC’ta alarm sayısının artması çoğu zaman başarı göstergesi gibi sunulur. Oysa operasyonel gerçeklik tersini söyleyebilir: yanlış pozitifler arttıkça analist odağı dağılır, triage süreleri uzar, kritik olaylar gürültüye karışır. Alarm yorgunluğu bir insan sorunu değil, tasarım sorunudur.</p><h2>Körleşmenin Kök Nedenleri</h2><h3>Use-case enflasyonu</h3><p>Yeni tehdit haberi geldikçe kural eklenir ama emeklilik yapılmaz. Sonuçta düşük değerli kurallar birikir.</p><h3>Telemetri hijyeninin zayıflığı</h3><p>Eksik alanlar, yanlış zaman damgası ve kimlik eşleştirme problemleri tespit kalitesini düşürür.</p><h3>Yanlış metrikler</h3><p>“Günde kaç alarm” metriği yerine true-positive oranı, mean-time-to-triage ve kapsama kalitesi izlenmelidir.</p><h2>Detection Engineering Ne Değiştirir?</h2><p>Detection engineering, kural yazmayı bir mühendislik yaşam döngüsüne dönüştürür: tasarım, test, sürüm, ölçüm, tuning ve emeklilik. Tehdit senaryosu tanımlanmadan yazılan kurallar, SIEM üzerinde yalnızca maliyet üretir.</p><ul><li>Her use-case için hedef davranış net tanımlanır.</li><li>Gerekli telemetry alanları kontrol edilir.</li><li>Simülasyon/purple team ile doğrulama yapılır.</li><li>Yanlış pozitif eşiği yönetilir.</li></ul><h2>IOC, IOA ve Davranış Dengesi</h2><p>IOC hızlıdır ama ömrü kısadır; IOA ve davranış tespiti daha kalıcıdır ama bağlam ister. Olgun SOC, bu katmanları birlikte kullanır. Yalnızca IOC odaklı yaklaşım saldırgan altyapı değiştiğinde hızla etkisizleşir.</p><h2>Sonuç</h2><p>SOC başarısı, ne kadar çok alarm ürettiğinizle değil; doğru alarmı ne kadar hızlı ve doğru karara çevirdiğinizle ölçülür. Gürültüden sinyale geçiş için detection engineering artık opsiyon değil zorunluluktur.</p>"
+    },
+    {
+      "title": "Tehdit İstihbaratı Gerçekten Ne İşe Yarar? Rapor Üretiminden Karar Üretimine Geçiş",
+      "slug": "tehdit-istihbarati-rapordan-karara-gecis",
+      "excerpt": "Threat intelligence, haftalık PDF üretmek değil; SOC, zafiyet yönetimi ve yönetim kararlarına ölçülebilir etki üretmektir.",
+      "category": "threat-intelligence",
+      "tags": [
+        "threat-intelligence",
+        "cti",
+        "risk",
+        "decision-making"
+      ],
+      "authorName": "NebChat Editör",
+      "authorSlug": "nebchat-editor",
+      "status": "published",
+      "featured": false,
+      "readingTime": 12,
+      "seoTitle": "Tehdit İstihbaratı Kurumlara Gerçekte Ne Kazandırır?",
+      "seoDescription": "Threat intelligence fonksiyonunu raporlamadan operasyonel karara taşıyan pratik model ve metrikler.",
+      "coverImagePrompt": "Threat intelligence analyst mapping campaigns and TTPs on digital board, realistic editorial style, no text",
+      "bodyHtml": "<p>Tehdit istihbaratı birçok kurumda hâlâ “güncel tehdit özeti” seviyesinde yürütülüyor. Bu yaklaşım bilgi üretir ama karar üretmez. Oysa gerçek değer, istihbarat çıktılarının SOC tespitlerine, zafiyet önceliklendirmesine ve yönetim risk kararlarına bağlanmasıyla ortaya çıkar.</p><h2>Üç Katmanlı Kullanım</h2><h3>Stratejik</h3><p>Sektör eğilimleri, bütçe öncelikleri ve yönetim risk görünürlüğü için kullanılır.</p><h3>Operasyonel</h3><p>Kampanya takibi, saldırı zinciri analizi ve savunma planı güncellemelerinde kullanılır.</p><h3>Taktik</h3><p>IOC/IOA sinyalleriyle hızlı koruma ve triage desteği sağlar.</p><h2>Neden Başarısız Oluyor?</h2><p>En sık sorun, tüketici tanımının yapılmamasıdır. SOC analisti ile yönetim kuruluna aynı formatta çıktı verildiğinde iki taraf da gerçek ihtiyacını alamaz. İkinci sorun, aksiyon sahipliğinin belirsizliğidir: bilgi üretilir ama kim uygulayacak net değildir.</p><h2>Karar Üreten Model</h2><ol><li>İstihbarat tüketicilerini rol bazında tanımla.</li><li>Her rol için farklı çıktı formatı belirle.</li><li>İçgörüyü aksiyon sahibi ekibe bağla.</li><li>Sonucu metrikle (MTTR, false-positive düşüşü, risk azalımı).</li></ol><h2>Sonuç</h2><p>Threat intelligence bir içerik faaliyeti değil, kurumun karar altyapısıdır. Kaliteli programlar veri yoğun değil aksiyon yoğun çalışır.</p>"
+    },
+    {
+      "title": "Dark Web İzleme Neden Tek Başına Yeterli Değil? Doğrulama ve Aksiyon İş Akışı Tasarımı",
+      "slug": "dark-web-izleme-dogrulama-aksiyon-is-akisi",
+      "excerpt": "Dark web monitoring araçları bulgu üretir; değer, doğrulanmış bulguların hızlı aksiyona dönüşmesiyle oluşur.",
+      "category": "dark-web",
+      "tags": [
+        "dark-web",
+        "monitoring",
+        "validation",
+        "threat-intelligence"
+      ],
+      "authorName": "NebChat Editör",
+      "authorSlug": "nebchat-editor",
+      "status": "published",
+      "featured": false,
+      "readingTime": 11,
+      "seoTitle": "Dark Web İzleme Neden Yetersiz Kalır?",
+      "seoDescription": "Dark web bulgularında doğrulama, önceliklendirme ve aksiyon sahipliği olmadan neden sonuç alınamadığını anlatır.",
+      "coverImagePrompt": "Security analysts validating dark web intelligence feeds in enterprise SOC, realistic style, no text",
+      "bodyHtml": "<p>Dark web izleme son yılların popüler yatırımlarından biri. Ancak birçok kurumda çıktı, “çok bulgu ama az etki” şeklinde oluyor. Sorun araç değil, iş akışı. İzleme ile müdahale arasında doğrulama katmanı kurulmadığında ekipler gürültü altında kalıyor.</p><h2>Gürültü Problemi</h2><p>Bulgu akışının önemli kısmı tekrar eden veya eski verilerden oluşabilir. Kaynak güvenilirliği, veri tazeliği ve kurum ilişkisi puanlanmadan verilen alarmlar yanlış önceliklendirme üretir.</p><h2>Doğrulama Çerçevesi</h2><ul><li>Kaynak güven puanı</li><li>Veri tazelik kontrolü</li><li>Kurum bağlamı eşleşmesi</li><li>Aksiyon etkisi değerlendirmesi</li></ul><h2>Aksiyon Sahipliği</h2><p>Credential leakage bulgusu IAM ekibine, sahte domain bulgusu brand protection ve hukuka, erişim satışı bulgusu SOC hunt ekibine net SLA ile atanmalıdır. Aksi halde bulgular rapor olarak kalır.</p><h2>Sonuç</h2><p>Dark web izleme bir radar işidir; radarın değeri hedefi göstermekten değil, doğru müdahaleyi başlatmaktan gelir.</p>"
+    },
+    {
+      "title": "Veri Sızıntısı Sonrası Kurumlar Neden İkinci Hata Dalgasını Yaşar?",
+      "slug": "veri-sizintisi-sonrasi-ikinci-hata-dalgasi",
+      "excerpt": "İhlal sonrası hızlı normalleşme baskısı, kimlik ve süreç açıkları temizlenmeden yapıldığında ikinci risk dalgasını tetikler.",
+      "category": "data-breaches",
+      "tags": [
+        "data-breach",
+        "post-incident",
+        "identity",
+        "governance"
+      ],
+      "authorName": "NebChat Editör",
+      "authorSlug": "nebchat-editor",
+      "status": "published",
+      "featured": false,
+      "readingTime": 11,
+      "seoTitle": "Veri İhlali Sonrası İkinci Kriz Dalgası Nasıl Önlenir?",
+      "seoDescription": "Veri sızıntısı sonrası kurumlarda görülen ikinci hata dalgasının nedenleri ve önleme adımları.",
+      "coverImagePrompt": "Post-breach review meeting with timeline and identity risk map, realistic enterprise editorial, no text",
+      "bodyHtml": "<p>Veri sızıntısının ilk günlerinde kurumlar genellikle güçlü refleks gösterir: teknik izolasyon, hukuki değerlendirme, müşteri iletişimi. Ancak asıl zarar çoğu zaman birkaç hafta sonra gelir. Bunun nedeni, olayın kök nedenlerinin değil görünür etkilerinin kapatılmasıdır.</p><h2>İkinci Dalga Neden Olur?</h2><ul><li>Ele geçirilmiş token ve anahtarların iptal edilmemesi</li><li>Tedarikçi erişimlerinin gözden geçirilmemesi</li><li>Kimlik güvenliği kontrollerinin yüzeyde kalması</li><li>Post-mortem çıktılarının aksiyona dönüşmemesi</li></ul><h2>Kimlik Odaklı Kapanış</h2><p>Parola sıfırlama tek başına yeterli değildir. Servis hesapları, API anahtarları, cihaz güven ilişkileri ve uzun ömürlü oturumlar da temizlenmelidir. Bu adımlar atlanırsa saldırganın geri dönüş penceresi açık kalır.</p><h2>Yönetim İçin 30-60-90 Planı</h2><p>İlk 30 günde acil kapatma, 60 günde süreç düzeltme, 90 günde kalıcı kontrol devreye alma hedeflenmelidir. Bu plan metriklerle izlenmezse olay sonrası öğrenme gerçekleşmez.</p><h2>Sonuç</h2><p>İhlal sonrası başarı, “olayı kapatmak” değil riski yeniden üretmeyecek işletim modeline geçmektir.</p>"
+    },
+    {
+      "title": "Zafiyet Yönetimi Neden CVSS Puanından İbaret Değildir?",
+      "slug": "zafiyet-yonetimi-cvss-puanindan-ibaret-degildir",
+      "excerpt": "CVSS teknik şiddeti gösterir; fakat gerçek kurumsal risk için exploitability, maruziyet ve iş etkisi birlikte değerlendirilmelidir.",
+      "category": "vulnerabilities",
+      "tags": [
+        "cvss",
+        "vulnerability-management",
+        "exploitability",
+        "patching"
+      ],
+      "authorName": "NebChat Editör",
+      "authorSlug": "nebchat-editor",
+      "status": "published",
+      "featured": false,
+      "readingTime": 12,
+      "seoTitle": "CVSS Yeterli mi? Zafiyet Önceliklendirme Rehberi",
+      "seoDescription": "CVSS sınırlarını aşan risk temelli zafiyet önceliklendirme yaklaşımı ve operasyonel uygulama önerileri.",
+      "coverImagePrompt": "Security engineer reviewing vulnerability matrix with exploitability and business impact dimensions, realistic editorial style, no text",
+      "bodyHtml": "<p>Zafiyet yönetiminde en zor karar, hangi açığın önce kapatılacağıdır. Birçok kurum bu kararı yalnızca CVSS skoruna bırakır. Bu pratik görünse de gerçek riski her zaman doğru temsil etmez.</p><h2>CVSS’nin Sınırı</h2><p>CVSS teknik şiddeti puanlar; kurum bağlamını değil. İnternete açık olmayan bir test sunucusundaki açık ile müşteri verisi taşıyan üretim API’sindeki açık aynı skorla gelebilir, ama riskleri aynı değildir.</p><h2>Dört Boyutlu Önceliklendirme</h2><ol><li>Teknik şiddet</li><li>Exploitability (aktif sömürü/POC durumu)</li><li>Maruziyet (internet, ağ, erişim tipi)</li><li>İş etkisi (gelir, regülasyon, müşteri etkisi)</li></ol><h2>Yama Programı Hataları</h2><ul><li>Her sistem için aynı SLA uygulamak</li><li>Varlık kritiklik sınıflandırmasını güncellememek</li><li>Yama sonrası doğrulama testini atlamak</li></ul><h2>Sonuç</h2><p>CVSS başlangıç noktasıdır; karar motoru değildir. Etkili zafiyet yönetimi, teknik skorları kurumsal risk bağlamıyla birleştirir.</p>"
+    },
+    {
+      "title": "Bulut Güvenliğinde En Sık Yanlış Anlaşılan Riskler",
+      "slug": "bulut-guvenliginde-en-sik-yanlis-anlasilan-riskler",
+      "excerpt": "Cloud saldırılarının büyük kısmı sıfır gün açıklarından değil, kimlik, görünürlük ve yapılandırma disiplini eksikliğinden kaynaklanır.",
+      "category": "cloud-security",
+      "tags": [
+        "cloud-security",
+        "misconfiguration",
+        "iam",
+        "devsecops"
+      ],
+      "authorName": "NebChat Editör",
+      "authorSlug": "nebchat-editor",
+      "status": "published",
+      "featured": false,
+      "readingTime": 11,
+      "seoTitle": "Cloud Security’de En Kritik Yanlış Yapılandırmalar",
+      "seoDescription": "Bulut güvenliğinde sık görülen misconfiguration riskleri ve önceliklendirilmiş savunma yaklaşımı.",
+      "coverImagePrompt": "Cloud security audit with IAM and network exposure dashboards, realistic editorial enterprise look, no text",
+      "bodyHtml": "<p>Bulut güvenliği konuşulurken teknik terimler çok, operasyonel netlik az olabiliyor. Gerçekte ise risklerin büyük bölümü bilinen ve tekrar eden yanlış yapılandırmalardan kaynaklanır.</p><h2>Kritik Risk Alanları</h2><ul><li>Aşırı yetkili IAM rolleri</li><li>Public erişime açık depolama alanları</li><li>Zayıf ağ segmentasyonu</li><li>Eksik denetim logları</li></ul><h2>Neden Tekrar Ediyor?</h2><p>Bulut hız avantajı sağlarken kontrol disiplini geride kalabiliyor. Yeni servis açmak kolay, yönetişimi aynı hızda güncellemek zor. Bu boşluk, saldırgan için düşük maliyetli fırsat yaratıyor.</p><h2>Guardrail Yaklaşımı</h2><p>Araçlar görünürlük sağlar; fakat kalıcı etki için policy-as-code, pipeline kalite kapıları, kısa ömürlü kimlik ve otomatik düzeltme (auto-remediation) gerekir.</p><h2>Sonuç</h2><p>Cloud güvenliğinde olgunluk, ürün sayısıyla değil kontrol disipliniyle ölçülür. Kimlik + görünürlük + otomasyon üçlüsü temel savunma eksenidir.</p>"
+    },
+    {
+      "title": "Marka Taklidi, Phishing ve Credential Leakage Aynı Zincirin Parçaları mı?",
+      "slug": "marka-taklidi-phishing-credential-leakage-ayni-zincir",
+      "excerpt": "Marka kötüye kullanımı ve kimlik hırsızlığı ayrı olaylar değil, çoğunlukla tek saldırı operasyonunun bağlantılı aşamalarıdır.",
+      "category": "brand-protection",
+      "tags": [
+        "brand-protection",
+        "phishing",
+        "credential-leakage",
+        "digital-risk"
+      ],
+      "authorName": "NebChat Editör",
+      "authorSlug": "nebchat-editor",
+      "status": "published",
+      "featured": false,
+      "readingTime": 11,
+      "seoTitle": "Marka Taklidi ve Credential Leakage Bağlantısı",
+      "seoDescription": "Sahte domain, phishing kampanyaları ve kimlik bilgisi sızıntısının tek zincir olarak nasıl yönetileceğini açıklar.",
+      "coverImagePrompt": "Brand abuse and phishing investigation board with fake domains and leaked credentials indicators, realistic editorial style, no text",
+      "bodyHtml": "<p>Kurumlar marka güvenliğini çoğu zaman iletişim konusu, kimlik güvenliğini ise BT konusu olarak ayırır. Saldırganlar ise bu ayrımı yapmaz. Sahte domainden başlayan kampanya çoğu zaman kullanıcı kimlik bilgisine, oradan da hesap ele geçirmeye uzanır.</p><h2>Bağlantılı Saldırı Zinciri</h2><ol><li>Marka benzeri alan adı tescili</li><li>Phishing içerik ve dağıtım</li><li>Credential toplama</li><li>Hesap suistimali ve ikincil dolandırıcılık</li></ol><h2>Nasıl Yönetilmeli?</h2><p>Brand protection, IAM, SOC ve hukuk ekiplerinin ortak playbook’u olmalıdır. Bulgu, takedown, kullanıcı uyarısı, parola reset ve riskli oturum takibi tek akışta yürütülmelidir.</p><h2>Sonuç</h2><p>Marka taklidi ile credential leakage’i ayrı görmek, saldırganın avantajına çalışır. Zinciri bütün görmek ise müdahale hızını ve doğruluğunu artırır.</p>"
+    },
+    {
+      "title": "Güvenlik Farkındalık Eğitimi Neden Tek Başına Davranışı Değiştirmez?",
+      "slug": "guvenlik-farkindalik-egitimi-davranis-degisimi",
+      "excerpt": "Tamamlama oranı yüksek eğitim programları bile gerçek saldırı davranışını değiştirmeyebilir; çünkü farkındalık ve davranış farklı tasarım sorunlarıdır.",
+      "category": "security-awareness",
+      "tags": [
+        "security-awareness",
+        "behavior",
+        "phishing",
+        "human-risk"
+      ],
+      "authorName": "NebChat Editör",
+      "authorSlug": "nebchat-editor",
+      "status": "published",
+      "featured": false,
+      "readingTime": 11,
+      "seoTitle": "Security Awareness Eğitimi Neden Yetersiz Kalıyor?",
+      "seoDescription": "Kurumlarda farkındalık eğitimini davranış değişimine dönüştürmek için rol bazlı ve ölçülebilir yaklaşım önerileri.",
+      "coverImagePrompt": "Corporate employees in practical cybersecurity awareness simulation session, realistic editorial style, no text",
+      "bodyHtml": "<p>Kurumsal eğitimler tamamlandığında raporlar genellikle olumlu görünür. Ancak phishing tıklama oranı aynı kaldığında programın etkisi sorgulanmalıdır. Çünkü bilgi aktarmak davranış değiştirmek değildir.</p><h2>Davranış Odaklı Tasarım</h2><ul><li>Rol bazlı içerik (finans, İK, satış, teknik ekip)</li><li>Mikro öğrenme ve düzenli tekrar</li><li>Simülasyon sonrası anlık geri bildirim</li><li>Suçlamayan, raporlamayı teşvik eden kültür</li></ul><h2>Ne Ölçülmeli?</h2><p>Yalnızca tamamlama oranı değil; raporlama süresi, tekrar eden hata oranı, birim bazında iyileşme eğilimi ve gerçek olay yakalama etkisi izlenmelidir.</p><h2>Sonuç</h2><p>Security awareness programı eğitim departmanı işi değil, kurumsal risk azaltma tasarımıdır.</p>"
+    },
+    {
+      "title": "Incident Response Retainer Kurumlara Gerçekte Ne Kazandırır?",
+      "slug": "incident-response-retainer-gercek-kazanim",
+      "excerpt": "IR retainer anlaşmaları yalnızca kriz anı danışmanlığı değil; hazırlık olgunluğu, karar hızı ve delil kalitesi sağlayan stratejik bir modeldir.",
+      "category": "incident-response",
+      "tags": [
+        "incident-response",
+        "retainer",
+        "forensics",
+        "preparedness"
+      ],
+      "authorName": "NebChat Editör",
+      "authorSlug": "nebchat-editor",
+      "status": "published",
+      "featured": false,
+      "readingTime": 11,
+      "seoTitle": "Incident Response Retainer’ın Somut Faydaları",
+      "seoDescription": "IR retainer modelinin kriz hazırlığı, müdahale hızı ve yönetişim kalitesi üzerindeki etkisini inceler.",
+      "coverImagePrompt": "Incident response consultants and in-house team running tabletop exercise in modern office, realistic style, no text",
+      "bodyHtml": "<p>IR retainer çoğu kurumda “olursa ararız” şeklinde algılanıyor. Oysa asıl değer olaydan önce başlar: playbook gözden geçirme, erişim hazırlığı, log doğrulama ve tatbikat çalışmaları kriz anındaki dağınıklığı azaltır.</p><h2>Somut Katkılar</h2><ul><li>Müdahalede başlangıç gecikmesini düşürür.</li><li>Forensik toplama kalitesini artırır.</li><li>Yönetim kararlarını daha hızlı veriyle besler.</li><li>İç ekip ile dış uzmanlığın rol sınırını netleştirir.</li></ul><h2>Yanlış Beklenti</h2><p>Retainer, iç ekibin yerini almaz. İç kapasite zayıfsa dış destek sınırlı etki üretir. Başarı için müşterek çalışma modeli gerekir.</p><h2>Sonuç</h2><p>IR retainer bir acil durum hattı değil, kurumsal dayanıklılık yatırımının operasyonel ayağıdır.</p>"
+    },
+    {
+      "title": "Tedarikçi Riski Siber Güvenlikte Neden Göründüğünden Daha Büyüktür?",
+      "slug": "tedarikci-riski-siber-guvenlikte-buyuk-resim",
+      "excerpt": "Üçüncü taraf entegrasyonları kurumların görünmeyen saldırı yüzeyini genişletir; yıllık anketler tek başına yeterli değildir.",
+      "category": "third-party-risk",
+      "tags": [
+        "third-party-risk",
+        "vendor-security",
+        "supply-chain",
+        "governance"
+      ],
+      "authorName": "NebChat Editör",
+      "authorSlug": "nebchat-editor",
+      "status": "published",
+      "featured": false,
+      "readingTime": 12,
+      "seoTitle": "Tedarikçi Siber Riski Nasıl Etkin Yönetilir?",
+      "seoDescription": "Üçüncü taraf riskinde sözleşme, erişim ve sürekli izleme yaklaşımıyla kurumsal saldırı yüzeyini azaltma rehberi.",
+      "coverImagePrompt": "Enterprise team reviewing third-party access and supply chain cyber risk board, realistic editorial style, no text",
+      "bodyHtml": "<p>Tedarikçi güvenliği birçok kurumda onboarding anketine indirgeniyor. Ancak dijital ekosistemde risk statik değildir. Yeni entegrasyon, API değişikliği, alt tedarikçi devri gibi dinamikler riski sürekli yeniden üretir.</p><h2>Yaygın Kör Noktalar</h2><ul><li>Alt tedarikçi görünürlüğünün olmaması</li><li>Sözleşme sonrası erişim denetimsizliği</li><li>Olay bildirim SLA’larının belirsizliği</li><li>Yalnızca sertifika kontrolüne güvenilmesi</li></ul><h2>Sürekli Değerlendirme Modeli</h2><p>Tedarikçiler risk seviyesine göre sınıflandırılmalı, erişim hakları least-privilege ile sınırlandırılmalı, kritik sağlayıcılarda periyodik teknik doğrulama yapılmalıdır.</p><h2>Sonuç</h2><p>Üçüncü taraf riski satın alma dosyasında değil, canlı operasyon akışında yönetilir.</p>"
+    },
+    {
+      "title": "Türkiye’de KOBİ’ler İçin Siber Risk Neden ‘Bize Bir Şey Olmaz’ Meselesi Değildir?",
+      "slug": "turkiye-kobi-siber-risk-bize-bir-sey-olmaz-degil",
+      "excerpt": "Saldırgan ekonomisinde hedef seçimi prestije değil fırsata dayanır; KOBİ’ler de bu nedenle yoğun şekilde maruz kalır.",
+      "category": "turkiye-gundemi",
+      "tags": [
+        "kobi",
+        "turkiye",
+        "cyber-risk",
+        "resilience"
+      ],
+      "authorName": "NebChat Editör",
+      "authorSlug": "nebchat-editor",
+      "status": "published",
+      "featured": false,
+      "readingTime": 11,
+      "seoTitle": "KOBİ’ler İçin Siber Risk: Neden Ciddi Bir İş Riski?",
+      "seoDescription": "Türkiye’de KOBİ’lerin siber maruziyetini ve sınırlı kaynakla uygulanabilir dayanıklılık adımlarını ele alan rehber.",
+      "coverImagePrompt": "SME leadership and IT team discussing cyber risk and resilience roadmap in Turkish office, realistic editorial style, no text",
+      "bodyHtml": "<p>KOBİ’lerde en yaygın savunma cümlesi “biz hedef değiliz” ifadesidir. Oysa saldırılar artık otomasyonla yürütülüyor; düşük güvenlik hijyenine sahip her işletme potansiyel hedefe dönüşüyor.</p><h2>Maruziyet Neden Yüksek?</h2><p>Kısıtlı ekip, geciken yama, zayıf MFA kapsaması ve test edilmemiş yedekleme KOBİ’lerde sık görülen sorunlardır. Bu kombinasyon, saldırgan için düşük maliyetli yüksek başarı oranı sağlar.</p><h2>İlk 60 Günlük Plan</h2><ol><li>MFA’yı e-posta ve uzak erişimde zorunlu kılın.</li><li>Kritik yedekten geri dönüş tatbikatı yapın.</li><li>Varlık ve sorumluluk envanteri çıkarın.</li><li>Temel olay bildirim zinciri tanımlayın.</li></ol><h2>Sonuç</h2><p>KOBİ’ler için siber risk teknik bir detay değil iş sürekliliği konusudur. Doğru önceliklendirme ile sınırlı bütçeyle de güçlü gelişim mümkündür.</p>"
+    }
+  ]
+}
