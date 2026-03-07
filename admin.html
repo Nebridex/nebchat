@@ -9,8 +9,10 @@
   <h1>Editör Paneli</h1>
   <p class="muted">İlk içerik yükleme, yazı oluşturma ve yorum moderasyonu.</p>
   <div class="hero-actions">
-    <button id="seedBtn" class="btn primary" type="button">Örnek içerikleri Firestore'a aktar</button>
+    <button id="seedBtn" class="btn primary" type="button">Eksik örnek içerikleri ekle</button>
+    <button id="seedForceBtn" class="btn ghost" type="button" hidden>Seed içerikleri zorla güncelle</button>
   </div>
+  <p class="notice" style="margin-top:.8rem;">Bu işlem yalnızca eksik seed içerikleri ekler. Mevcut içerikleri ezmez.</p>
   <div id="adminStatus" class="notice" style="margin-top:.8rem;">Hazır.</div>
   <pre id="adminLog" class="admin-log" aria-live="polite"></pre>
 </div>

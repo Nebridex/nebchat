@@ -1,7 +1,7 @@
 import { auth, db, serverTimestamp } from './firebase.js';
 import { injectHeaderFooter, initAuthNav } from './common.js';
 import { CATEGORY_LIST } from './content.js';
-import { addDoc, collection, getDocs, limit, orderBy, query, updateDoc, doc, setDoc } from 'https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js';
+import { addDoc, collection, getDoc, getDocs, limit, orderBy, query, updateDoc, doc, setDoc } from 'https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js';
 import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js';
 
 injectHeaderFooter();
@@ -62,21 +62,34 @@ const normalizeArticle = (article, index) => {
   };
 };
 
-async function importSeedArticles() {
+async function importSeedArticles({ force = false } = {}) {
   if (!isAdmin) {
     show('İçerik aktarmak için admin yetkisi gerekir.', 'error');
     return;
   }
 
+  const forceBtn = document.getElementById('seedForceBtn');
   seedBtn.disabled = true;
+  if (forceBtn) forceBtn.disabled = true;
   logBox.textContent = '';
+
+  const summary = {
+    created: 0,
+    skipped: 0,
+    failed: 0,
+    updated: 0,
+    categoryCreated: 0,
+    categorySkipped: 0,
+    categoryFailed: 0
+  };
+
   try {
     show('Seed dosyası okunuyor...', '');
     log('seed/articles.seed.json okunuyor.');
     const response = await fetch('./seed/articles.seed.json', { cache: 'no-store' });
     if (!response.ok) throw new Error(`Seed dosyası okunamadı (${response.status})`);
     const payload = await response.json();
-    const seedArticles = Array.isArray(payload?.articles) ? payload.articles.slice(0, 10) : [];
+    const seedArticles = Array.isArray(payload?.articles) ? payload.articles : [];
     if (!seedArticles.length) throw new Error('Seed dosyasında makale bulunamadı.');
 
     const categoryMap = new Map(CATEGORY_LIST.map((c) => [c.slug, c]));
@@ -90,37 +103,84 @@ async function importSeedArticles() {
       }
     }
 
-    show('Kategoriler Firestore\'a yazılıyor...', '');
+    show('Kategoriler güvenli biçimde kontrol ediliyor...', '');
     let catIndex = 0;
     for (const category of categoryMap.values()) {
       catIndex += 1;
-      await setDoc(doc(db, 'categories', category.slug), {
-        slug: category.slug,
-        name: category.name,
-        description: category.description || '',
-        order: catIndex,
-        isVisible: true,
-        updatedAt: serverTimestamp(),
-        createdAt: serverTimestamp()
-      }, { merge: true });
-      log(`Kategori upsert: ${category.slug}`);
+      const categoryRef = doc(db, 'categories', category.slug);
+      try {
+        const categorySnap = await getDoc(categoryRef);
+        if (categorySnap.exists() && !force) {
+          summary.categorySkipped += 1;
+          log(`SKIPPED existing category: ${category.slug}`);
+          continue;
+        }
+
+        await setDoc(categoryRef, {
+          slug: category.slug,
+          name: category.name,
+          description: category.description || '',
+          order: catIndex,
+          isVisible: true,
+          updatedAt: serverTimestamp(),
+          createdAt: serverTimestamp()
+        }, { merge: false });
+
+        if (categorySnap.exists()) {
+          log(`UPDATED category: ${category.slug}`);
+        } else {
+          summary.categoryCreated += 1;
+          log(`CREATED category: ${category.slug}`);
+        }
+      } catch (categoryError) {
+        summary.categoryFailed += 1;
+        log(`FAILED category: ${category.slug} (${categoryError.message || categoryError})`);
+      }
     }
 
-    show('Makaleler Firestore\'a yazılıyor... (0/10)', '');
+    show(`Makaleler kontrol ediliyor... (0/${seedArticles.length})`, '');
     for (let i = 0; i < seedArticles.length; i += 1) {
       const normalized = normalizeArticle(seedArticles[i], i);
-      await setDoc(doc(db, 'articles', normalized.slug), normalized, { merge: true });
-      show(`Makaleler Firestore'a yazılıyor... (${i + 1}/10)`, '');
-      log(`Makale upsert: ${normalized.slug}`);
+      const articleRef = doc(db, 'articles', normalized.slug);
+
+      try {
+        const articleSnap = await getDoc(articleRef);
+        if (articleSnap.exists() && !force) {
+          summary.skipped += 1;
+          log(`SKIPPED existing article: ${normalized.slug}`);
+        } else {
+          await setDoc(articleRef, normalized, { merge: false });
+          if (articleSnap.exists()) {
+            summary.updated += 1;
+            log(`UPDATED article: ${normalized.slug}`);
+          } else {
+            summary.created += 1;
+            log(`CREATED article: ${normalized.slug}`);
+          }
+        }
+      } catch (articleError) {
+        summary.failed += 1;
+        log(`FAILED article: ${normalized.slug} (${articleError.message || articleError})`);
+      }
+
+      show(`Makaleler kontrol ediliyor... (${i + 1}/${seedArticles.length})`, '');
     }
 
-    show('Örnek içerikler başarıyla Firestore\'a aktarıldı.', 'ok');
-    log('İşlem tamamlandı. archive.html sayfasını yenileyerek doğrulayın.');
+    log(`Özet -> created: ${summary.created}, skipped: ${summary.skipped}, failed: ${summary.failed}`);
+    if (summary.updated > 0) log(`Force güncelleme sayısı: ${summary.updated}`);
+    log(`Kategori özeti -> created: ${summary.categoryCreated}, skipped: ${summary.categorySkipped}, failed: ${summary.categoryFailed}`);
+
+    if (summary.failed > 0 || summary.categoryFailed > 0) {
+      show(`Aktarım tamamlandı (created: ${summary.created}, skipped: ${summary.skipped}, failed: ${summary.failed}).`, 'error');
+    } else {
+      show(`Aktarım tamamlandı (created: ${summary.created}, skipped: ${summary.skipped}, failed: 0).`, 'ok');
+    }
   } catch (error) {
     show(`Aktarım hatası: ${error.message || error}`, 'error');
     log(`Hata: ${error.message || error}`);
   } finally {
     seedBtn.disabled = false;
+    if (forceBtn) forceBtn.disabled = false;
   }
 }
 
@@ -133,8 +193,9 @@ onAuthStateChanged(auth, async (user) => {
     return;
   }
 
-  console.log('User email:', user.email);
-  isAdmin = !!user && user.email === ADMIN_EMAIL;
+  const tokenResult = await user.getIdTokenResult(true);
+  const role = tokenResult?.claims?.role;
+  isAdmin = role === 'admin' || role === 'editor' || user.email === ADMIN_EMAIL;
 
   if (!isAdmin) {
     gate.classList.remove('hidden');
@@ -151,7 +212,16 @@ onAuthStateChanged(auth, async (user) => {
   await loadComments();
 });
 
-seedBtn.addEventListener('click', importSeedArticles);
+seedBtn.addEventListener('click', () => importSeedArticles({ force: false }));
+
+const seedForceBtn = document.getElementById('seedForceBtn');
+if (seedForceBtn) {
+  seedForceBtn.addEventListener('click', async () => {
+    const confirmed = window.confirm('Bu işlem mevcut seed içeriklerini zorla günceller ve mevcut alanları ezebilir. Devam etmek istiyor musunuz?');
+    if (!confirmed) return;
+    await importSeedArticles({ force: true });
+  });
+}
 
 document.getElementById('articleForm').addEventListener('submit', async (e) => {
   e.preventDefault();
