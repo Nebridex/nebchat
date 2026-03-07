@@ -76,7 +76,7 @@ async function importSeedArticles() {
     const response = await fetch('./seed/articles.seed.json', { cache: 'no-store' });
     if (!response.ok) throw new Error(`Seed dosyası okunamadı (${response.status})`);
     const payload = await response.json();
-    const seedArticles = Array.isArray(payload?.articles) ? payload.articles.slice(0, 10) : [];
+    const seedArticles = Array.isArray(payload?.articles) ? payload.articles : [];
     if (!seedArticles.length) throw new Error('Seed dosyasında makale bulunamadı.');
 
     const categoryMap = new Map(CATEGORY_LIST.map((c) => [c.slug, c]));
@@ -106,11 +106,11 @@ async function importSeedArticles() {
       log(`Kategori upsert: ${category.slug}`);
     }
 
-    show('Makaleler Firestore\'a yazılıyor... (0/10)', '');
+    show(`Makaleler Firestore'a yazılıyor... (0/${seedArticles.length})`, '');
     for (let i = 0; i < seedArticles.length; i += 1) {
       const normalized = normalizeArticle(seedArticles[i], i);
       await setDoc(doc(db, 'articles', normalized.slug), normalized, { merge: true });
-      show(`Makaleler Firestore'a yazılıyor... (${i + 1}/10)`, '');
+      show(`Makaleler Firestore'a yazılıyor... (${i + 1}/${seedArticles.length})`, '');
       log(`Makale upsert: ${normalized.slug}`);
     }
 
@@ -133,8 +133,9 @@ onAuthStateChanged(auth, async (user) => {
     return;
   }
 
-  console.log('User email:', user.email);
-  isAdmin = !!user && user.email === ADMIN_EMAIL;
+  const tokenResult = await user.getIdTokenResult(true);
+  const role = tokenResult?.claims?.role;
+  isAdmin = role === 'admin' || role === 'editor' || user.email === ADMIN_EMAIL;
 
   if (!isAdmin) {
     gate.classList.remove('hidden');
