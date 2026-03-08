@@ -81,9 +81,10 @@ export async function fetchCategories() {
 export async function fetchArticles({ category = '', search = '', tag = '', authorSlug = '', sort = 'newest', max = 24 } = {}) {
   let rows = [];
   try {
-    const q = query(collection(db, 'articles'), where('status', '==', 'published'));
-    const snap = await getDocs(q);
-    rows = snap.docs.map(mapArticle);
+    const snap = await getDocs(query(collection(db, 'articles'), limit(600)));
+    rows = snap.docs
+      .map(mapArticle)
+      .filter((a) => a.status === 'published' || a.status == null || a.status === '');
   } catch (error) {
     console.warn('Makale sorgusu başarısız:', error);
     return [];
@@ -112,19 +113,19 @@ export async function fetchArticleBySlug(slug) {
     const byIdSnap = await getDoc(byIdRef);
     if (byIdSnap.exists()) {
       const byIdArticle = mapArticle(byIdSnap);
-      if (byIdArticle.status === 'published') return byIdArticle;
+      if (byIdArticle.status === 'published' || byIdArticle.status == null || byIdArticle.status === '') return byIdArticle;
     }
 
-    const publishedSnap = await getDocs(query(
+    const allSnap = await getDocs(query(
       collection(db, 'articles'),
-      where('status', '==', 'published'),
-      limit(300)
+      limit(600)
     ));
-    if (publishedSnap.empty) return null;
+    if (allSnap.empty) return null;
 
-    const matches = publishedSnap.docs
+    const matches = allSnap.docs
       .map(mapArticle)
-      .filter((a) => (a.slug || a.id) === slug);
+      .filter((a) => (a.slug || a.id) === slug)
+      .filter((a) => a.status === 'published' || a.status == null || a.status === '');
 
     return sortByPublishedAtDesc(matches)[0] || null;
   } catch (error) {

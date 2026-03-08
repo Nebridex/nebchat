@@ -8,6 +8,7 @@ import {
   limit,
   orderBy,
   query,
+  startAfter,
   updateDoc,
   doc,
   setDoc,
@@ -281,12 +282,22 @@ function renderArticleCard(id, data) {
 async function loadArticlesByStatus(statusKey) {
   const container = moderationContainers[statusKey];
   if (!container) return;
-  const snap = await getDocs(query(collection(db, 'articles'), where('status', '==', statusKey), orderBy('createdAt', 'desc'), limit(40)));
+
+  const snap = await getDocs(query(collection(db, 'articles'), where('status', '==', statusKey), limit(120)));
   if (snap.empty) {
     container.innerHTML = `<div class="muted">${statusLabel[statusKey]} durumunda yazı bulunamadı.</div>`;
     return;
   }
-  container.innerHTML = snap.docs.map((d) => renderArticleCard(d.id, d.data())).join('');
+
+  const rows = snap.docs
+    .map((d) => ({ id: d.id, ...d.data() }))
+    .sort((a, b) => {
+      const ad = a.createdAt?.toDate ? a.createdAt.toDate().getTime() : (a.createdAt ? new Date(a.createdAt).getTime() : 0);
+      const bd = b.createdAt?.toDate ? b.createdAt.toDate().getTime() : (b.createdAt ? new Date(b.createdAt).getTime() : 0);
+      return bd - ad;
+    });
+
+  container.innerHTML = rows.map((row) => renderArticleCard(row.id, row)).join('');
 }
 
 async function loadModerationSections() {
@@ -303,6 +314,25 @@ async function loadComments() {
 }
 
 
+
+async function fetchAllArticleDocs(maxDocs = 2000) {
+  const out = [];
+  let lastDoc = null;
+
+  while (out.length < maxDocs) {
+    const constraints = [orderBy('__name__'), limit(200)];
+    if (lastDoc) constraints.push(startAfter(lastDoc));
+    const snap = await getDocs(query(collection(db, 'articles'), ...constraints));
+    if (snap.empty) break;
+
+    out.push(...snap.docs);
+    lastDoc = snap.docs[snap.docs.length - 1];
+    if (snap.size < 200) break;
+  }
+
+  return out.slice(0, maxDocs);
+}
+
 async function sendAllPublishedToReview() {
   if (!isAdmin) return;
   const confirmed = window.confirm('Yayındaki tüm yazılar pending_review durumuna alınacak. Devam etmek istiyor musunuz?');
@@ -310,24 +340,35 @@ async function sendAllPublishedToReview() {
 
   try {
     show('Yayındaki yazılar incelemeye alınıyor...', '');
-    const snap = await getDocs(query(collection(db, 'articles'), where('status', '==', 'published'), limit(500)));
-    if (snap.empty) {
+    const docs = await fetchAllArticleDocs();
+    const targets = docs.filter((row) => {
+      const statusValue = row.data()?.status;
+      return statusValue === 'published' || statusValue == null || statusValue === '';
+    });
+
+    if (!targets.length) {
       show('Yayında yazı bulunamadı, işlem yapılmadı.', 'ok');
       return;
     }
 
     let updated = 0;
-    for (const row of snap.docs) {
-      await updateDoc(doc(db, 'articles', row.id), {
-        status: 'pending_review',
-        updatedAt: serverTimestamp(),
-        featured: false
-      });
-      updated += 1;
+    let failed = 0;
+    for (const row of targets) {
+      try {
+        await updateDoc(doc(db, 'articles', row.id), {
+          status: 'pending_review',
+          updatedAt: serverTimestamp(),
+          featured: false
+        });
+        updated += 1;
+      } catch (err) {
+        failed += 1;
+        log(`FAILED pending_review update: ${row.id} (${err.message || err})`);
+      }
     }
 
-    log(`Toplu işlem tamamlandı: ${updated} yazı pending_review durumuna alındı.`);
-    show(`${updated} yazı incelemeye alındı.`, 'ok');
+    log(`Toplu işlem tamamlandı: updated=${updated}, failed=${failed}.`);
+    show(`${updated} yazı incelemeye alındı${failed ? `, ${failed} başarısız` : ''}.`, failed ? 'error' : 'ok');
     await loadModerationSections();
     activateTab('pending_review');
   } catch (error) {
