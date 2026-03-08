@@ -1,6 +1,8 @@
 import { auth } from './firebase.js';
 import { onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js';
 
+const ADMIN_EMAIL = 'oz.cht.t@gmail.com';
+
 export function injectHeaderFooter() {
   const header = document.querySelector('[data-site-header]');
   const footer = document.querySelector('[data-site-footer]');
@@ -45,17 +47,8 @@ export function initAuthNav() {
       };
     }
 
-    let isEditor = false;
-    if (user) {
-      try {
-        const tokenResult = await user.getIdTokenResult();
-        const role = tokenResult?.claims?.role;
-        isEditor = role === 'admin' || role === 'editor';
-      } catch (error) {
-        console.warn('Rol bilgisi alınamadı:', error);
-      }
-    }
-    if (adminNav) adminNav.classList.toggle('hidden', !isEditor);
+    const isAdmin = Boolean(user?.email) && user.email.toLowerCase() === ADMIN_EMAIL;
+    if (adminNav) adminNav.classList.toggle('hidden', !isAdmin);
   });
 }
 

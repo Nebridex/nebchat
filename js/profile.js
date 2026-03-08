@@ -140,6 +140,13 @@ const statusLabel = (statusKey = '') => ({
   rejected: 'Reddedildi'
 }[statusKey] || statusKey || 'Belirsiz');
 
+const statusHint = (statusKey = '') => ({
+  pending_review: 'Editör incelemesinde.',
+  draft: 'Taslak olarak kaydedildi.',
+  published: 'Yazı yayında, bağlantıdan görüntüleyebilirsiniz.',
+  rejected: 'Yazı reddedildi. Revize ederek tekrar gönderebilirsiniz.'
+}[statusKey] || 'Durum bilgisi güncellenecek.');
+
 async function renderCommentHistory(uid) {
   try {
     const snap = await getDocs(query(collection(db, 'comments'), where('userId', '==', uid), orderBy('createdAt', 'desc'), limit(20)));
@@ -161,7 +168,9 @@ async function renderSubmittedArticles(uid) {
     submittedWrap.innerHTML = snap.docs.map((d) => {
       const a = d.data();
       const date = a.createdAt?.toDate ? formatDate(a.createdAt.toDate()) : '—';
-      return `<a class="card" href="article.html?slug=${encodeURIComponent(a.slug || d.id)}"><strong>${a.title || 'Başlıksız Yazı'}</strong><p class="muted">Durum: ${statusLabel(a.status)}</p><div class="meta"><span>${date}</span><span>${a.category || 'kategori'}</span></div></a>`;
+      const href = a.status === 'published' ? `article.html?slug=${encodeURIComponent(a.slug || d.id)}` : 'javascript:void(0)';
+      const disabled = a.status === 'published' ? '' : 'aria-disabled="true"';
+      return `<a class="card" href="${href}" ${disabled}><strong>${a.title || 'Başlıksız Yazı'}</strong><p class="muted">Durum: ${statusLabel(a.status)}</p><p class="muted">${statusHint(a.status)}</p><div class="meta"><span>${date}</span><span>${a.category || 'kategori'}</span></div></a>`;
     }).join('') || '<p class="muted">Henüz gönderilmiş yazı yok.</p>';
   } catch (error) {
     submittedWrap.innerHTML = '<p class="muted">Gönderdiğiniz yazılar yüklenemedi. Firestore rule/index kontrolü gerekebilir.</p>';

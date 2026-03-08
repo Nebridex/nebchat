@@ -6,11 +6,12 @@ import { doc, getDoc, setDoc } from 'https://www.gstatic.com/firebasejs/12.6.0/f
 injectHeaderFooter();
 initAuthNav();
 
+const ADMIN_EMAIL = 'oz.cht.t@gmail.com';
 const form = document.getElementById('writeForm');
 const status = document.getElementById('writeStatus');
 const statusField = document.getElementById('statusField');
 let currentUser = null;
-let isEditor = false;
+let isAdmin = false;
 
 const slugify = (text = '') => String(text)
   .toLowerCase()
@@ -25,7 +26,7 @@ const setStatus = (msg, type = '') => {
   status.textContent = msg;
 };
 
-onAuthStateChanged(auth, async (user) => {
+onAuthStateChanged(auth, (user) => {
   currentUser = user;
   if (!user) {
     form.classList.add('hidden');
@@ -33,13 +34,11 @@ onAuthStateChanged(auth, async (user) => {
     return;
   }
 
-  const token = await user.getIdTokenResult();
-  const role = token?.claims?.role;
-  isEditor = role === 'admin' || role === 'editor';
+  isAdmin = user.email?.toLowerCase() === ADMIN_EMAIL;
 
   form.classList.remove('hidden');
-  statusField.classList.toggle('hidden', !isEditor);
-  setStatus(isEditor ? 'Editör yetkisi algılandı: durum seçimi aktif.' : 'Yazınız inceleme için gönderilecektir.');
+  statusField.classList.toggle('hidden', !isAdmin);
+  setStatus(isAdmin ? 'Yönetici modu: durum seçimi aktif.' : 'Yazınız inceleme için gönderilecektir.');
 });
 
 form.addEventListener('submit', async (e) => {
@@ -56,7 +55,7 @@ form.addEventListener('submit', async (e) => {
     return;
   }
 
-  const selectedStatus = isEditor ? f.status.value : 'pending_review';
+  const selectedStatus = isAdmin ? f.status.value : 'pending_review';
   const payload = {
     title,
     slug,
@@ -69,6 +68,7 @@ form.addEventListener('submit', async (e) => {
     coverImagePrompt: f.coverImagePrompt.value.trim(),
     authorId: currentUser.uid,
     authorName: currentUser.displayName || currentUser.email || 'NebChat Üye Yazarı',
+    authorEmail: currentUser.email || '',
     authorSlug: slugify(currentUser.displayName || currentUser.email || 'uye-yazar'),
     status: selectedStatus,
     featured: false,
@@ -76,6 +76,8 @@ form.addEventListener('submit', async (e) => {
     seoTitle: title,
     seoDescription: f.excerpt.value.trim(),
     views: 0,
+    commentCount: 0,
+    likeCount: 0,
     createdAt: serverTimestamp(),
     updatedAt: serverTimestamp(),
     publishedAt: selectedStatus === 'published' ? new Date() : null

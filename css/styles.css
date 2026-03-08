@@ -140,3 +140,6 @@ textarea { min-height:130px; }
 .profile-hero h1 { margin: .35rem 0 .6rem; }
 .auth-form { display:grid; gap:.7rem; }
 .auth-form .btn { width: fit-content; }
+
+.moderation-list { display:grid; gap:.75rem; margin-top:1rem; }
+.moderation-list .card { border-left:3px solid rgba(79,140,255,.45); }
