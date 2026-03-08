@@ -4,61 +4,63 @@
 <meta name="robots" content="noindex,follow"><link rel="stylesheet" href="css/styles.css"></head><body>
 <header class="site-header" data-site-header></header>
 <main class="container">
-  <section id="guestView" class="section">
+  <section id="loggedOutView" class="section">
     <div class="panel profile-hero">
       <div class="kicker">NebChat Üyelik</div>
       <h1 id="profileTitle">NebChat'e Giriş Yap</h1>
       <p class="lead">NebChat'e giriş yaparak kendi analizlerini yayınlayabilir, mevcut yazılara yorum bırakabilir, içeriklerini kaydedebilir ve yayın tercihlerini yönetebilirsin.</p>
       <div class="hero-actions">
         <a href="#loginPanel" class="btn primary">Giriş Yap</a>
-        <button id="openRegisterBtn" class="btn ghost" type="button">Üye değil misin? Kayıt ol</button>
+        <button id="openRegisterBtn" class="btn ghost" type="button" aria-controls="registerPanel" aria-expanded="false">Üye değil misin? Kayıt ol</button>
       </div>
     </div>
 
     <section id="loginPanel" class="section panel">
       <h2>Giriş Yap</h2>
-      <form id="loginForm" class="auth-form">
+      <form id="loginForm" class="auth-form" novalidate>
         <input name="email" type="email" placeholder="E-posta" required>
         <input name="password" type="password" placeholder="Şifre" required>
         <button class="btn primary" type="submit">Giriş</button>
       </form>
+      <div id="loginMessage" class="notice hidden" style="margin-top:.8rem;" aria-live="polite"></div>
     </section>
 
     <section id="registerPanel" class="section panel hidden" aria-hidden="true">
       <h2>Kayıt Ol</h2>
-      <p class="muted">Hızlıca kayıt ol ve NebChat topluluğuna katıl.</p>
-      <form id="registerForm" class="auth-form">
+      <p class="muted">Üye değil misin? Hızlıca kayıt ol ve NebChat topluluğuna katıl.</p>
+      <form id="registerForm" class="auth-form" novalidate>
         <input name="name" placeholder="Ad Soyad" required>
         <input name="email" type="email" placeholder="E-posta" required>
         <input name="password" type="password" placeholder="Şifre" required>
         <button class="btn primary" type="submit">Hesap Oluştur</button>
       </form>
+      <div id="registerMessage" class="notice hidden" style="margin-top:.8rem;" aria-live="polite"></div>
     </section>
   </section>
 
-  <section id="memberView" class="hidden">
+  <section id="loggedInView" class="hidden">
     <section class="section panel">
-      <h1>Profilim</h1>
+      <h1 id="memberHeading">Profilim</h1>
       <h2>Üye Özeti</h2>
       <div id="userBox"></div>
       <div class="hero-actions">
         <button id="signOutBtn" class="btn ghost" type="button">Çıkış Yap</button>
       </div>
-      <div id="authStatus" class="notice" style="margin-top:.8rem;"></div>
+      <div id="authStatus" class="notice" style="margin-top:.8rem;">Üye paneline hoş geldiniz.</div>
     </section>
 
     <section class="section grid-2">
-      <div class="panel"><h2>Kaydedilen Makaleler</h2><div id="savedArticles"></div></div>
-      <div class="panel"><h2>Sonra Oku</h2><div id="readLaterArticles"></div></div>
+      <div class="panel"><h2>Kaydedilen Makaleler</h2><div id="savedArticles"><p class="muted">Kaydedilmiş içerik yok.</p></div></div>
+      <div class="panel"><h2>Sonra Oku</h2><div id="readLaterArticles"><p class="muted">Okuma listesi boş.</p></div></div>
     </section>
 
     <section class="section grid-2">
-      <div class="panel"><h2>Yorum Geçmişi</h2><div id="recentComments"></div></div>
+      <div class="panel"><h2>Yorum Geçmişi</h2><div id="recentComments"><p class="muted">Henüz yorum bulunmuyor.</p></div></div>
       <div class="panel"><h2>Bülten Tercihleri</h2>
         <label><input id="newsletterWeekly" type="checkbox"> Haftalık Threat Digest</label><br>
         <label><input id="newsletterBreaking" type="checkbox"> Kritik güvenlik alarmı</label><br>
         <button id="savePrefsBtn" class="btn primary" type="button" style="margin-top:.8rem;">Tercihleri Kaydet</button>
-        <div id="prefsStatus" class="muted" style="margin-top:.5rem;"></div>
+        <div id="prefsStatus" class="muted" style="margin-top:.5rem;">Tercihleriniz buradan yönetilir.</div>
       </div>
     </section>
   </section>
