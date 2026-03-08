@@ -106,11 +106,14 @@ export async function fetchArticles({ category = '', search = '', sort = 'newest
 
 export async function fetchArticleBySlug(slug) {
   try {
-    const snap = await getDocs(query(collection(db, 'articles'), where('slug', '==', slug)));
+    const snap = await getDocs(query(
+      collection(db, 'articles'),
+      where('slug', '==', slug),
+      where('status', '==', 'published')
+    ));
     if (snap.empty) return null;
-    const matches = snap.docs.map(mapArticle).filter((a) => a.status === 'published');
-    if (!matches.length) return null;
-    return sortByPublishedAtDesc(matches)[0];
+    const matches = snap.docs.map(mapArticle);
+    return sortByPublishedAtDesc(matches)[0] || null;
   } catch (error) {
     console.warn('Makale detayı sorgusu başarısız:', error);
     return null;
@@ -144,10 +147,14 @@ export async function addComment({ articleId = '', articleSlug, userId, displayN
 
 export async function incrementView(articleId) {
   if (!articleId || String(articleId).startsWith('seed-')) return;
-  const ref = doc(db, 'articles', articleId);
-  const snap = await getDoc(ref);
-  const views = (snap.data()?.views || 0) + 1;
-  await updateDoc(ref, { views });
+  try {
+    const ref = doc(db, 'articles', articleId);
+    const snap = await getDoc(ref);
+    const views = (snap.data()?.views || 0) + 1;
+    await updateDoc(ref, { views });
+  } catch (error) {
+    console.warn('Görüntülenme artırılamadı:', error);
+  }
 }
 
 export async function seedInitialDataIfEmpty() {
