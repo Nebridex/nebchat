@@ -1,12 +1,12 @@
 import { fetchArticles } from './data.js';
 import { TOPIC_HUBS } from './content.js';
-import { escapeHtml, formatDate, injectHeaderFooter, initAuthNav, setCanonical, setJSONLD, setSEO } from './common.js';
+import { escapeHtml, formatDate, injectHeaderFooter, initAuthNav, setCanonical, setJSONLD, setRobots, setSEO } from './common.js';
 
 injectHeaderFooter();
 initAuthNav();
 
-const slug = new URLSearchParams(location.search).get('slug') || 'ai-security';
-const hub = TOPIC_HUBS.find((h) => h.slug === slug) || TOPIC_HUBS[0];
+const requestedSlug = new URLSearchParams(location.search).get('slug') || 'ai-security';
+const hub = TOPIC_HUBS.find((h) => h.slug === requestedSlug) || TOPIC_HUBS[0];
 
 const titleEl = document.getElementById('topicTitle');
 const descEl = document.getElementById('topicDescription');
@@ -20,8 +20,10 @@ linksEl.innerHTML = TOPIC_HUBS.map((h) => `<a class="category-chip ${h.slug === 
 
 const rows = await fetchArticles({ category: hub.category || '', search: hub.query || '', max: 40 });
 const url = `https://nebchat.online/topic.html?slug=${encodeURIComponent(hub.slug)}`;
+
 setSEO({ title: `${hub.name} Topic Hub | NebChat`, description: hub.description, url });
 setCanonical(url);
+setRobots(requestedSlug === hub.slug ? 'index,follow' : 'noindex,follow');
 setJSONLD({
   '@context': 'https://schema.org',
   '@type': 'CollectionPage',
@@ -29,7 +31,16 @@ setJSONLD({
   description: hub.description,
   url
 }, 'topicSchema');
+setJSONLD({
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Ana Sayfa', item: 'https://nebchat.online/' },
+    { '@type': 'ListItem', position: 2, name: 'Topic Hub', item: 'https://nebchat.online/topic.html?slug=ai-security' },
+    { '@type': 'ListItem', position: 3, name: hub.name, item: url }
+  ]
+}, 'topicBreadcrumbSchema');
 
-featuredEl.innerHTML = rows.slice(0, 2).map((a) => `<article class="card article-card"><span class="badge">${escapeHtml(a.category)}</span><h3><a href="article.html?slug=${encodeURIComponent(a.slug)}">${escapeHtml(a.title)}</a></h3><p>${escapeHtml(a.excerpt || '')}</p><div class="meta"><span>${a.publishedAtDate ? formatDate(a.publishedAtDate) : '—'}</span><span>${a.readingTime || 5} dk</span></div></article>`).join('') || '<div class="card">Bu topic için içerik bulunamadı.</div>';
+featuredEl.innerHTML = rows.slice(0, 2).map((a) => `<article class="card article-card"><span class="badge">${escapeHtml(a.category)}</span><h3><a href="article.html?slug=${encodeURIComponent(a.slug)}">${escapeHtml(a.title)}</a></h3><p>${escapeHtml(a.excerpt || '')}</p><div class="meta"><span>${a.publishedAtDate ? formatDate(a.publishedAtDate) : '—'}</span><span>${a.readingTime || 5} dk</span></div></article>`).join('') || '<div class="card">Bu topic için henüz yayınlanmış içerik bulunmuyor.</div>';
 
-listEl.innerHTML = rows.map((a) => `<article class="card article-card"><h3><a href="article.html?slug=${encodeURIComponent(a.slug)}">${escapeHtml(a.title)}</a></h3><p>${escapeHtml(a.excerpt || '')}</p><div class="meta"><span>${escapeHtml(a.category)}</span><span>${a.publishedAtDate ? formatDate(a.publishedAtDate) : '—'}</span></div></article>`).join('') || '<div class="card">Bu topic için içerik bulunamadı.</div>';
+listEl.innerHTML = rows.map((a) => `<article class="card article-card"><h3><a href="article.html?slug=${encodeURIComponent(a.slug)}">${escapeHtml(a.title)}</a></h3><p>${escapeHtml(a.excerpt || '')}</p><div class="meta"><span>${escapeHtml(a.category)}</span><span>${a.publishedAtDate ? formatDate(a.publishedAtDate) : '—'}</span></div></article>`).join('') || '<div class="card">Bu topic için henüz yayınlanmış içerik bulunmuyor.</div>';
