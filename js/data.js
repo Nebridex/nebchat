@@ -106,13 +106,24 @@ export async function fetchArticles({ category = '', search = '', sort = 'newest
 
 export async function fetchArticleBySlug(slug) {
   try {
-    const snap = await getDocs(query(
+    const byIdRef = doc(db, 'articles', slug);
+    const byIdSnap = await getDoc(byIdRef);
+    if (byIdSnap.exists()) {
+      const byIdArticle = mapArticle(byIdSnap);
+      if (byIdArticle.status === 'published') return byIdArticle;
+    }
+
+    const publishedSnap = await getDocs(query(
       collection(db, 'articles'),
-      where('slug', '==', slug),
-      where('status', '==', 'published')
+      where('status', '==', 'published'),
+      limit(300)
     ));
-    if (snap.empty) return null;
-    const matches = snap.docs.map(mapArticle);
+    if (publishedSnap.empty) return null;
+
+    const matches = publishedSnap.docs
+      .map(mapArticle)
+      .filter((a) => (a.slug || a.id) === slug);
+
     return sortByPublishedAtDesc(matches)[0] || null;
   } catch (error) {
     console.warn('Makale detayı sorgusu başarısız:', error);
