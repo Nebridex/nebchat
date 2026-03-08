@@ -50,6 +50,25 @@ const statusLabel = {
   rejected: 'Reddedildi'
 };
 
+const statusAliases = {
+  pending_review: 'pending_review',
+  pendingreview: 'pending_review',
+  review: 'pending_review',
+  waiting: 'pending_review',
+  in_review: 'pending_review',
+  moderation: 'pending_review',
+  published: 'published',
+  live: 'published',
+  public: 'published',
+  approved: 'published',
+  draft: 'draft',
+  drafts: 'draft',
+  rejected: 'rejected',
+  deny: 'rejected',
+  denied: 'rejected',
+  declined: 'rejected'
+};
+
 const toLocalDate = (v) => {
   const d = v?.toDate ? v.toDate() : (v ? new Date(v) : null);
   if (!d || Number.isNaN(d.getTime())) return null;
@@ -261,12 +280,14 @@ async function changeArticleStatus(articleId, action) {
 }
 
 function renderArticleCard(id, data) {
-  const createdAt = toLocalDate(data.createdAt);
-  const excerpt = (data.excerpt || data.bodyMarkdown || '').slice(0, 180);
+  const visibleStatus = normalizeStatus(data.status);
+  const createdAt = resolveArticleDate(data);
+  const excerptSource = data.excerpt || data.summary || data.bodyMarkdown || String(data.bodyHtml || '').replace(/<[^>]+>/g, ' ');
+  const excerpt = excerptSource.slice(0, 180);
   return `
     <article class="card" data-article-id="${escapeHtml(id)}">
-      <div class="meta"><span>${escapeHtml(statusLabel[data.status] || data.status || 'Belirsiz')}</span><span>${createdAt ? formatDate(createdAt) : '—'}</span></div>
-      <strong>${escapeHtml(data.title || 'Başlıksız Yazı')}</strong>
+      <div class="meta"><span>${escapeHtml(statusLabel[visibleStatus] || visibleStatus || 'Belirsiz')}</span><span>${createdAt ? formatDate(createdAt) : '—'}</span></div>
+      <strong>${escapeHtml(data.title || data.headline || 'Başlıksız Yazı')}</strong>
       <p class="muted">${escapeHtml(excerpt)}${excerpt.length >= 180 ? '…' : ''}</p>
       <div class="meta"><span>Kategori: ${escapeHtml(data.category || '—')}</span><span>Slug: ${escapeHtml(data.slug || id)}</span></div>
       <div class="meta"><span>Yazar: ${escapeHtml(data.authorName || '—')}</span><span>${escapeHtml(data.authorEmail || data.authorId || '—')}</span></div>
@@ -281,8 +302,9 @@ function renderArticleCard(id, data) {
 }
 
 const normalizeStatus = (value) => {
-  if (value === 'pending_review' || value === 'published' || value === 'draft' || value === 'rejected') return value;
-  return 'published';
+  const key = String(value || '').trim().toLowerCase();
+  if (!key) return 'published';
+  return statusAliases[key] || 'published';
 };
 
 function toMillis(raw) {
@@ -292,18 +314,41 @@ function toMillis(raw) {
   return Number.isNaN(t) ? 0 : t;
 }
 
+function resolveArticleDate(data) {
+  return toLocalDate(data.updatedAt)
+    || toLocalDate(data.submittedAt)
+    || toLocalDate(data.createdAt)
+    || toLocalDate(data.publishedAt)
+    || null;
+}
+
+function setContainerState(container, state, message) {
+  if (!container) return;
+  if (state === 'error') {
+    container.innerHTML = `<div class="notice error">${escapeHtml(message || 'Bu liste yüklenirken hata oluştu.')}</div>`;
+    return;
+  }
+  if (state === 'empty') {
+    container.innerHTML = `<div class="muted">${escapeHtml(message || 'Kayıt bulunamadı.')}</div>`;
+    return;
+  }
+  container.innerHTML = `<div class="muted">${escapeHtml(message || 'Yükleniyor...')}</div>`;
+}
+
 function renderRowsForStatus(statusKey, rows) {
   const container = moderationContainers[statusKey];
   if (!container) return;
   if (!rows.length) {
-    container.innerHTML = `<div class="muted">${statusLabel[statusKey]} durumunda yazı bulunamadı.</div>`;
+    setContainerState(container, 'empty', `${statusLabel[statusKey]} durumunda yazı bulunamadı.`);
     return;
   }
   container.innerHTML = rows.map((row) => renderArticleCard(row.id, row)).join('');
 }
 
 async function loadModerationSections() {
+  Object.values(moderationContainers).forEach((container) => setContainerState(container, 'loading', 'Yükleniyor...'));
   try {
+    log('Moderasyon yenileniyor: collection=articles, order=__name__, limit=200/page.');
     const docs = await fetchAllArticleDocs();
     const grouped = { pending_review: [], published: [], draft: [], rejected: [] };
 
@@ -315,12 +360,17 @@ async function loadModerationSections() {
     }
 
     Object.keys(grouped).forEach((k) => {
-      grouped[k].sort((a, b) => toMillis(b.createdAt) - toMillis(a.createdAt));
+      grouped[k].sort((a, b) => toMillis(resolveArticleDate(b)) - toMillis(resolveArticleDate(a)));
       renderRowsForStatus(k, grouped[k]);
+      log(`Moderasyon listesi: status=${k}, adet=${grouped[k].length}.`);
     });
 
     activateTab(activeStatus);
   } catch (error) {
+    Object.entries(moderationContainers).forEach(([k, container]) => {
+      setContainerState(container, 'error', `${statusLabel[k]} listesi yüklenemedi: ${error.message || error}`);
+    });
+    log(`FAILED moderation refresh: collection=articles (${error.message || error})`);
     show(`Moderasyon listesi yüklenemedi: ${error.message || error}`, 'error');
   }
 }
@@ -342,7 +392,8 @@ async function fetchAllArticleDocs(maxDocs = 2000) {
   while (out.length < maxDocs) {
     const constraints = [orderBy('__name__'), limit(200)];
     if (lastDoc) constraints.push(startAfter(lastDoc));
-    const snap = await getDocs(query(collection(db, 'articles'), ...constraints));
+    const q = query(collection(db, 'articles'), ...constraints);
+    const snap = await getDocs(q);
     if (snap.empty) break;
 
     out.push(...snap.docs);
@@ -361,10 +412,8 @@ async function sendAllPublishedToReview() {
   try {
     show('Yayındaki yazılar incelemeye alınıyor...', '');
     const docs = await fetchAllArticleDocs();
-    const targets = docs.filter((row) => {
-      const statusValue = row.data()?.status;
-      return statusValue === 'published' || statusValue == null || statusValue === '';
-    });
+    const targets = docs.filter((row) => normalizeStatus(row.data()?.status) === 'published');
+    log(`Toplu incelemeye düşür hedef sorgu: collection=articles, status in [published/live/public/approved/null], bulunan=${targets.length}`);
 
     if (!targets.length) {
       show('Yayında yazı bulunamadı, işlem yapılmadı.', 'ok');
@@ -405,6 +454,7 @@ async function restorePendingToPublished() {
     show('Bekleyen yazılar tekrar yayınlanıyor...', '');
     const docs = await fetchAllArticleDocs();
     const targets = docs.filter((row) => normalizeStatus(row.data()?.status) === 'pending_review');
+    log(`Toplu geri yayın hedef sorgu: collection=articles, status in [pending_review/review/waiting], bulunan=${targets.length}`);
 
     if (!targets.length) {
       show('Beklemede yazı bulunamadı, işlem yapılmadı.', 'ok');
@@ -494,7 +544,12 @@ document.getElementById('moderationLists')?.addEventListener('click', async (eve
     return;
   }
 
-  await changeArticleStatus(btn.dataset.id, btn.dataset.action);
+  try {
+    await changeArticleStatus(btn.dataset.id, btn.dataset.action);
+  } catch (error) {
+    log(`FAILED status change: id=${btn.dataset.id}, action=${btn.dataset.action}, error=${error.message || error}`);
+    show(`Durum değiştirilemedi: ${error.message || error}`, 'error');
+  }
 });
 
 articleForm.addEventListener('submit', async (e) => {
