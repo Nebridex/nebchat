@@ -55,17 +55,17 @@ Firestore → Indexes bölümünde aşağıdakileri oluşturun:
 ## 4) İçerik import (ana yol)
 1. NebChat'e editör hesabıyla giriş yapın.
 2. `admin.html` sayfasına gidin.
-3. **Örnek içerikleri Firestore'a aktar** butonuna tıklayın.
+3. **Eksik örnek içerikleri ekle** butonuna tıklayın.
 4. Sayfadaki log panelinden ilerlemeyi kontrol edin:
-   - kategori upsert
-   - 10 makale upsert
+   - kategori kontrol/create
+   - mevcutları atlayarak seed makale create
 5. İşlem bitince `archive.html` sayfasını açın ve kartların geldiğini doğrulayın.
 
 ## 5) Opsiyonel CLI import
 Aynı veriyi terminalden yazmak için:
 
 ```bash
-node scripts/firestore_import_seed.mjs 10
+node scripts/firestore_import_seed.mjs 6
 ```
 
 ## 6) Doğrulama checklist

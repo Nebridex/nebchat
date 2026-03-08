@@ -19,6 +19,12 @@ let submitLock = false;
 let lastSubmitTime = 0;
 let currentArticle = null;
 
+const relatedExcerpt = (text = '', max = 130) => {
+  const clean = String(text || '').replace(/\s+/g, ' ').trim();
+  if (!clean) return '';
+  return clean.length > max ? `${clean.slice(0, max).trimEnd()}…` : clean;
+};
+
 const renderNotFound = () => {
   wrap.innerHTML = '<div class="notice error">Makale bulunamadı veya henüz yayınlanmadı.</div>';
   relatedWrap.innerHTML = '<div class="card muted">İlgili içerik bulunamadı.</div>';
@@ -115,7 +121,7 @@ async function init() {
     .filter((a) => a.slug !== article.slug)
     .slice(0, 3);
 
-  relatedWrap.innerHTML = related.map((a) => `<a class="card" href="article.html?slug=${encodeURIComponent(a.slug)}"><strong>${escapeHtml(a.title)}</strong><p class="muted">${escapeHtml(a.excerpt || '')}</p></a>`).join('') || '<div class="card muted">İlgili içerik yakında.</div>';
+  relatedWrap.innerHTML = related.map((a) => `<a class="card" href="article.html?slug=${encodeURIComponent(a.slug)}"><strong>${escapeHtml(a.title)}</strong><p class="muted">${escapeHtml(relatedExcerpt(a.excerpt))}</p></a>`).join('') || '<div class="card muted">İlgili içerik yakında.</div>';
 
   await loadComments();
 }
