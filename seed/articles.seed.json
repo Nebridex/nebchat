@@ -1,22 +1,23 @@
 {
   "articles": [
     {
-      "title": "Yapay zekâ saldırı yüzeyini büyütüyor: 2026’da asıl risk model değil, etrafındaki sistemler",
-      "slug": "ai-saldiri-yuzeyi-2026-risk-model-degil-sistemler",
+      "title": "Haftalık Threat Digest: 2026 Siber Risk Haritasında Öne Çıkan 5 Kırılma",
+      "slug": "haftalik-threat-digest-2026-siber-risk-haritasi",
       "excerpt": "Şirketler AI projelerini hızla devreye alırken risk çoğu zaman modelde değil; eklenti, kimlik, API anahtarı ve veri akışı katmanında oluşuyor.",
       "category": "cloud-security",
       "tags": [
         "ai-security",
         "llm",
         "prompt-injection",
-        "model-risk"
+        "model-risk",
+        "weekly-digest"
       ],
       "authorName": "NebChat Editör",
       "authorSlug": "nebchat-editor",
       "status": "published",
       "featured": true,
       "readingTime": 9,
-      "seoTitle": "2026 AI Güvenliği: Asıl Risk Modelde Değil, Entegrasyon Katmanında",
+      "seoTitle": "Haftalık Threat Digest: 2026 Siber Risk Haritasında Öne Çıkan 5 Kırılma",
       "seoDescription": "AI güvenliğinde 2026 resmi: prompt, plugin, kimlik, API ve veri akışı riskleri nasıl yönetilmeli?",
       "coverImagePrompt": "Enterprise AI security architecture review with cloud integrations and risk overlays, realistic editorial style, no text",
       "bodyHtml": "<p>2026’ya girerken siber güvenlikte en çok konuşulan başlıklardan biri AI güvenliği oldu. Ancak sahadaki gerçek sorun, çoğu kurumun bu alanı yalnızca model güvenliği olarak düşünmesi. Oysa üretim ortamında risk; prompt katmanı, retrieval akışı, tool çağrıları, servis hesapları, veri erişim izinleri ve üçüncü taraf entegrasyonların birleşiminde ortaya çıkıyor.</p><p>Buradaki temel hata şu: Kurumlar yeni AI kabiliyetlerini verimlilik projesi gibi başlatıyor, ama bunu yeni bir saldırı yüzeyi olarak modellemiyor. Bir LLM uygulaması yalnızca soru-cevap motoru değil; çoğu zaman CRM, e-posta, doküman depoları, ticketing sistemleri ve iç API’lerle konuşan bir karar katmanı hâline geliyor. Bu yüzden saldırgan için hedef artık sadece kullanıcı hesabı değil, karar veren ve erişim kullanan uygulama zinciri oluyor.</p><h2>2026 risk resmi neden ağırlaşıyor?</h2><p>WEF, AI ile ilgili zafiyetlerin en hızlı büyüyen siber risklerden biri olduğunu raporluyor. Trend Micro da AI ekosisteminin tüm katmanlarında zafiyet baskısının arttığını vurguluyor. Bu tablo bize şunu anlatıyor: Tehdit yalnızca AI üreten aktörlerden değil, AI’yı hızlı ama kontrolsüz biçimde devreye alan kurumlardan da besleniyor.</p><h2>Kurumlar ne yapmalı?</h2><ul><li>AI uygulamalarını “yeni uygulama” değil, “yeni yetki ve veri yolu” olarak sınıflandırın.</li><li>Modelin hangi sistemlere hangi kimlikle eriştiğini tam envanterleyin.</li><li>Tool ve plugin zincirini izole edin; kurumsal ağa sınırsız erişim vermeyin.</li><li>Prompt loglarının ötesine geçin: hangi veri çağrıldı, hangi karar üretildi, hangi aksiyon tetiklendi sorularını görünür kılın.</li></ul><p>2026’da AI güvenliğinde olgun kurum ile riskli kurum arasındaki fark model seçimi olmayacak. Esas fark; erişim mimarisi, izolasyon disiplini ve uçtan uca gözlemlenebilirlik olacak.</p>",

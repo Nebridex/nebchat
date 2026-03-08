@@ -29,7 +29,7 @@ const render = async () => {
     <span class="badge">${escapeHtml(a.category)}</span>
     <h3><a href="article.html?slug=${encodeURIComponent(a.slug)}">${escapeHtml(a.title)}</a></h3>
     <p>${escapeHtml(a.excerpt || '')}</p>
-    <div class="meta"><span>${escapeHtml(a.authorName || 'NebChat Editör')}</span><span>${a.publishedAtDate ? formatDate(a.publishedAtDate) : '—'}</span><span>${a.views || 0} görüntülenme</span></div>
+    <div class="meta"><span>${escapeHtml(a.authorName || 'NebChat Editör')}</span><span>${a.publishedAtDate ? formatDate(a.publishedAtDate) : '—'}</span><span>${a.readingTime || 5} dk okuma</span></div>
   </article>`).join('') || '<div class="card"><strong>Henüz yayınlanmış içerik yok.</strong><p class="muted">Bu arşivde henüz yayınlanmış içerik bulunmuyor.</p></div>';
 
   moreBtn.classList.toggle('hidden', rows.length <= shown);

@@ -78,7 +78,7 @@ export async function fetchCategories() {
   }
 }
 
-export async function fetchArticles({ category = '', search = '', sort = 'newest', max = 24 } = {}) {
+export async function fetchArticles({ category = '', search = '', tag = '', authorSlug = '', sort = 'newest', max = 24 } = {}) {
   let rows = [];
   try {
     const q = query(collection(db, 'articles'), where('status', '==', 'published'));
@@ -90,6 +90,8 @@ export async function fetchArticles({ category = '', search = '', sort = 'newest
   }
 
   if (category) rows = rows.filter((a) => a.category === category);
+  if (authorSlug) rows = rows.filter((a) => a.authorSlug === authorSlug);
+  if (tag) rows = rows.filter((a) => (a.tags || []).includes(tag));
   if (search) {
     const s = search.toLowerCase();
     rows = rows.filter((a) => [a.title, a.excerpt, ...(a.tags || [])].join(' ').toLowerCase().includes(s));

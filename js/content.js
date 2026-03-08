@@ -12,3 +12,19 @@ export const CATEGORY_LIST = [
   { slug: 'third-party-risk', name: 'Third-Party Risk', description: 'Tedarik zinciri, dış bağımlılıklar ve sözleşme kaynaklı riskler.' },
   { slug: 'turkiye-gundemi', name: 'Türkiye Gündemi', description: 'Türkiye merkezli olaylar, regülasyon ve sektör etkisi.' }
 ];
+
+export const TOPIC_HUBS = [
+  { slug: 'ai-security', name: 'AI Security', query: 'ai', description: 'LLM güvenliği, prompt injection ve model çevresi riskleri.' },
+  { slug: 'ransomware', name: 'Ransomware', category: 'ransomware', description: 'Ransomware operasyonları, kriz yönetimi ve toparlanma.' },
+  { slug: 'threat-intelligence', name: 'Threat Intelligence', category: 'threat-intelligence', description: 'Kampanya analizi ve operasyonel tehdit içgörüleri.' },
+  { slug: 'dark-web', name: 'Dark Web', category: 'dark-web', description: 'Sızıntı ekosistemi ve yeraltı sinyal takibi.' },
+  { slug: 'turkiye-siber-gundemi', name: 'Türkiye Siber Gündemi', category: 'turkiye-gundemi', description: 'Türkiye odaklı regülasyon ve sektör etkileri.' }
+];
+
+export const TRENDING_TOPICS = [
+  { label: 'AI Security', href: 'topic.html?slug=ai-security' },
+  { label: 'Identity Security', href: 'archive.html?q=identity' },
+  { label: 'Ransomware Resilience', href: 'topic.html?slug=ransomware' },
+  { label: 'Supply Chain Risk', href: 'archive.html?q=supply%20chain' },
+  { label: 'Türkiye Siber Gündemi', href: 'topic.html?slug=turkiye-siber-gundemi' }
+];

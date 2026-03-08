@@ -25,6 +25,14 @@ const relatedExcerpt = (text = '', max = 130) => {
   return clean.length > max ? `${clean.slice(0, max).trimEnd()}…` : clean;
 };
 
+const updateLibrary = (type, articleSlug) => {
+  const key = `nebchat-${type}`;
+  const current = JSON.parse(localStorage.getItem(key) || '[]');
+  const next = Array.from(new Set([articleSlug, ...current])).slice(0, 100);
+  localStorage.setItem(key, JSON.stringify(next));
+  message.textContent = type === 'saved' ? 'Makale kaydedildi.' : 'Makale okuma listesine eklendi.';
+};
+
 const renderNotFound = () => {
   wrap.innerHTML = '<div class="notice error">Makale bulunamadı veya henüz yayınlanmadı.</div>';
   relatedWrap.innerHTML = '<div class="card muted">İlgili içerik bulunamadı.</div>';
@@ -33,12 +41,7 @@ const renderNotFound = () => {
   const url = slug
     ? `https://nebchat.online/article.html?slug=${encodeURIComponent(slug)}`
     : 'https://nebchat.online/article.html';
-  setSEO({
-    title: 'Makale bulunamadı | NebChat',
-    description: 'İstenen makale NebChat üzerinde bulunamadı.',
-    url,
-    type: 'article'
-  });
+  setSEO({ title: 'Makale bulunamadı | NebChat', description: 'İstenen makale NebChat üzerinde bulunamadı.', url, type: 'article' });
   setRobots('noindex,follow');
 };
 
@@ -61,27 +64,16 @@ async function loadComments() {
 }
 
 async function init() {
-  if (!slug) {
-    renderNotFound();
-    return;
-  }
+  if (!slug) return renderNotFound();
 
   const article = await fetchArticleBySlug(slug);
-  if (!article) {
-    renderNotFound();
-    return;
-  }
+  if (!article) return renderNotFound();
 
   currentArticle = article;
 
   const articleUrl = `https://nebchat.online/article.html?slug=${encodeURIComponent(article.slug)}`;
   setRobots('index,follow');
-  setSEO({
-    title: `${article.seoTitle || article.title} | NebChat`,
-    description: article.seoDescription || article.excerpt,
-    url: articleUrl,
-    type: 'article'
-  });
+  setSEO({ title: `${article.seoTitle || article.title} | NebChat`, description: article.seoDescription || article.excerpt, url: articleUrl, type: 'article' });
   setCanonical(articleUrl);
   setJSONLD({
     '@context': 'https://schema.org',
@@ -90,16 +82,19 @@ async function init() {
     description: article.seoDescription || article.excerpt || '',
     datePublished: article.publishedAtDate ? article.publishedAtDate.toISOString() : undefined,
     dateModified: article.updatedAtDate ? article.updatedAtDate.toISOString() : undefined,
-    author: {
-      '@type': 'Person',
-      name: article.authorName || 'NebChat Editör'
-    },
+    author: { '@type': 'Person', name: article.authorName || 'NebChat Editör', url: `https://nebchat.online/author.html?slug=${encodeURIComponent(article.authorSlug || 'nebchat-editor')}` },
     mainEntityOfPage: articleUrl,
-    publisher: {
-      '@type': 'Organization',
-      name: 'NebChat'
-    }
+    publisher: { '@type': 'Organization', name: 'NebChat' }
   }, 'articleSchema');
+  setJSONLD({
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Ana Sayfa', item: 'https://nebchat.online/' },
+      { '@type': 'ListItem', position: 2, name: 'Arşiv', item: 'https://nebchat.online/archive.html' },
+      { '@type': 'ListItem', position: 3, name: article.title, item: articleUrl }
+    ]
+  }, 'articleBreadcrumbSchema');
 
   await incrementView(article.id);
 
@@ -113,11 +108,14 @@ async function init() {
   wrap.innerHTML = `<article class="article-body">
     <span class="badge">${escapeHtml(article.category)}</span>
     <h1>${escapeHtml(article.title)}</h1>
-    <div class="meta"><span>${escapeHtml(article.authorName || 'NebChat Editör')}</span><span>${article.publishedAtDate ? formatDate(article.publishedAtDate) : '—'}</span><span>${article.readingTime || 5} dk okuma</span></div>
+    <div class="meta"><span><a href="author.html?slug=${encodeURIComponent(article.authorSlug || 'nebchat-editor')}">${escapeHtml(article.authorName || 'NebChat Editör')}</a></span><span>${article.publishedAtDate ? formatDate(article.publishedAtDate) : '—'}</span><span>${article.readingTime || 5} dk okuma</span></div>
     ${article.coverImageUrl ? `<img class="cover" src="${escapeHtml(article.coverImageUrl)}" alt="${escapeHtml(article.title)}">` : ''}
     <div class="article-content">${article.html}</div>
+    <div class="panel" style="margin-top:1rem;"><strong>Yazar Hakkında</strong><p class="muted">${escapeHtml(article.authorName || 'NebChat Editör')} tarafından hazırlanan bu analiz, NebChat editoryal standartlarına göre yayınlanmıştır.</p><a class="btn ghost" href="author.html?slug=${encodeURIComponent(article.authorSlug || 'nebchat-editor')}">Yazarın diğer yazıları</a></div>
     <div class="hero-actions">
       <button id="copyLinkBtn" class="btn ghost" type="button">Bağlantıyı kopyala</button>
+      <button id="saveArticleBtn" class="btn ghost" type="button">Kaydet</button>
+      <button id="readLaterBtn" class="btn ghost" type="button">Sonra oku</button>
       <a class="btn ghost" href="archive.html?category=${encodeURIComponent(article.category)}">Bu kategorideki yazılar</a>
     </div>
   </article>`;
@@ -126,12 +124,14 @@ async function init() {
     await navigator.clipboard.writeText(location.href);
     message.textContent = 'Makale bağlantısı kopyalandı.';
   };
+  document.getElementById('saveArticleBtn').onclick = () => updateLibrary('saved', article.slug);
+  document.getElementById('readLaterBtn').onclick = () => updateLibrary('read-later', article.slug);
 
-  const related = (await fetchArticles({ category: article.category, max: 6 }))
+  const related = (await fetchArticles({ category: article.category, max: 12 }))
     .filter((a) => a.slug !== article.slug)
-    .slice(0, 3);
+    .slice(0, 4);
 
-  relatedWrap.innerHTML = related.map((a) => `<a class="card" href="article.html?slug=${encodeURIComponent(a.slug)}"><strong>${escapeHtml(a.title)}</strong><p class="muted">${escapeHtml(relatedExcerpt(a.excerpt))}</p></a>`).join('') || '<div class="card muted">İlgili içerik yakında.</div>';
+  relatedWrap.innerHTML = related.map((a) => `<a class="card" href="article.html?slug=${encodeURIComponent(a.slug)}"><span class="badge">${escapeHtml(a.category)}</span><strong>${escapeHtml(a.title)}</strong><p class="muted">${escapeHtml(relatedExcerpt(a.excerpt))}</p><div class="meta"><span>${a.publishedAtDate ? formatDate(a.publishedAtDate) : '—'}</span><span>${a.readingTime || 5} dk</span></div></a>`).join('') || '<div class="card muted">İlgili içerik yakında.</div>';
 
   await loadComments();
 }

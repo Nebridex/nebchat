@@ -11,6 +11,7 @@ export function injectHeaderFooter() {
         <nav class="nav-links">
           <a href="index.html">Ana Sayfa</a>
           <a href="archive.html">Arşiv</a>
+          <a href="topic.html?slug=ai-security">Topic Hub</a>
           <a href="about.html">Hakkımızda</a>
           <a href="contact.html">İletişim</a>
           <a href="profile.html" id="profileNav">Giriş</a>

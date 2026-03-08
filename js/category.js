@@ -10,6 +10,7 @@ const current = categories.find((c) => c.slug === slug);
 const titleEl = document.getElementById('categoryTitle');
 const descEl = document.getElementById('categoryDescription');
 const list = document.getElementById('categoryArticles');
+const links = document.getElementById('relatedCategoryLinks');
 
 const introByCategory = {
   'threat-intelligence': 'Aktör davranışları, kampanya izleri ve operasyonel karar üretimi için tehdit istihbaratı analizleri.',
@@ -26,9 +27,7 @@ const introByCategory = {
   'turkiye-gundemi': 'Türkiye merkezli güvenlik gündemi, regülasyon ve sektör etkileri üzerine değerlendirmeler.'
 };
 
-const categoryUrl = slug
-  ? `https://nebchat.online/category.html?slug=${encodeURIComponent(slug)}`
-  : 'https://nebchat.online/category.html';
+const categoryUrl = slug ? `https://nebchat.online/category.html?slug=${encodeURIComponent(slug)}` : 'https://nebchat.online/category.html';
 
 if (current) {
   const intro = introByCategory[current.slug] || current.description || 'NebChat kategori içeriği.';
@@ -37,17 +36,9 @@ if (current) {
   setSEO({ title: `${current.name} | NebChat`, description: intro, url: categoryUrl });
   setCanonical(categoryUrl);
   setRobots('index,follow');
+  setJSONLD({ '@context': 'https://schema.org', '@type': 'CollectionPage', name: `${current.name} | NebChat`, description: intro, url: categoryUrl }, 'categorySchema');
   setJSONLD({
-    '@context': 'https://schema.org',
-    '@type': 'CollectionPage',
-    name: `${current.name} | NebChat`,
-    description: intro,
-    url: categoryUrl
-  }, 'categorySchema');
-  setJSONLD({
-    '@context': 'https://schema.org',
-    '@type': 'BreadcrumbList',
-    itemListElement: [
+    '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [
       { '@type': 'ListItem', position: 1, name: 'Ana Sayfa', item: 'https://nebchat.online/' },
       { '@type': 'ListItem', position: 2, name: 'Arşiv', item: 'https://nebchat.online/archive.html' },
       { '@type': 'ListItem', position: 3, name: current.name, item: categoryUrl }
@@ -60,5 +51,14 @@ if (current) {
   setRobots('noindex,follow');
 }
 
-const rows = await fetchArticles({ category: slug, max: 30 });
-list.innerHTML = rows.map((a) => `<article class="card article-card"><h3><a href="article.html?slug=${encodeURIComponent(a.slug)}">${escapeHtml(a.title)}</a></h3><p>${escapeHtml(a.excerpt || '')}</p><div class="meta"><span>${a.publishedAtDate ? formatDate(a.publishedAtDate) : '—'}</span><span>${a.readingTime || 5} dk</span></div></article>`).join('') || '<div class="card">Bu kategoride henüz yayın yok.</div>';
+const rows = await fetchArticles({ category: slug, max: 40 });
+const featured = rows.slice(0, 2);
+const supporting = rows.slice(2);
+
+list.innerHTML = featured.map((a) => `<article class="card article-card"><span class="badge">Öne çıkan</span><h3><a href="article.html?slug=${encodeURIComponent(a.slug)}">${escapeHtml(a.title)}</a></h3><p>${escapeHtml(a.excerpt || '')}</p><div class="meta"><span>${a.publishedAtDate ? formatDate(a.publishedAtDate) : '—'}</span><span>${a.readingTime || 5} dk</span></div></article>`).join('')
+  + supporting.map((a) => `<article class="card article-card"><h3><a href="article.html?slug=${encodeURIComponent(a.slug)}">${escapeHtml(a.title)}</a></h3><p>${escapeHtml(a.excerpt || '')}</p><div class="meta"><span>${a.publishedAtDate ? formatDate(a.publishedAtDate) : '—'}</span><span>${a.readingTime || 5} dk</span></div></article>`).join('')
+  || '<div class="card">Bu kategoride henüz yayın yok.</div>';
+
+if (links) {
+  links.innerHTML = categories.filter((c) => c.slug !== slug).slice(0, 5).map((c) => `<a class="category-chip" href="category.html?slug=${encodeURIComponent(c.slug)}">${escapeHtml(c.name)}</a>`).join('');
+}
