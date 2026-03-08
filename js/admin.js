@@ -29,6 +29,7 @@ const seedBtn = document.getElementById('seedBtn');
 const seedForceBtn = document.getElementById('seedForceBtn');
 const moderationTabs = document.getElementById('moderationTabs');
 const articleForm = document.getElementById('articleForm');
+const sendPublishedToReviewBtn = document.getElementById('sendPublishedToReviewBtn');
 const moderationContainers = {
   pending_review: document.getElementById('queue-pending_review'),
   published: document.getElementById('queue-published'),
@@ -269,6 +270,7 @@ function renderArticleCard(id, data) {
       <div class="meta"><span>Yazar: ${escapeHtml(data.authorName || '—')}</span><span>${escapeHtml(data.authorEmail || data.authorId || '—')}</span></div>
       <div class="hero-actions" style="margin-top:.7rem;">
         <button class="btn ghost" data-action="published" data-id="${escapeHtml(id)}">Yayınla</button>
+        <button class="btn ghost" data-action="pending_review" data-id="${escapeHtml(id)}">İncelemeye Al</button>
         <button class="btn ghost" data-action="draft" data-id="${escapeHtml(id)}">Taslağa Al</button>
         <button class="btn ghost" data-action="rejected" data-id="${escapeHtml(id)}">Reddet</button>
         <button class="btn ghost" data-action="edit" data-id="${escapeHtml(id)}">Düzenle</button>
@@ -300,6 +302,39 @@ async function loadComments() {
   }).join('') || '<div class="muted">Yorum bulunamadı.</div>';
 }
 
+
+async function sendAllPublishedToReview() {
+  if (!isAdmin) return;
+  const confirmed = window.confirm('Yayındaki tüm yazılar pending_review durumuna alınacak. Devam etmek istiyor musunuz?');
+  if (!confirmed) return;
+
+  try {
+    show('Yayındaki yazılar incelemeye alınıyor...', '');
+    const snap = await getDocs(query(collection(db, 'articles'), where('status', '==', 'published'), limit(500)));
+    if (snap.empty) {
+      show('Yayında yazı bulunamadı, işlem yapılmadı.', 'ok');
+      return;
+    }
+
+    let updated = 0;
+    for (const row of snap.docs) {
+      await updateDoc(doc(db, 'articles', row.id), {
+        status: 'pending_review',
+        updatedAt: serverTimestamp(),
+        featured: false
+      });
+      updated += 1;
+    }
+
+    log(`Toplu işlem tamamlandı: ${updated} yazı pending_review durumuna alındı.`);
+    show(`${updated} yazı incelemeye alındı.`, 'ok');
+    await loadModerationSections();
+    activateTab('pending_review');
+  } catch (error) {
+    show(`Toplu incelemeye alma hatası: ${error.message || error}`, 'error');
+  }
+}
+
 onAuthStateChanged(auth, async (user) => {
   const allowed = Boolean(user?.email) && user.email.toLowerCase() === ADMIN_EMAIL;
   isAdmin = allowed;
@@ -329,6 +364,8 @@ onAuthStateChanged(auth, async (user) => {
 });
 
 seedBtn.addEventListener('click', () => importSeedArticles({ force: false }));
+
+sendPublishedToReviewBtn?.addEventListener('click', sendAllPublishedToReview);
 
 seedForceBtn?.addEventListener('click', async () => {
   const confirmed = window.confirm('Bu işlem mevcut seed içeriklerini zorla günceller. Emin misiniz?');
