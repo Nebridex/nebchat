@@ -135,3 +135,8 @@ textarea { min-height:130px; }
   font-size: .85rem;
   white-space: pre-wrap;
 }
+
+
+.profile-hero h1 { margin: .35rem 0 .6rem; }
+.auth-form { display:grid; gap:.7rem; }
+.auth-form .btn { width: fit-content; }

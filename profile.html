@@ -1,21 +1,66 @@
 <!DOCTYPE html><html lang="tr"><head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Üye Alanı | NebChat</title><meta name="description" content="NebChat üye alanı: profil, kaydedilen yazılar, yorum geçmişi ve bülten tercihleri.">
+<title>NebChat'e Giriş Yap | NebChat</title><meta name="description" content="NebChat üyelik alanı: giriş, analiz yayınlama, yorum, kaydet/sonra oku ve tercih yönetimi.">
 <meta name="robots" content="noindex,follow"><link rel="stylesheet" href="css/styles.css"></head><body>
 <header class="site-header" data-site-header></header>
 <main class="container">
-  <section class="section grid-2">
-    <div class="panel"><h2>Giriş Yap</h2><form id="loginForm"><input name="email" type="email" placeholder="E-posta" required><input name="password" type="password" placeholder="Şifre" required><button class="btn primary" type="submit">Giriş</button></form></div>
-    <div class="panel"><h2>Hesap Oluştur</h2><form id="registerForm"><input name="name" placeholder="Ad Soyad" required><input name="email" type="email" placeholder="E-posta" required><input name="password" type="password" placeholder="Şifre" required><button class="btn primary" type="submit">Kayıt Ol</button></form></div>
+  <section id="guestView" class="section">
+    <div class="panel profile-hero">
+      <div class="kicker">NebChat Üyelik</div>
+      <h1 id="profileTitle">NebChat'e Giriş Yap</h1>
+      <p class="lead">NebChat'e giriş yaparak kendi analizlerini yayınlayabilir, mevcut yazılara yorum bırakabilir, içeriklerini kaydedebilir ve yayın tercihlerini yönetebilirsin.</p>
+      <div class="hero-actions">
+        <a href="#loginPanel" class="btn primary">Giriş Yap</a>
+        <button id="openRegisterBtn" class="btn ghost" type="button">Üye değil misin? Kayıt ol</button>
+      </div>
+    </div>
+
+    <section id="loginPanel" class="section panel">
+      <h2>Giriş Yap</h2>
+      <form id="loginForm" class="auth-form">
+        <input name="email" type="email" placeholder="E-posta" required>
+        <input name="password" type="password" placeholder="Şifre" required>
+        <button class="btn primary" type="submit">Giriş</button>
+      </form>
+    </section>
+
+    <section id="registerPanel" class="section panel hidden" aria-hidden="true">
+      <h2>Kayıt Ol</h2>
+      <p class="muted">Hızlıca kayıt ol ve NebChat topluluğuna katıl.</p>
+      <form id="registerForm" class="auth-form">
+        <input name="name" placeholder="Ad Soyad" required>
+        <input name="email" type="email" placeholder="E-posta" required>
+        <input name="password" type="password" placeholder="Şifre" required>
+        <button class="btn primary" type="submit">Hesap Oluştur</button>
+      </form>
+    </section>
   </section>
-  <section class="section panel"><h2>Üye Özeti</h2><div id="userBox"></div><button id="signOutBtn" class="btn ghost" type="button">Çıkış Yap</button><div id="authStatus" class="notice" style="margin-top:.8rem;"></div></section>
-  <section class="section grid-2">
-    <div class="panel"><h2>Kaydedilen Makaleler</h2><div id="savedArticles"></div></div>
-    <div class="panel"><h2>Sonra Oku</h2><div id="readLaterArticles"></div></div>
-  </section>
-  <section class="section grid-2">
-    <div class="panel"><h2>Yorum Geçmişi</h2><div id="recentComments"></div></div>
-    <div class="panel"><h2>Bülten Tercihleri</h2><label><input id="newsletterWeekly" type="checkbox"> Haftalık Threat Digest</label><br><label><input id="newsletterBreaking" type="checkbox"> Kritik güvenlik alarmı</label><br><button id="savePrefsBtn" class="btn primary" type="button" style="margin-top:.8rem;">Tercihleri Kaydet</button><div id="prefsStatus" class="muted" style="margin-top:.5rem;"></div></div>
+
+  <section id="memberView" class="hidden">
+    <section class="section panel">
+      <h1>Profilim</h1>
+      <h2>Üye Özeti</h2>
+      <div id="userBox"></div>
+      <div class="hero-actions">
+        <button id="signOutBtn" class="btn ghost" type="button">Çıkış Yap</button>
+      </div>
+      <div id="authStatus" class="notice" style="margin-top:.8rem;"></div>
+    </section>
+
+    <section class="section grid-2">
+      <div class="panel"><h2>Kaydedilen Makaleler</h2><div id="savedArticles"></div></div>
+      <div class="panel"><h2>Sonra Oku</h2><div id="readLaterArticles"></div></div>
+    </section>
+
+    <section class="section grid-2">
+      <div class="panel"><h2>Yorum Geçmişi</h2><div id="recentComments"></div></div>
+      <div class="panel"><h2>Bülten Tercihleri</h2>
+        <label><input id="newsletterWeekly" type="checkbox"> Haftalık Threat Digest</label><br>
+        <label><input id="newsletterBreaking" type="checkbox"> Kritik güvenlik alarmı</label><br>
+        <button id="savePrefsBtn" class="btn primary" type="button" style="margin-top:.8rem;">Tercihleri Kaydet</button>
+        <div id="prefsStatus" class="muted" style="margin-top:.5rem;"></div>
+      </div>
+    </section>
   </section>
 </main>
 <footer class="site-footer" data-site-footer></footer>

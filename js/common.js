@@ -36,7 +36,7 @@ export function initAuthNav() {
     const profileNav = document.getElementById('profileNav');
     const logoutBtn = document.getElementById('logoutBtn');
     const adminNav = document.getElementById('adminNav');
-    if (profileNav) profileNav.textContent = user ? 'Profil' : 'Giriş';
+    if (profileNav) profileNav.textContent = user ? 'Profilim' : 'Giriş Yap';
     if (logoutBtn) logoutBtn.classList.toggle('hidden', !user);
     if (logoutBtn) {
       logoutBtn.onclick = async () => {
