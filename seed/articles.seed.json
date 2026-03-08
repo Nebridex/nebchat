@@ -1,6 +1,117 @@
 {
   "articles": [
     {
+      "title": "HAFNIUM (Silk Typhoon): Tehdit Profili, TTP Haritası ve Savunma Öncelikleri",
+      "slug": "hafnium-silk-typhoon-tehdit-profili-ve-savunma-oncelikleri",
+      "excerpt": "HAFNIUM/Silk Typhoon operasyonlarını teknik zinciriyle ele alıyor; maruziyet, tespit ve müdahale tarafında kurumlar için öncelikli savunma adımlarını çıkarıyoruz.",
+      "category": "threat-intelligence",
+      "tags": [
+        "hafnium",
+        "silk-typhoon",
+        "apt",
+        "threat-intelligence",
+        "web-shell"
+      ],
+      "authorName": "NebChat Editör",
+      "authorSlug": "nebchat-editor",
+      "status": "published",
+      "featured": false,
+      "readingTime": 6,
+      "seoTitle": "HAFNIUM (Silk Typhoon) Teknik Analizi: TTP, Risk ve Savunma Öncelikleri",
+      "seoDescription": "HAFNIUM/Silk Typhoon aktörünün kimliği, operasyon modeli ve enterprise savunma için uygulanabilir öncelik seti.",
+      "coverImagePrompt": "Advanced persistent threat intelligence profile board for HAFNIUM Silk Typhoon, enterprise cyber defense context, realistic editorial style, no text",
+      "bodyHtml": "<p>HAFNIUM (Silk Typhoon), son yıllarda kurumsal altyapıları hedefleyen en disiplinli APT kümelerinden biri olarak öne çıkıyor. Grup; internete açık servislerdeki zafiyet penceresini hızlı değerlendiriyor, düşük gürültülü kalıcılık yöntemleri kullanıyor ve veri toplama operasyonlarını uzun süre fark edilmeden sürdürebiliyor.</p>\n<h2>Operasyonel karakter</h2>\n<p>HAFNIUM’un yaklaşımı “gösterişli malware” yerine operasyon verimliliğine dayanır. Önce maruz sistem bulunur, sonra erişim kalıcı hale getirilir, ardından kimlik ve veri yolları dikkatle genişletilir. Bu disiplin, özellikle yamalama döngüsü zayıf ortamlarda etkisini artırır.</p>\n<h2>TTP zinciri (özet)</h2>\n<ul>\n<li><strong>Initial access:</strong> İnternete açık kurumsal uygulamalarda kritik zafiyet sömürüsü.</li>\n<li><strong>Execution:</strong> Sunucu tarafında komut yürütme ve web shell yerleştirme.</li>\n<li><strong>Persistence:</strong> Çoklu dosya/dizin konumunda alternatif erişim noktaları.</li>\n<li><strong>Credential access:</strong> Sunucu konfigürasyonları ve bellek artefaktlarından kimlik çıkarımı.</li>\n<li><strong>Collection/exfiltration:</strong> Mailbox ve doküman odaklı seçici veri toplama.</li>\n</ul>\n<h2>Kimler daha fazla risk altında?</h2>\n<p>Kamu kurumları, savunma ekosistemi, araştırma kuruluşları ve uluslararası bağlantısı güçlü özel sektör yapıları daha yüksek hedef değerine sahip. Ancak yalnızca stratejik kurumlar değil; zayıf internet yüzeyi olan orta ölçekli şirketler de ikinci dalga hedef olarak kullanılabiliyor.</p>\n<h2>Savunma tarafında kritik yanlışlar</h2>\n<p>En sık gördüğümüz hata, zafiyet yönetimi ile kimlik güvenliğinin ayrı dünyalar gibi ele alınması. HAFNIUM benzeri aktörlerde bu ayrım gerçek değil: zafiyet erişim kapısını açar, kimlik zayıflığı operasyonu büyütür. Bu nedenle patch, IAM, EDR ve proxy telemetrisi tek olay zinciri olarak düşünülmelidir.</p>\n<h2>Kurumsal öncelik seti</h2>\n<ol>\n<li>Kritik internet yüzeyi için 24–72 saatlik yama SLA’sı uygulayın.</li>\n<li>Web shell tespiti için dosya bütünlüğü ve davranış analitiğini birlikte çalıştırın.</li>\n<li>Yüksek ayrıcalıklı hesaplarda şartlı erişim ve oturum anomali tespiti zorunlu olsun.</li>\n<li>Mail sistemleri için anormal export/forwarding aktivitelerini ayrı alarm sınıfına alın.</li>\n<li>IR ekibinde “APT dwell time” odaklı proaktif avcılık rutinleştirin.</li>\n</ol>\n<p>HAFNIUM vakaları bize şunu tekrar gösteriyor: kalıcı savunma, tek bir ürün yatırımıyla değil; saldırganın operasyon zincirini kıran mühendislik disipliniyle kurulur.</p>",
+      "publishedAt": "2026-03-08T10:00:00Z"
+    },
+    {
+      "title": "Zafiyet Yönetimi Neden CVSS Puanından İbaret Değildir?",
+      "slug": "zafiyet-yonetimi-cvss-puanindan-ibaret-degildir",
+      "excerpt": "CVSS teknik şiddeti gösterir; ancak kurumsal risk önceliği için exploitability, maruziyet, varlık kritikliği ve iş etkisi birlikte değerlendirilmelidir.",
+      "category": "vulnerabilities",
+      "tags": [
+        "vulnerability-management",
+        "cvss",
+        "exposure",
+        "risk-prioritization"
+      ],
+      "authorName": "NebChat Editör",
+      "authorSlug": "nebchat-editor",
+      "status": "published",
+      "featured": false,
+      "seoTitle": "CVSS Ötesinde Zafiyet Yönetimi: Risk Önceliklendirme Rehberi",
+      "seoDescription": "CVSS skorunun sınırlarını ve kurumsal zafiyet yönetiminde exploitability + maruziyet + iş etkisi yaklaşımını anlatan teknik rehber.",
+      "coverImagePrompt": "vulnerability management dashboard comparing cvss and real exploitability risk",
+      "publishedAt": "2026-03-07T15:00:00Z",
+      "bodyHtml": "<p>Kurumsal yama takvimlerinde en sık görülen hata, zafiyetleri yalnızca CVSS puanına göre sıralamaktır. CVSS teknik şiddeti anlamak için faydalıdır; ancak kurumun gerçek riskini tek başına açıklamaz. Aynı CVSS skoruna sahip iki açık, farklı maruziyet koşullarında tamamen farklı öncelik gerektirebilir.</p><h2>CVSS neden tek başına yetersiz?</h2><p>Skor, çoğu zaman teorik etkiyi temsil eder. Oysa operasyon tarafında kritik soru şudur: Bu açık gerçekten sömürülebilir mi, internete açık mı, kritik bir varlıkta mı ve iş kesintisi etkisi nedir?</p><h2>Daha doğru önceliklendirme modeli</h2><ul><li><strong>Exploitability:</strong> Aktif sömürü var mı, PoC erişilebilir mi?</li><li><strong>Exposure:</strong> Varlık internete açık mı, segmentteki konumu ne?</li><li><strong>Asset criticality:</strong> Etkilenen sistem iş için ne kadar kritik?</li><li><strong>Compensating controls:</strong> WAF, segmentasyon, EDR kuralı gibi azaltıcı kontroller mevcut mu?</li></ul><h2>Pratik uygulama</h2><p>Patch backlog’u yönetirken CVSS + KEV + varlık kritikliği + iş etkisi matrisi kullanın. Bu sayede “yüksek puanlı ama düşük maruziyetli” açıklarla uğraşırken, gerçekten sömürülen açıkları kaçırma riskiniz azalır.</p><p>Zafiyet yönetimi bir patch yarışı değildir; sınırlı kaynağı en yüksek operasyonel riske yönlendirme disiplinidir. Başarılı ekipler bu yüzden skor değil bağlam yönetir.</p>",
+      "readingTime": 6
+    },
+    {
+      "title": "Marka Taklidi, Phishing ve Credential Leakage Aynı Zincirin Parçaları mı?",
+      "slug": "marka-taklidi-ve-credential-leakage-ayni-zincir",
+      "excerpt": "Marka kötüye kullanımı, oltalama kampanyaları ve kimlik sızıntıları çoğu zaman ayrı olaylar değil; tek bir saldırı operasyonunun farklı fazlarıdır.",
+      "category": "brand-protection",
+      "tags": [
+        "brand-protection",
+        "phishing",
+        "credential-leakage",
+        "fraud"
+      ],
+      "authorName": "NebChat Editör",
+      "authorSlug": "nebchat-editor",
+      "status": "published",
+      "featured": false,
+      "seoTitle": "Marka Taklidi ve Credential Leakage: Tek Saldırı Zinciri Analizi",
+      "seoDescription": "Marka suistimali, phishing altyapısı ve hesap ele geçirme zincirini birlikte ele alan operasyonel savunma yaklaşımı.",
+      "coverImagePrompt": "brand protection analyst tracking fake domains and credential theft campaigns",
+      "publishedAt": "2026-03-07T13:00:00Z",
+      "bodyHtml": "<p>Marka koruma ekipleri ile SOC ekipleri çoğu kurumda farklı KPI’larla çalışıyor. Bu ayrım operasyonel kör nokta oluşturuyor. Çünkü marka taklidiyle açılan sahte domainler çoğu zaman phishing kampanyasının ilk fazı, credential leakage ise aynı zincirin sonuç fazıdır.</p><h2>Zincir nasıl çalışıyor?</h2><ol><li>Saldırgan markaya benzeyen domain ve sayfa altyapısı kurar.</li><li>Hedef kitleye e-posta/SMS/mesajlaşma kanalıyla trafik çeker.</li><li>Kullanıcı kimlik bilgisi ve oturum artefaktı toplanır.</li><li>Ele geçirilen kimlikler kurumsal erişim, ödeme suistimali veya veri sızıntısı için kullanılır.</li></ol><h2>Neden tek ekip yaklaşımı şart?</h2><p>Brand protection yalnızca taklit domain kaldırma süreci olarak kalırsa saldırı zinciri kırılmaz. SOC sadece oturum anomalisine bakarsa kök neden görünmez. En etkili yaklaşım, alan adı istihbaratı, kimlik anomali izleme ve fraud sinyallerini tek olay akışında birleştirmektir.</p><h2>Uygulanabilir kontrol seti</h2><ul><li>Taklit domain tespiti için sürekli dış yüzey izleme</li><li>Yüksek riskli oturumlarda cihaz ve konum bağlam doğrulaması</li><li>Kimlik avı URL’lerine giden kullanıcılar için hızlı parola reset/policy tetikleme</li><li>Legal ve operasyon ekipleriyle hızlı takedown prosedürü</li></ul><p>Marka taklidi ile credential leakage’i ayrı sorunlar olarak yönetmek saldırgana avantaj sağlar. Zinciri bir bütün olarak gören kurumlar hem tespit süresini kısaltır hem de finansal etkiyi azaltır.</p>",
+      "readingTime": 6
+    },
+    {
+      "title": "Güvenlik Farkındalık Eğitimi Neden Tek Başına Davranışı Değiştirmez?",
+      "slug": "guvenlik-farkindalik-egitimi-davranis-degisimi",
+      "excerpt": "Yüksek eğitim tamamlama oranı, gerçek güvenlik davranışı anlamına gelmez. Etkili farkındalık programı için ölçüm, rol-bazlı senaryo ve teknik kontrol eşleşmesi şarttır.",
+      "category": "security-awareness",
+      "tags": [
+        "security-awareness",
+        "human-risk",
+        "phishing",
+        "behavior-change"
+      ],
+      "authorName": "NebChat Editör",
+      "authorSlug": "nebchat-editor",
+      "status": "published",
+      "featured": false,
+      "seoTitle": "Güvenlik Farkındalığında Davranış Değişimi: Neden Eğitim Yetmez?",
+      "seoDescription": "Farkındalık eğitimlerinin neden tek başına yeterli olmadığını ve davranış değişimi için hangi teknik/organizasyonel katmanların gerektiğini anlatan analiz.",
+      "coverImagePrompt": "corporate security awareness workshop with role-based phishing simulation dashboard",
+      "publishedAt": "2026-03-07T11:00:00Z",
+      "bodyHtml": "<p>Birçok kurum farkındalık programının başarısını tamamlanma oranıyla ölçüyor. %95 tamamlanma, hatta yüksek quiz skoru görüldüğünde program başarılı sayılıyor. Ancak sahadaki olay verisi farklı bir hikâye anlatıyor: eğitim alan çalışanlar bile zaman baskısı, rol stresi ve operasyonel yoğunluk altında hatalı aksiyon alabiliyor.</p><h2>Neden eğitim tek başına yetmiyor?</h2><p>Çünkü saldırı bağlamı dinamik. Kullanıcı yalnızca e-posta okumuyor; Teams mesajı, SMS doğrulama talebi, sahte yönetici araması ve ödeme baskısı aynı anda gelebiliyor. Bu çok kanallı sosyal mühendislik karşısında tek seferlik eğitim kalıcı davranış üretmiyor.</p><h2>Etkili programın bileşenleri</h2><ul><li><strong>Rol bazlı içerik:</strong> Finans, İK, BT, saha ekipleri için ayrı senaryolar tasarlayın.</li><li><strong>Sürekli ölçüm:</strong> Klik oranı yerine raporlama süresi, doğru escalation ve false positive kalitesini izleyin.</li><li><strong>Teknik kontrol eşleşmesi:</strong> Eğitim çıktısını mail güvenliği, step-up MFA ve URL izolasyon kontrolleriyle destekleyin.</li></ul><h2>Yönetim için kritik metrik</h2><p>Asıl KPI, “kim eğitimi tamamladı” değil; “kim riskli bir olayı ne kadar hızlı ve doğru raporladı” olmalıdır. Davranış değişimi ancak bu seviyede ölçülebilir.</p><p>Sonuç olarak farkındalık eğitimini bir video serisi olarak değil, insan riski yönetimi programı olarak tasarlayan kurumlar daha sürdürülebilir güvenlik kazanımı elde eder.</p>",
+      "readingTime": 6
+    },
+    {
+      "title": "Incident Response Retainer Kurumlara Gerçekte Ne Kazandırır?",
+      "slug": "incident-response-retainer-gercek-kazanim",
+      "excerpt": "IR retainer modeli, yalnızca kriz anında danışmanlık almak değil; hazırlık seviyesini yükseltmek, karar kalitesini artırmak ve müdahale süresini kısaltmak için stratejik bir güvenlik yatırımıdır.",
+      "category": "incident-response",
+      "tags": [
+        "incident-response",
+        "retainer",
+        "forensics",
+        "crisis-management"
+      ],
+      "authorName": "NebChat Editör",
+      "authorSlug": "nebchat-editor",
+      "status": "published",
+      "featured": false,
+      "seoTitle": "Incident Response Retainer: Kurumlar için Operasyonel Kazanımlar",
+      "seoDescription": "IR retainer anlaşmalarının kriz hazırlığı, delil disiplini, karar hızı ve iş sürekliliği üzerindeki gerçek etkilerini teknik açıdan ele alan rehber.",
+      "coverImagePrompt": "incident response war room with SOC and legal teams coordinating breach response, realistic editorial style",
+      "publishedAt": "2026-03-07T09:00:00Z",
+      "bodyHtml": "<p>Incident Response (IR) retainer anlaşmaları çoğu kurumda hâlâ “kriz olursa dışarıdan ekip çağıralım” yaklaşımıyla okunuyor. Bu bakış eksik. Doğru kurgulanmış bir retainer, olay anındaki insan kaynağı desteğinden önce hazırlık olgunluğu ve karar disiplini sağlar.</p><h2>Retainer’ın gerçek değeri nerede oluşur?</h2><p>Asıl değer, olay yaşanmadan önce yapılan hazırlık çalışmalarında ortaya çıkar: log kapsamı analizi, kritik varlık önceliklendirmesi, delil toplama zinciri, hukuki bildirim akışı ve yönetim raporlama formatı. Bu hazırlıklar yoksa kriz anında dışarıdan gelen en iyi ekip bile kayıp zamanı geri getiremez.</p><h2>Üç pratik kazanım</h2><ul><li><strong>Daha hızlı karar:</strong> Kim, ne zaman, hangi yetkiyle aksiyon alacak önceden netleşir.</li><li><strong>Daha iyi delil kalitesi:</strong> Forensik zincir doğru kurulduğu için teknik analiz ve hukuki süreç güçlenir.</li><li><strong>Daha düşük operasyonel kesinti:</strong> İzolasyon ve toparlanma adımları iş kritikliğiyle uyumlu yürütülür.</li></ul><h2>Sözleşme kalitesini belirleyen maddeler</h2><p>SLA, kapsam dışı işler, 7/24 erişim modeli, teknik uzmanlık profili, masaüstü tatbikat sıklığı ve kök neden raporu teslim standardı mutlaka yazılı olmalıdır. “Gerektiğinde destek” gibi belirsiz tanımlar, gerçek krizde ciddi gecikme üretir.</p><p>Özetle IR retainer, güvenlik bütçesinde reaktif bir harcama değil; kurumun kriz dayanıklılığını ölçülebilir biçimde artıran bir operasyon yatırımıdır.</p>",
+      "readingTime": 6
+    },
+    {
       "title": "Haftalık Threat Digest: 2026 Güvenlik Gündeminde 5 Kritik Kırılma Noktası",
       "slug": "haftalik-threat-digest-2026-siber-risk-haritasi",
       "excerpt": "Bu haftanın tehdit görünümü; AI entegrasyon riski, kimlik saldırıları, tedarik zinciri zafiyetleri, ransomware karar yönetimi ve phishing otomasyonu başlıklarında yoğunlaşıyor.",
@@ -132,29 +243,6 @@
       "coverImagePrompt": "Self-hosted AI agent runtime security audit with skill marketplace risk map, realistic editorial style, no text",
       "bodyHtml": "<p>OpenClaw son dönemde “agentic AI” dalgasıyla birlikte daha görünür hale gelen self-hosted bir runtime yaklaşımı sunuyor. Çalıştığı ortama göre workstation, VM veya container üzerinde skill yükleyebiliyor ve dış servislerle entegre olabiliyor. Teknik olarak esnek; güvenlik açısından ise dikkat gerektiren bir model.</p>\n<h2>Kritik risk: güven mirası</h2>\n<p>Runtime’ın en kritik özelliği aynı zamanda en büyük riski: üzerinde çalıştığı sistemin kimlik, ağ ve dosya erişim bağlamını miras alması. Bu durumda “yeni skill kurmak”, çoğu kurumda fark edilmeden ayrıcalıklı kod çalıştırmakla aynı etkiyi doğurabilir.</p>\n<h2>Skill ekosistemi neden ayrı bir tehdit alanı?</h2>\n<p>Marketplace denetimleri ve malware taramaları önemli ama tek başına yeterli değil. Bir skill’in zararlı olmaması, kurumsal bağlamda güvenli olduğu anlamına gelmez. Skill, beklenenden geniş API izniyle çalışıyorsa veya hassas veri akışına erişiyorsa işlevsel olarak güvenlik riski üretir.</p>\n<h2>Deployment hijyeni en az skill kadar önemli</h2>\n<p>İnternete açık, yanlış yapılandırılmış runtime örnekleri; yetkisiz erişim, veri sızıntısı ve kimlik kötüye kullanımı için doğrudan yüzey oluşturur. Özellikle TLS zorlaması, inbound/outbound policy ve yönetim arayüzü erişim sınırları ihmal edildiğinde risk katlanır.</p>\n<h2>OpenClaw için minimum güvenlik standardı</h2>\n<ul>\n<li>Runtime izolasyonu (ayrı ağ segmenti, minimum host erişimi)</li>\n<li>Dar yetkili servis kimlikleri ve düzenli secret rotasyonu</li>\n<li>Skill kaynağı, bütünlük ve sürüm doğrulaması</li>\n<li>Outbound kural seti (hangi domain/API’ye çıkabileceği net tanımlı)</li>\n<li>Davranışsal loglama: hangi skill hangi veriyle hangi aksiyonu üretti</li>\n<li>İnternete açık örneklerde sürekli konfigürasyon denetimi</li>\n</ul>\n<p>OpenClaw özelinde güvenlik sorusu “bu araç güvenli mi?” sorusu değildir. Doğru soru şudur: “Bu runtime hangi erişimle çalışıyor, hangi veriye dokunuyor ve hangi güven sınırlarıyla yönetiliyor?” Güvenlik ekipleri bu soruya ölçülebilir cevap vermeden agent üretime alınmamalıdır.</p>",
       "publishedAt": "2026-02-28T09:00:00Z"
-    },
-    {
-      "title": "HAFNIUM (Silk Typhoon): Tehdit Profili, TTP Haritası ve Savunma Öncelikleri",
-      "slug": "hafnium-silk-typhoon-tehdit-profili-ve-savunma-oncelikleri",
-      "excerpt": "HAFNIUM/Silk Typhoon operasyonlarını teknik zinciriyle ele alıyor; maruziyet, tespit ve müdahale tarafında kurumlar için öncelikli savunma adımlarını çıkarıyoruz.",
-      "category": "threat-intelligence",
-      "tags": [
-        "hafnium",
-        "silk-typhoon",
-        "apt",
-        "threat-intelligence",
-        "web-shell"
-      ],
-      "authorName": "NebChat Editör",
-      "authorSlug": "nebchat-editor",
-      "status": "published",
-      "featured": false,
-      "readingTime": 6,
-      "seoTitle": "HAFNIUM (Silk Typhoon) Teknik Analizi: TTP, Risk ve Savunma Öncelikleri",
-      "seoDescription": "HAFNIUM/Silk Typhoon aktörünün kimliği, operasyon modeli ve enterprise savunma için uygulanabilir öncelik seti.",
-      "coverImagePrompt": "Advanced persistent threat intelligence profile board for HAFNIUM Silk Typhoon, enterprise cyber defense context, realistic editorial style, no text",
-      "bodyHtml": "<p>HAFNIUM (Silk Typhoon), son yıllarda kurumsal altyapıları hedefleyen en disiplinli APT kümelerinden biri olarak öne çıkıyor. Grup; internete açık servislerdeki zafiyet penceresini hızlı değerlendiriyor, düşük gürültülü kalıcılık yöntemleri kullanıyor ve veri toplama operasyonlarını uzun süre fark edilmeden sürdürebiliyor.</p>\n<h2>Operasyonel karakter</h2>\n<p>HAFNIUM’un yaklaşımı “gösterişli malware” yerine operasyon verimliliğine dayanır. Önce maruz sistem bulunur, sonra erişim kalıcı hale getirilir, ardından kimlik ve veri yolları dikkatle genişletilir. Bu disiplin, özellikle yamalama döngüsü zayıf ortamlarda etkisini artırır.</p>\n<h2>TTP zinciri (özet)</h2>\n<ul>\n<li><strong>Initial access:</strong> İnternete açık kurumsal uygulamalarda kritik zafiyet sömürüsü.</li>\n<li><strong>Execution:</strong> Sunucu tarafında komut yürütme ve web shell yerleştirme.</li>\n<li><strong>Persistence:</strong> Çoklu dosya/dizin konumunda alternatif erişim noktaları.</li>\n<li><strong>Credential access:</strong> Sunucu konfigürasyonları ve bellek artefaktlarından kimlik çıkarımı.</li>\n<li><strong>Collection/exfiltration:</strong> Mailbox ve doküman odaklı seçici veri toplama.</li>\n</ul>\n<h2>Kimler daha fazla risk altında?</h2>\n<p>Kamu kurumları, savunma ekosistemi, araştırma kuruluşları ve uluslararası bağlantısı güçlü özel sektör yapıları daha yüksek hedef değerine sahip. Ancak yalnızca stratejik kurumlar değil; zayıf internet yüzeyi olan orta ölçekli şirketler de ikinci dalga hedef olarak kullanılabiliyor.</p>\n<h2>Savunma tarafında kritik yanlışlar</h2>\n<p>En sık gördüğümüz hata, zafiyet yönetimi ile kimlik güvenliğinin ayrı dünyalar gibi ele alınması. HAFNIUM benzeri aktörlerde bu ayrım gerçek değil: zafiyet erişim kapısını açar, kimlik zayıflığı operasyonu büyütür. Bu nedenle patch, IAM, EDR ve proxy telemetrisi tek olay zinciri olarak düşünülmelidir.</p>\n<h2>Kurumsal öncelik seti</h2>\n<ol>\n<li>Kritik internet yüzeyi için 24–72 saatlik yama SLA’sı uygulayın.</li>\n<li>Web shell tespiti için dosya bütünlüğü ve davranış analitiğini birlikte çalıştırın.</li>\n<li>Yüksek ayrıcalıklı hesaplarda şartlı erişim ve oturum anomali tespiti zorunlu olsun.</li>\n<li>Mail sistemleri için anormal export/forwarding aktivitelerini ayrı alarm sınıfına alın.</li>\n<li>IR ekibinde “APT dwell time” odaklı proaktif avcılık rutinleştirin.</li>\n</ol>\n<p>HAFNIUM vakaları bize şunu tekrar gösteriyor: kalıcı savunma, tek bir ürün yatırımıyla değil; saldırganın operasyon zincirini kıran mühendislik disipliniyle kurulur.</p>",
-      "publishedAt": "2026-03-08T10:00:00Z"
     }
   ]
 }
