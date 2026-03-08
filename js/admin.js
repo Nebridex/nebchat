@@ -31,6 +31,7 @@ const seedForceBtn = document.getElementById('seedForceBtn');
 const moderationTabs = document.getElementById('moderationTabs');
 const articleForm = document.getElementById('articleForm');
 const sendPublishedToReviewBtn = document.getElementById('sendPublishedToReviewBtn');
+const restorePublishedBtn = document.getElementById('restorePublishedBtn');
 const moderationContainers = {
   pending_review: document.getElementById('queue-pending_review'),
   published: document.getElementById('queue-published'),
@@ -279,30 +280,49 @@ function renderArticleCard(id, data) {
     </article>`;
 }
 
-async function loadArticlesByStatus(statusKey) {
+const normalizeStatus = (value) => {
+  if (value === 'pending_review' || value === 'published' || value === 'draft' || value === 'rejected') return value;
+  return 'published';
+};
+
+function toMillis(raw) {
+  if (raw?.toDate) return raw.toDate().getTime();
+  if (!raw) return 0;
+  const t = new Date(raw).getTime();
+  return Number.isNaN(t) ? 0 : t;
+}
+
+function renderRowsForStatus(statusKey, rows) {
   const container = moderationContainers[statusKey];
   if (!container) return;
-
-  const snap = await getDocs(query(collection(db, 'articles'), where('status', '==', statusKey), limit(120)));
-  if (snap.empty) {
+  if (!rows.length) {
     container.innerHTML = `<div class="muted">${statusLabel[statusKey]} durumunda yazı bulunamadı.</div>`;
     return;
   }
-
-  const rows = snap.docs
-    .map((d) => ({ id: d.id, ...d.data() }))
-    .sort((a, b) => {
-      const ad = a.createdAt?.toDate ? a.createdAt.toDate().getTime() : (a.createdAt ? new Date(a.createdAt).getTime() : 0);
-      const bd = b.createdAt?.toDate ? b.createdAt.toDate().getTime() : (b.createdAt ? new Date(b.createdAt).getTime() : 0);
-      return bd - ad;
-    });
-
   container.innerHTML = rows.map((row) => renderArticleCard(row.id, row)).join('');
 }
 
 async function loadModerationSections() {
-  await Promise.all(Object.keys(moderationContainers).map((statusKey) => loadArticlesByStatus(statusKey)));
-  activateTab(activeStatus);
+  try {
+    const docs = await fetchAllArticleDocs();
+    const grouped = { pending_review: [], published: [], draft: [], rejected: [] };
+
+    for (const d of docs) {
+      const data = d.data() || {};
+      const statusKey = normalizeStatus(data.status);
+      if (!grouped[statusKey]) grouped[statusKey] = [];
+      grouped[statusKey].push({ id: d.id, ...data });
+    }
+
+    Object.keys(grouped).forEach((k) => {
+      grouped[k].sort((a, b) => toMillis(b.createdAt) - toMillis(a.createdAt));
+      renderRowsForStatus(k, grouped[k]);
+    });
+
+    activateTab(activeStatus);
+  } catch (error) {
+    show(`Moderasyon listesi yüklenemedi: ${error.message || error}`, 'error');
+  }
 }
 
 async function loadComments() {
@@ -376,6 +396,46 @@ async function sendAllPublishedToReview() {
   }
 }
 
+async function restorePendingToPublished() {
+  if (!isAdmin) return;
+  const confirmed = window.confirm('Bekleyen tüm yazılar tekrar yayın durumuna alınacak. Devam etmek istiyor musunuz?');
+  if (!confirmed) return;
+
+  try {
+    show('Bekleyen yazılar tekrar yayınlanıyor...', '');
+    const docs = await fetchAllArticleDocs();
+    const targets = docs.filter((row) => normalizeStatus(row.data()?.status) === 'pending_review');
+
+    if (!targets.length) {
+      show('Beklemede yazı bulunamadı, işlem yapılmadı.', 'ok');
+      return;
+    }
+
+    let updated = 0;
+    let failed = 0;
+    for (const row of targets) {
+      try {
+        await updateDoc(doc(db, 'articles', row.id), {
+          status: 'published',
+          updatedAt: serverTimestamp(),
+          publishedAt: row.data()?.publishedAt || serverTimestamp()
+        });
+        updated += 1;
+      } catch (err) {
+        failed += 1;
+        log(`FAILED republish: ${row.id} (${err.message || err})`);
+      }
+    }
+
+    log(`Toplu geri yayın tamamlandı: updated=${updated}, failed=${failed}.`);
+    show(`${updated} yazı tekrar yayınlandı${failed ? `, ${failed} başarısız` : ''}.`, failed ? 'error' : 'ok');
+    await loadModerationSections();
+    activateTab('published');
+  } catch (error) {
+    show(`Toplu geri yayın hatası: ${error.message || error}`, 'error');
+  }
+}
+
 onAuthStateChanged(auth, async (user) => {
   const allowed = Boolean(user?.email) && user.email.toLowerCase() === ADMIN_EMAIL;
   isAdmin = allowed;
@@ -407,6 +467,7 @@ onAuthStateChanged(auth, async (user) => {
 seedBtn.addEventListener('click', () => importSeedArticles({ force: false }));
 
 sendPublishedToReviewBtn?.addEventListener('click', sendAllPublishedToReview);
+restorePublishedBtn?.addEventListener('click', restorePendingToPublished);
 
 seedForceBtn?.addEventListener('click', async () => {
   const confirmed = window.confirm('Bu işlem mevcut seed içeriklerini zorla günceller. Emin misiniz?');
