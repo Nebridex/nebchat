@@ -1,5 +1,5 @@
 import { auth, db } from './firebase.js';
-import { injectHeaderFooter, initAuthNav } from './common.js';
+import { formatDate, injectHeaderFooter, initAuthNav } from './common.js';
 import {
   createUserWithEmailAndPassword,
   onAuthStateChanged,
@@ -28,6 +28,7 @@ const signOutBtn = document.getElementById('signOutBtn');
 const savedWrap = document.getElementById('savedArticles');
 const laterWrap = document.getElementById('readLaterArticles');
 const commentsWrap = document.getElementById('recentComments');
+const submittedWrap = document.getElementById('submittedArticles');
 const weeklyPref = document.getElementById('newsletterWeekly');
 const breakingPref = document.getElementById('newsletterBreaking');
 const prefsStatus = document.getElementById('prefsStatus');
@@ -43,7 +44,6 @@ const firebaseErrorMap = {
   'auth/email-already-in-use': 'Bu e-posta zaten kullanımda.',
   'auth/too-many-requests': 'Çok fazla deneme yapıldı. Lütfen biraz sonra tekrar deneyin.'
 };
-
 const mapFirebaseError = (error) => firebaseErrorMap[error?.code] || 'İşlem sırasında bir hata oluştu. Lütfen tekrar deneyin.';
 
 const showInline = (el, msg, type = 'error') => {
@@ -52,7 +52,6 @@ const showInline = (el, msg, type = 'error') => {
   el.textContent = msg;
   el.classList.remove('hidden');
 };
-
 const hideInline = (el) => {
   if (!el) return;
   el.textContent = '';
@@ -66,20 +65,17 @@ const show = (msg, type = '') => {
 };
 
 const setAuthView = (isLoggedIn) => {
-  console.info('[profile] view switch', { isLoggedIn });
   loggedOutView.classList.toggle('hidden', isLoggedIn);
   loggedInView.classList.toggle('hidden', !isLoggedIn);
   document.title = isLoggedIn ? 'Profilim | NebChat' : "NebChat'e Giriş Yap | NebChat";
 };
 
 const openRegister = () => {
-  console.info('[profile] register CTA clicked');
   registerPanel.classList.remove('hidden');
   registerPanel.setAttribute('aria-hidden', 'false');
   openRegisterBtn?.setAttribute('aria-expanded', 'true');
   registerPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
 };
-
 if (urlMode === 'register' || location.hash === '#register') openRegister();
 openRegisterBtn?.addEventListener('click', openRegister);
 
@@ -117,9 +113,7 @@ registerForm.addEventListener('submit', async (e) => {
     await updateProfile(cred.user, { displayName: name.value });
     showInline(registerMessage, 'Kayıt tamamlandı. Profilinize yönlendiriliyorsunuz.', 'ok');
     e.target.reset();
-    console.info('[profile] register success');
   } catch (error) {
-    console.warn('[profile] register failure', error?.code || error);
     showInline(registerMessage, mapFirebaseError(error), 'error');
   }
 });
@@ -132,22 +126,50 @@ loginForm.addEventListener('submit', async (e) => {
     await signInWithEmailAndPassword(auth, email.value, password.value);
     showInline(loginMessage, 'Giriş başarılı. Üye paneliniz yükleniyor.', 'ok');
     e.target.reset();
-    console.info('[profile] login success');
   } catch (error) {
-    console.warn('[profile] login failure', error?.code || error);
     showInline(loginMessage, mapFirebaseError(error), 'error');
   }
 });
 
-signOutBtn.onclick = async () => {
-  await signOut(auth);
-  console.info('[profile] sign out');
-};
+signOutBtn.onclick = async () => { await signOut(auth); };
+
+const statusLabel = (statusKey = '') => ({
+  pending_review: 'İnceleme Bekliyor',
+  draft: 'Taslak',
+  published: 'Yayında',
+  rejected: 'Reddedildi'
+}[statusKey] || statusKey || 'Belirsiz');
+
+async function renderCommentHistory(uid) {
+  try {
+    const snap = await getDocs(query(collection(db, 'comments'), where('userId', '==', uid), orderBy('createdAt', 'desc'), limit(20)));
+    commentsWrap.innerHTML = snap.docs.map((d) => {
+      const c = d.data();
+      const title = c.articleTitle || c.articleSlug || 'Makale';
+      const date = c.createdAt?.toDate ? formatDate(c.createdAt.toDate()) : '—';
+      const excerpt = (c.body || '').slice(0, 140);
+      return `<a class="card" href="article.html?slug=${encodeURIComponent(c.articleSlug || '')}"><strong>${title}</strong><p class="muted">${excerpt}${(c.body || '').length > 140 ? '…' : ''}</p><div class="meta"><span>${date}</span></div></a>`;
+    }).join('') || '<p class="muted">Henüz yorum yok.</p>';
+  } catch (error) {
+    commentsWrap.innerHTML = '<p class="muted">Yorum geçmişi yüklenemedi. Gerekli index/rule kontrolü yapın.</p>';
+  }
+}
+
+async function renderSubmittedArticles(uid) {
+  try {
+    const snap = await getDocs(query(collection(db, 'articles'), where('authorId', '==', uid), orderBy('createdAt', 'desc'), limit(20)));
+    submittedWrap.innerHTML = snap.docs.map((d) => {
+      const a = d.data();
+      const date = a.createdAt?.toDate ? formatDate(a.createdAt.toDate()) : '—';
+      return `<a class="card" href="article.html?slug=${encodeURIComponent(a.slug || d.id)}"><strong>${a.title || 'Başlıksız Yazı'}</strong><p class="muted">Durum: ${statusLabel(a.status)}</p><div class="meta"><span>${date}</span><span>${a.category || 'kategori'}</span></div></a>`;
+    }).join('') || '<p class="muted">Henüz gönderilmiş yazı yok.</p>';
+  } catch (error) {
+    submittedWrap.innerHTML = '<p class="muted">Gönderdiğiniz yazılar yüklenemedi. Firestore rule/index kontrolü gerekebilir.</p>';
+  }
+}
 
 onAuthStateChanged(auth, async (u) => {
-  console.info('[profile] auth state changed', { uid: u?.uid || null });
   setAuthView(Boolean(u));
-
   if (!u) {
     userBox.innerHTML = '';
     show('Üye paneli için giriş yapın.');
@@ -157,17 +179,8 @@ onAuthStateChanged(auth, async (u) => {
   userBox.innerHTML = `<strong>${u.displayName || 'NebChat Üyesi'}</strong><p class="muted">${u.email}</p><p class="muted">Kendi analizlerini yayınlayabilir, yorum yapabilir ve içerik listelerini yönetebilirsin.</p>`;
   await renderLibrary('nebchat-saved', savedWrap);
   await renderLibrary('nebchat-read-later', laterWrap);
+  await renderCommentHistory(u.uid);
+  await renderSubmittedArticles(u.uid);
   loadPrefs();
-
-  try {
-    const snap = await getDocs(query(collection(db, 'comments'), where('userId', '==', u.uid), orderBy('createdAt', 'desc'), limit(10)));
-    commentsWrap.innerHTML = snap.docs.map((d) => {
-      const c = d.data();
-      return `<div class="card"><strong>${c.articleSlug}</strong><p class="muted">${c.body || ''}</p></div>`;
-    }).join('') || '<p class="muted">Henüz yorum yok.</p>';
-  } catch (error) {
-    commentsWrap.innerHTML = '<p class="muted">Yorum geçmişi yüklenemedi.</p>';
-  }
-
   show('Üye paneline hoş geldiniz.', 'ok');
 });

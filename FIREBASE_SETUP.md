@@ -21,8 +21,17 @@ service cloud.firestore {
     function isEditor() { return role() in ['admin', 'editor']; }
 
     match /articles/{articleId} {
-      allow read: if resource.data.status == 'published' || isEditor();
-      allow create, update, delete: if isEditor();
+      allow read: if resource.data.status == 'published'
+        || isEditor()
+        || (isSignedIn() && resource.data.authorId == request.auth.uid);
+
+      allow create: if isEditor()
+        || (isSignedIn()
+          && request.resource.data.authorId == request.auth.uid
+          && request.resource.data.status in ['pending_review', 'draft']);
+
+      allow update, delete: if isEditor()
+        || (isSignedIn() && resource.data.authorId == request.auth.uid && resource.data.status in ['pending_review', 'draft']);
     }
 
     match /categories/{categoryId} {
@@ -31,7 +40,9 @@ service cloud.firestore {
     }
 
     match /comments/{commentId} {
-      allow read: if resource.data.status == 'published' || isEditor();
+      allow read: if resource.data.status == 'published'
+        || isEditor()
+        || (isSignedIn() && resource.data.userId == request.auth.uid);
       allow create: if isSignedIn()
         && request.resource.data.userId == request.auth.uid
         && request.resource.data.body is string
@@ -50,6 +61,8 @@ Firestore → Indexes bölümünde aşağıdakileri oluşturun:
 - `articles`: `status ASC, category ASC, publishedAt DESC`
 - `comments`: `articleSlug ASC, status ASC, createdAt ASC`
 - `comments`: `status ASC, createdAt DESC`
+- `comments`: `userId ASC, createdAt DESC`
+- `articles`: `authorId ASC, createdAt DESC`
 - `categories`: `isVisible ASC, order ASC`
 
 ## 4) İçerik import (ana yol)

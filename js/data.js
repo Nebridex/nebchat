@@ -143,10 +143,11 @@ export async function fetchComments(articleSlug) {
   }
 }
 
-export async function addComment({ articleId = '', articleSlug, userId, displayName, body, parentId = null }) {
+export async function addComment({ articleId = '', articleSlug, articleTitle = '', userId, displayName, body, parentId = null }) {
   return addDoc(collection(db, 'comments'), {
     articleId,
     articleSlug,
+    articleTitle,
     parentId,
     userId,
     displayName,

@@ -1,0 +1,42 @@
+<!DOCTYPE html><html lang="tr"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Yeni Yazı Oluştur | NebChat</title>
+<meta name="description" content="NebChat kullanıcı yazı gönderim ekranı.">
+<meta name="robots" content="noindex,follow">
+<link rel="stylesheet" href="css/styles.css"></head><body>
+<header class="site-header" data-site-header></header>
+<main class="container section">
+  <section class="panel">
+    <h1>Yeni Yazı Oluştur</h1>
+    <p class="lead">Yazınızı gönderdiğinizde inceleme kuyruğuna alınır. Editör rolüne sahipseniz durum seçimi yapabilirsiniz.</p>
+    <form id="writeForm" class="auth-form">
+      <input id="title" name="title" placeholder="Başlık" required>
+      <input id="slug" name="slug" placeholder="Slug (opsiyonel, boş bırakılırsa başlıktan üretilir)">
+      <input id="excerpt" name="excerpt" placeholder="Kısa özet" required>
+      <select id="category" name="category" required>
+        <option value="">Kategori seçin</option>
+        <option value="threat-intelligence">Threat Intelligence</option>
+        <option value="ransomware">Ransomware</option>
+        <option value="soc-detection">SOC & Detection</option>
+        <option value="cloud-security">Cloud Security</option>
+        <option value="vulnerabilities">Vulnerabilities</option>
+        <option value="security-awareness">Security Awareness</option>
+        <option value="turkiye-gundemi">Türkiye Gündemi</option>
+      </select>
+      <input id="tags" name="tags" placeholder="Etiketler (virgülle)">
+      <input id="coverImageUrl" name="coverImageUrl" placeholder="Kapak görsel URL (opsiyonel)">
+      <input id="coverImagePrompt" name="coverImagePrompt" placeholder="Kapak prompt (opsiyonel)">
+      <textarea id="body" name="body" placeholder="Makale içeriği" required></textarea>
+      <select id="statusField" name="status" class="hidden">
+        <option value="pending_review">İnceleme Bekliyor</option>
+        <option value="draft">Taslak</option>
+        <option value="published">Yayınla</option>
+      </select>
+      <button class="btn primary" type="submit">Yazıyı Gönder</button>
+    </form>
+    <div id="writeStatus" class="notice" style="margin-top:.8rem;">Gönderim için giriş yapmalısınız.</div>
+  </section>
+</main>
+<footer class="site-footer" data-site-footer></footer>
+<script type="module" src="js/write.js"></script>
+</body></html>

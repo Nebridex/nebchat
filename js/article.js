@@ -158,6 +158,7 @@ form.addEventListener('submit', async (e) => {
   await addComment({
     articleId: currentArticle.id,
     articleSlug: currentArticle.slug,
+    articleTitle: currentArticle.title,
     userId: currentUser.uid,
     displayName: currentUser.displayName || currentUser.email || 'Kullanıcı',
     body
