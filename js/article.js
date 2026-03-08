@@ -1,7 +1,7 @@
 import { auth } from './firebase.js';
 import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js';
 import { addComment, fetchArticleBySlug, fetchArticles, fetchComments, incrementView } from './data.js';
-import { escapeHtml, formatDate, injectHeaderFooter, initAuthNav, setCanonical, setJSONLD, setSEO } from './common.js';
+import { escapeHtml, formatDate, injectHeaderFooter, initAuthNav, setCanonical, setJSONLD, setRobots, setSEO } from './common.js';
 
 injectHeaderFooter();
 initAuthNav();
@@ -30,12 +30,16 @@ const renderNotFound = () => {
   relatedWrap.innerHTML = '<div class="card muted">İlgili içerik bulunamadı.</div>';
   form.classList.add('hidden');
   commentsWrap.innerHTML = '';
+  const url = slug
+    ? `https://nebchat.online/article.html?slug=${encodeURIComponent(slug)}`
+    : 'https://nebchat.online/article.html';
   setSEO({
     title: 'Makale bulunamadı | NebChat',
     description: 'İstenen makale NebChat üzerinde bulunamadı.',
-    url: `https://nebchat.online/article.html?slug=${encodeURIComponent(slug)}`,
+    url,
     type: 'article'
   });
+  setRobots('noindex,follow');
 };
 
 async function loadComments() {
@@ -57,6 +61,11 @@ async function loadComments() {
 }
 
 async function init() {
+  if (!slug) {
+    renderNotFound();
+    return;
+  }
+
   const article = await fetchArticleBySlug(slug);
   if (!article) {
     renderNotFound();
@@ -66,6 +75,7 @@ async function init() {
   currentArticle = article;
 
   const articleUrl = `https://nebchat.online/article.html?slug=${encodeURIComponent(article.slug)}`;
+  setRobots('index,follow');
   setSEO({
     title: `${article.seoTitle || article.title} | NebChat`,
     description: article.seoDescription || article.excerpt,

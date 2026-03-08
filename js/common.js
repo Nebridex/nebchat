@@ -43,7 +43,18 @@ export function initAuthNav() {
         location.href = 'index.html';
       };
     }
-    if (adminNav) adminNav.classList.toggle('hidden', !user);
+
+    let isEditor = false;
+    if (user) {
+      try {
+        const tokenResult = await user.getIdTokenResult();
+        const role = tokenResult?.claims?.role;
+        isEditor = role === 'admin' || role === 'editor';
+      } catch (error) {
+        console.warn('Rol bilgisi alınamadı:', error);
+      }
+    }
+    if (adminNav) adminNav.classList.toggle('hidden', !isEditor);
   });
 }
 
@@ -65,6 +76,10 @@ export function setCanonical(url) {
     document.head.appendChild(canonical);
   }
   canonical.setAttribute('href', url);
+}
+
+export function setRobots(content = 'index,follow') {
+  ensureMeta('meta[name="robots"]', { name: 'robots' }).setAttribute('content', content);
 }
 
 export function setJSONLD(schema, id = 'pageSchema') {

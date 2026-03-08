@@ -1,4 +1,7 @@
 User-agent: *
 Allow: /
+Disallow: /admin.html
+Disallow: /forum.html
+Disallow: /topic.html
 
 Sitemap: https://nebchat.online/sitemap.xml

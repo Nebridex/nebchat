@@ -4,29 +4,17 @@
   <url><loc>https://nebchat.online/archive.html</loc><changefreq>daily</changefreq><priority>0.9</priority></url>
   <url><loc>https://nebchat.online/about.html</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://nebchat.online/contact.html</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://nebchat.online/profile.html</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://nebchat.online/category.html?slug=brand-protection</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://nebchat.online/profile.html</loc><changefreq>monthly</changefreq><priority>0.4</priority></url>
   <url><loc>https://nebchat.online/category.html?slug=cloud-security</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://nebchat.online/category.html?slug=dark-web</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://nebchat.online/category.html?slug=data-breaches</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://nebchat.online/category.html?slug=incident-response</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
   <url><loc>https://nebchat.online/category.html?slug=ransomware</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
   <url><loc>https://nebchat.online/category.html?slug=security-awareness</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
   <url><loc>https://nebchat.online/category.html?slug=soc-detection</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://nebchat.online/category.html?slug=third-party-risk</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
   <url><loc>https://nebchat.online/category.html?slug=threat-intelligence</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://nebchat.online/category.html?slug=turkiye-gundemi</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
   <url><loc>https://nebchat.online/category.html?slug=vulnerabilities</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://nebchat.online/article.html?slug=ransomware-saldirisinda-ilk-6-saat-operasyonel-cerceve</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://nebchat.online/article.html?slug=soc-ekipleri-alarm-altinda-korlesme-detection-engineering</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://nebchat.online/article.html?slug=tehdit-istihbarati-rapordan-karara-gecis</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://nebchat.online/article.html?slug=dark-web-izleme-dogrulama-aksiyon-is-akisi</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://nebchat.online/article.html?slug=veri-sizintisi-sonrasi-ikinci-hata-dalgasi</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://nebchat.online/article.html?slug=zafiyet-yonetimi-cvss-puanindan-ibaret-degildir</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://nebchat.online/article.html?slug=bulut-guvenliginde-en-sik-yanlis-anlasilan-riskler</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://nebchat.online/article.html?slug=marka-taklidi-phishing-credential-leakage-ayni-zincir</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://nebchat.online/article.html?slug=guvenlik-farkindalik-egitimi-davranis-degisimi</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://nebchat.online/article.html?slug=incident-response-retainer-gercek-kazanim</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://nebchat.online/article.html?slug=tedarikci-riski-siber-guvenlikte-buyuk-resim</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://nebchat.online/article.html?slug=turkiye-kobi-siber-risk-bize-bir-sey-olmaz-degil</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://nebchat.online/article.html?slug=ai-saldiri-yuzeyi-2026-risk-model-degil-sistemler</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://nebchat.online/article.html?slug=kimlik-guvenligi-2026-oturum-ve-erisim-zinciri</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://nebchat.online/article.html?slug=tedarik-zinciri-saldirilari-tek-hedef-degil-ekosistem</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://nebchat.online/article.html?slug=ransomware-bitmedi-cunku-sorun-karar-alma-hizi</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://nebchat.online/article.html?slug=ai-destekli-phishing-neden-daha-tehlikeli</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://nebchat.online/article.html?slug=openclaw-nedir-ve-neden-guvenlik-ekiplerinin-gundeminde</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
 </urlset>

@@ -12,7 +12,7 @@ const picksWrap = document.getElementById('editorPicks');
 const articles = await fetchArticles({ max: 12 });
 const categories = await fetchCategories();
 
-const emptyCard = '<div class="card"><strong>Henüz yayınlanmış makale yok.</strong><p class="muted">Admin panelinden içerik aktardığınızda burada listelenecek.</p></div>';
+const emptyCard = '<div class="card"><strong>Henüz yayınlanmış makale yok.</strong><p class="muted">Yeni yayınlar kısa süre içinde burada görünür.</p></div>';
 
 const featured = articles.find((a) => a.featured) || articles[0];
 if (featuredWrap) {
