@@ -131,7 +131,7 @@ async function init() {
     .filter((a) => a.slug !== article.slug)
     .slice(0, 4);
 
-  relatedWrap.innerHTML = related.map((a) => `<a class="card" href="article.html?slug=${encodeURIComponent(a.slug)}"><span class="badge">${escapeHtml(a.category)}</span><strong>${escapeHtml(a.title)}</strong><p class="muted">${escapeHtml(relatedExcerpt(a.excerpt))}</p><div class="meta"><span>${a.publishedAtDate ? formatDate(a.publishedAtDate) : '—'}</span><span>${a.readingTime || 5} dk</span></div></a>`).join('') || '<div class="card muted">İlgili içerik yakında.</div>';
+  relatedWrap.innerHTML = related.map((a) => `<a class="card" href="article.html?slug=${encodeURIComponent(a.slug)}"><span class="badge">${escapeHtml(a.category)}</span><strong>${escapeHtml(a.title)}</strong><p class="muted">${escapeHtml(relatedExcerpt(a.excerpt))}</p><div class="meta"><span>${a.publishedAtDate ? formatDate(a.publishedAtDate) : '—'}</span><span>${a.readingTime || 5} dk</span></div></a>`).join('') || '<div class="card muted">Bu makale için aynı kategoride ek içerik henüz listelenmedi.</div>';
 
   await loadComments();
 }
