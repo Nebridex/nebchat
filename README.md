@@ -35,3 +35,29 @@ NebChat, Türkiye odaklı bir siber güvenlik yayın platformudur. İçerikler r
 ```bash
 node scripts/firestore_import_seed.mjs 6
 ```
+
+## Firestore `articles` export + edit akışı (managed export olmadan)
+Aşağıdaki scriptler repo içindeki Firebase proje ayarını (`js/firebase.js` -> `projectId`) kullanır ve Admin SDK kimlik doğrulamasıyla çalışır.
+
+Önce kimlik doğrulaması için birini ayarlayın:
+- `GOOGLE_APPLICATION_CREDENTIALS=/path/service-account.json`
+- veya `FIREBASE_SERVICE_ACCOUNT_JSON='{"type":"service_account",...}'`
+
+### 1) Articles export
+```bash
+node scripts/export_articles.mjs
+# çıktı: exports/articles-export.json
+```
+
+### 2) Düzenleme taslağı üret
+```bash
+node scripts/prepare_article_edits.mjs
+# çıktı: exports/articles-edit-draft.json
+```
+
+### 3) Düzenlenen içerikleri Firestore'a uygula
+```bash
+node scripts/apply_article_edits.mjs exports/articles-edit-draft.json
+```
+
+Not: Export dosyasında her kayıt için `id` alanı korunur; apply adımı bu `id` üzerinden `articles/{id}` dokümanlarını merge ederek günceller.
