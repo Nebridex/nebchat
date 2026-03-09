@@ -1,4 +1,4 @@
-import { fetchArticles, fetchCategories } from './data.js';
+import { fetchArticles, fetchCategories, getLastPublicArticleError } from './data.js';
 import { escapeHtml, formatDate, injectHeaderFooter, initAuthNav } from './common.js';
 
 injectHeaderFooter();
@@ -24,6 +24,14 @@ const render = async () => {
     .concat(categories.map((c) => `<a class="category-chip ${category === c.slug ? 'active' : ''}" href="archive.html?category=${encodeURIComponent(c.slug)}">${escapeHtml(c.name)}</a>`)).join('');
 
   const rows = await fetchArticles({ category, search, sort, max: 60 });
+  const publicError = getLastPublicArticleError();
+  if (!rows.length && publicError) {
+    listWrap.innerHTML = '<div class="notice error"><strong>Yayınlar yüklenemedi.</strong><p class="muted">Veri sorgusu başarısız oldu. Lütfen daha sonra tekrar deneyin.</p></div>';
+    console.error('Arşiv akışı yüklenemedi:', publicError);
+    moreBtn.classList.add('hidden');
+    return;
+  }
+
   const sliced = rows.slice(0, shown);
   listWrap.innerHTML = sliced.map((a) => `<article class="card article-card">
     <span class="badge">${escapeHtml(a.category)}</span>

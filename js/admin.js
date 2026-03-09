@@ -312,7 +312,7 @@ function fillEditorForm(article, id) {
 async function changeArticleStatus(articleId, action) {
   if (!isAdmin) return;
 
-  const payload = { status: action, updatedAt: serverTimestamp() };
+  const payload = { status: action, updatedAt: serverTimestamp(), isVisible: action === 'published' };
   if (action === 'published') payload.publishedAt = serverTimestamp();
   if (action !== 'published') payload.featured = false;
 
@@ -660,6 +660,7 @@ articleForm.addEventListener('submit', async (e) => {
     updatedAt: serverTimestamp(),
     createdAt: existing?.createdAt || serverTimestamp(),
     status: f.status.value,
+    isVisible: f.status.value === 'published',
     featured: f.featured.checked,
     readingTime: Number(f.readingTime.value || 5),
     seoTitle: f.seoTitle.value.trim(),

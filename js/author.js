@@ -1,4 +1,4 @@
-import { fetchArticles } from './data.js';
+import { fetchArticles, getLastPublicArticleError } from './data.js';
 import { escapeHtml, formatDate, injectHeaderFooter, initAuthNav, setCanonical, setJSONLD, setRobots, setSEO } from './common.js';
 
 injectHeaderFooter();
@@ -10,6 +10,8 @@ const nameEl = document.getElementById('authorName');
 const bioEl = document.getElementById('authorBio');
 
 const rows = await fetchArticles({ authorSlug: slug, max: 100 });
+const publicError = getLastPublicArticleError();
+if (!rows.length && publicError) console.error('Yazar sayfası akışı yüklenemedi:', publicError);
 const name = rows[0]?.authorName || 'NebChat Editör';
 nameEl.textContent = name;
 bioEl.textContent = `${name}, NebChat editoryal çerçevesinde tehdit odaklı teknik analizler üretir.`;
@@ -36,4 +38,4 @@ setJSONLD({
 
 list.innerHTML = rows.length
   ? rows.map((a) => `<article class="card article-card"><span class="badge">${escapeHtml(a.category)}</span><h3><a href="article.html?slug=${encodeURIComponent(a.slug)}">${escapeHtml(a.title)}</a></h3><p>${escapeHtml(a.excerpt || '')}</p><div class="meta"><span>${a.publishedAtDate ? formatDate(a.publishedAtDate) : '—'}</span><span>${a.readingTime || 5} dk</span></div></article>`).join('')
-  : '<div class="card">Bu yazar için yayın bulunamadı.</div>';
+  : (publicError ? '<div class="notice error">Yazar yayınları şu anda yüklenemedi.</div>' : '<div class="card">Bu yazar için yayın bulunamadı.</div>');

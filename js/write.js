@@ -71,6 +71,7 @@ form.addEventListener('submit', async (e) => {
     authorEmail: currentUser.email || '',
     authorSlug: slugify(currentUser.displayName || currentUser.email || 'uye-yazar'),
     status: selectedStatus,
+    isVisible: selectedStatus === 'published',
     featured: false,
     readingTime: Math.max(4, Math.round(f.body.value.trim().split(/\s+/).length / 220)),
     seoTitle: title,

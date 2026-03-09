@@ -4,6 +4,8 @@ import {
   addDoc, collection, doc, getDoc, getDocs, limit, orderBy, query, setDoc, updateDoc, where
 } from 'https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js';
 
+let lastPublicArticleError = null;
+
 const toDate = (value) => {
   if (!value) return null;
   if (typeof value?.toDate === 'function') return value.toDate();
@@ -22,16 +24,20 @@ export const markdownToHtml = (markdown = '') => {
     .concat('</p>');
 };
 
+export function getLastPublicArticleError() {
+  return lastPublicArticleError;
+}
+
 function mapArticle(docSnap) {
   const d = docSnap.data();
   return {
     id: docSnap.id,
-    title: d.title || 'Başlıksız Makale',
+    title: d.title || d.headline || 'Başlıksız Makale',
     slug: d.slug || docSnap.id,
-    excerpt: d.excerpt || '',
-    category: d.category || 'turkiye-gundemi',
+    excerpt: d.excerpt || d.summary || '',
+    category: d.category || d.topic || 'turkiye-gundemi',
     tags: Array.isArray(d.tags) ? d.tags : [],
-    authorName: d.authorName || 'NebChat Editör',
+    authorName: d.authorName || d.author || 'NebChat Editör',
     authorSlug: d.authorSlug || 'nebchat-editor',
     status: d.status || 'draft',
     featured: Boolean(d.featured),
@@ -45,7 +51,7 @@ function mapArticle(docSnap) {
     publishedAtDate: toDate(d.publishedAt),
     createdAtDate: toDate(d.createdAt),
     updatedAtDate: toDate(d.updatedAt),
-    html: d.bodyHtml || markdownToHtml(d.bodyMarkdown || '')
+    html: d.bodyHtml || markdownToHtml(d.bodyMarkdown || d.body || '')
   };
 }
 
@@ -80,13 +86,13 @@ export async function fetchCategories() {
 
 export async function fetchArticles({ category = '', search = '', tag = '', authorSlug = '', sort = 'newest', max = 24 } = {}) {
   let rows = [];
+  lastPublicArticleError = null;
   try {
-    const snap = await getDocs(query(collection(db, 'articles'), limit(600)));
-    rows = snap.docs
-      .map(mapArticle)
-      .filter((a) => a.status === 'published' || a.status == null || a.status === '');
+    const snap = await getDocs(query(collection(db, 'articles'), where('status', '==', 'published'), limit(600)));
+    rows = snap.docs.map(mapArticle);
   } catch (error) {
-    console.warn('Makale sorgusu başarısız:', error);
+    lastPublicArticleError = error;
+    console.error('Makale sorgusu başarısız (public feed):', error);
     return [];
   }
 
@@ -108,28 +114,30 @@ export async function fetchArticles({ category = '', search = '', tag = '', auth
 }
 
 export async function fetchArticleBySlug(slug) {
+  lastPublicArticleError = null;
   try {
     const byIdRef = doc(db, 'articles', slug);
     const byIdSnap = await getDoc(byIdRef);
     if (byIdSnap.exists()) {
       const byIdArticle = mapArticle(byIdSnap);
-      if (byIdArticle.status === 'published' || byIdArticle.status == null || byIdArticle.status === '') return byIdArticle;
+      if (byIdArticle.status === 'published') return byIdArticle;
     }
 
     const allSnap = await getDocs(query(
       collection(db, 'articles'),
+      where('status', '==', 'published'),
       limit(600)
     ));
     if (allSnap.empty) return null;
 
     const matches = allSnap.docs
       .map(mapArticle)
-      .filter((a) => (a.slug || a.id) === slug)
-      .filter((a) => a.status === 'published' || a.status == null || a.status === '');
+      .filter((a) => (a.slug || a.id) === slug);
 
     return sortByPublishedAtDesc(matches)[0] || null;
   } catch (error) {
-    console.warn('Makale detayı sorgusu başarısız:', error);
+    lastPublicArticleError = error;
+    console.error('Makale detayı sorgusu başarısız (public read):', error);
     return null;
   }
 }

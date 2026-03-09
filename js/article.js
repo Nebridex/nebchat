@@ -1,6 +1,6 @@
 import { auth } from './firebase.js';
 import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js';
-import { addComment, fetchArticleBySlug, fetchArticles, fetchComments, incrementView } from './data.js';
+import { addComment, fetchArticleBySlug, fetchArticles, fetchComments, getLastPublicArticleError, incrementView } from './data.js';
 import { escapeHtml, formatDate, injectHeaderFooter, initAuthNav, setCanonical, setJSONLD, setRobots, setSEO } from './common.js';
 
 injectHeaderFooter();
@@ -33,8 +33,9 @@ const updateLibrary = (type, articleSlug) => {
   message.textContent = type === 'saved' ? 'Makale kaydedildi.' : 'Makale okuma listesine eklendi.';
 };
 
-const renderNotFound = () => {
-  wrap.innerHTML = '<div class="notice error">Makale bulunamadı veya henüz yayınlanmadı.</div>';
+const renderNotFound = (reason = '') => {
+  const detail = reason ? `<p class="muted">${escapeHtml(reason)}</p>` : '';
+  wrap.innerHTML = `<div class="notice error">Makale bulunamadı veya henüz yayınlanmadı.${detail}</div>`;
   relatedWrap.innerHTML = '<div class="card muted">İlgili içerik bulunamadı.</div>';
   form.classList.add('hidden');
   commentsWrap.innerHTML = '';
@@ -67,7 +68,14 @@ async function init() {
   if (!slug) return renderNotFound();
 
   const article = await fetchArticleBySlug(slug);
-  if (!article) return renderNotFound();
+  if (!article) {
+    const err = getLastPublicArticleError();
+    if (err) {
+      console.error('Makale detayı sorgusu başarısız:', err);
+      return renderNotFound('Makale verisi yüklenirken bir sorgu hatası oluştu.');
+    }
+    return renderNotFound();
+  }
 
   currentArticle = article;
 

@@ -1,4 +1,4 @@
-import { fetchArticles, fetchCategories } from './data.js';
+import { fetchArticles, fetchCategories, getLastPublicArticleError } from './data.js';
 import { TOPIC_HUBS, TRENDING_TOPICS } from './content.js';
 import { escapeHtml, formatDate, injectHeaderFooter, initAuthNav } from './common.js';
 
@@ -14,9 +14,12 @@ const trendingWrap = document.getElementById('trendingTopics');
 const hubWrap = document.getElementById('topicHubs');
 
 const articles = await fetchArticles({ max: 24 });
+const publicError = getLastPublicArticleError();
 const categories = await fetchCategories();
 
 const emptyCard = '<div class="card"><strong>Henüz yayınlanmış makale yok.</strong><p class="muted">Yeni yayınlar kısa süre içinde burada görünür.</p></div>';
+const errorCard = '<div class="notice error"><strong>Yayın akışı yüklenemedi.</strong><p class="muted">Bağlantı/izin kaynaklı bir sorgu hatası oluştu. Lütfen tekrar deneyin.</p></div>';
+if (!articles.length && publicError) console.error('Ana sayfa yayın akışı yüklenemedi:', publicError);
 
 const featured = articles.find((a) => a.featured) || articles[0];
 if (featuredWrap) {
@@ -28,7 +31,7 @@ if (featuredWrap) {
       <p>${escapeHtml(featured.excerpt || '')}</p>
       <div class="meta"><span>${featured.publishedAtDate ? formatDate(featured.publishedAtDate) : '—'}</span><span>${featured.readingTime || 5} dk okuma</span></div>
     </article>`
-    : emptyCard;
+    : (publicError ? errorCard : emptyCard);
 }
 
 if (latestWrap) {
@@ -39,7 +42,7 @@ if (latestWrap) {
       <p>${escapeHtml(a.excerpt || '')}</p>
       <div class="meta"><span>${escapeHtml(a.authorName || 'NebChat')}</span><span>${a.publishedAtDate ? formatDate(a.publishedAtDate) : '—'}</span><span>${a.readingTime || 5} dk</span></div>
     </article>`).join('')
-    : emptyCard;
+    : (publicError ? errorCard : emptyCard);
 }
 
 if (categoryWrap) {
@@ -50,13 +53,18 @@ if (picksWrap) {
   const picks = articles.slice(1, 5);
   picksWrap.innerHTML = picks.length
     ? picks.map((a) => `<article class="card article-card"><h3><a href="article.html?slug=${encodeURIComponent(a.slug)}">${escapeHtml(a.title)}</a></h3><p>${escapeHtml(a.excerpt || '')}</p><div class="meta"><span>${a.publishedAtDate ? formatDate(a.publishedAtDate) : '—'}</span><span>${a.readingTime || 5} dk</span></div></article>`).join('')
-    : emptyCard;
+    : (publicError ? errorCard : emptyCard);
 }
 
 if (digestWrap) {
-  const digest = (await fetchArticles({ tag: 'weekly-digest', max: 1 }))[0] || articles[0];
+  const digestRows = await fetchArticles({ tag: 'weekly-digest', max: 1 });
+  const digestError = getLastPublicArticleError();
+  const digest = digestRows[0] || articles[0];
   if (digest) {
     digestWrap.innerHTML = `<article class="card article-card"><span class="badge">Weekly Digest</span><h3><a href="article.html?slug=${encodeURIComponent(digest.slug)}">${escapeHtml(digest.title)}</a></h3><p>${escapeHtml(digest.excerpt || '')}</p><div class="meta"><span>${digest.publishedAtDate ? formatDate(digest.publishedAtDate) : '—'}</span><span>${digest.readingTime || 5} dk</span></div></article>`;
+  } else if (digestError) {
+    digestWrap.innerHTML = errorCard;
+    console.error('Weekly digest akışı yüklenemedi:', digestError);
   }
 }
 

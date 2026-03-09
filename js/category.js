@@ -1,4 +1,4 @@
-import { fetchArticles, fetchCategories } from './data.js';
+import { fetchArticles, fetchCategories, getLastPublicArticleError } from './data.js';
 import { escapeHtml, formatDate, injectHeaderFooter, initAuthNav, setCanonical, setJSONLD, setRobots, setSEO } from './common.js';
 
 injectHeaderFooter();
@@ -52,12 +52,18 @@ if (current) {
 }
 
 const rows = await fetchArticles({ category: slug, max: 40 });
+const publicError = getLastPublicArticleError();
 const featured = rows.slice(0, 2);
 const supporting = rows.slice(2);
 
-list.innerHTML = featured.map((a) => `<article class="card article-card"><span class="badge">Öne çıkan</span><h3><a href="article.html?slug=${encodeURIComponent(a.slug)}">${escapeHtml(a.title)}</a></h3><p>${escapeHtml(a.excerpt || '')}</p><div class="meta"><span>${a.publishedAtDate ? formatDate(a.publishedAtDate) : '—'}</span><span>${a.readingTime || 5} dk</span></div></article>`).join('')
-  + supporting.map((a) => `<article class="card article-card"><h3><a href="article.html?slug=${encodeURIComponent(a.slug)}">${escapeHtml(a.title)}</a></h3><p>${escapeHtml(a.excerpt || '')}</p><div class="meta"><span>${a.publishedAtDate ? formatDate(a.publishedAtDate) : '—'}</span><span>${a.readingTime || 5} dk</span></div></article>`).join('')
-  || '<div class="card">Bu kategoride henüz yayın yok.</div>';
+if (!rows.length && publicError) {
+  list.innerHTML = '<div class="notice error"><strong>Bu kategori şu anda yüklenemedi.</strong><p class="muted">Yayın sorgusunda hata oluştu, lütfen tekrar deneyin.</p></div>';
+  console.error('Kategori akışı yüklenemedi:', publicError);
+} else {
+  list.innerHTML = featured.map((a) => `<article class="card article-card"><span class="badge">Öne çıkan</span><h3><a href="article.html?slug=${encodeURIComponent(a.slug)}">${escapeHtml(a.title)}</a></h3><p>${escapeHtml(a.excerpt || '')}</p><div class="meta"><span>${a.publishedAtDate ? formatDate(a.publishedAtDate) : '—'}</span><span>${a.readingTime || 5} dk</span></div></article>`).join('')
+    + supporting.map((a) => `<article class="card article-card"><h3><a href="article.html?slug=${encodeURIComponent(a.slug)}">${escapeHtml(a.title)}</a></h3><p>${escapeHtml(a.excerpt || '')}</p><div class="meta"><span>${a.publishedAtDate ? formatDate(a.publishedAtDate) : '—'}</span><span>${a.readingTime || 5} dk</span></div></article>`).join('')
+    || '<div class="card">Bu kategoride henüz yayın yok.</div>';
+}
 
 if (links) {
   links.innerHTML = categories.filter((c) => c.slug !== slug).slice(0, 5).map((c) => `<a class="category-chip" href="category.html?slug=${encodeURIComponent(c.slug)}">${escapeHtml(c.name)}</a>`).join('');
