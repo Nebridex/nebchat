@@ -32,6 +32,8 @@ const moderationTabs = document.getElementById('moderationTabs');
 const articleForm = document.getElementById('articleForm');
 const sendPublishedToReviewBtn = document.getElementById('sendPublishedToReviewBtn');
 const restorePublishedBtn = document.getElementById('restorePublishedBtn');
+const clearLogBtn = document.getElementById('clearLogBtn');
+const downloadLogBtn = document.getElementById('downloadLogBtn');
 const moderationContainers = {
   pending_review: document.getElementById('queue-pending_review'),
   published: document.getElementById('queue-published'),
@@ -42,6 +44,9 @@ const moderationContainers = {
 let isAdmin = false;
 let currentAdmin = null;
 let activeStatus = 'pending_review';
+
+const LOG_STORAGE_KEY = 'nebchat_admin_logs_v1';
+const LOG_LIMIT = 800;
 
 const statusLabel = {
   pending_review: 'İncelemede',
@@ -75,16 +80,53 @@ const toLocalDate = (v) => {
   return d;
 };
 
+const readPersistedLogs = () => {
+  try {
+    const raw = localStorage.getItem(LOG_STORAGE_KEY);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+};
+
+const persistLogs = (entries) => {
+  try {
+    localStorage.setItem(LOG_STORAGE_KEY, JSON.stringify(entries.slice(-LOG_LIMIT)));
+  } catch {
+    // no-op
+  }
+};
+
+const appendLogLine = (line) => {
+  if (!logBox) return;
+  logBox.textContent += `${line}\n`;
+  logBox.scrollTop = logBox.scrollHeight;
+};
+
+const bootstrapPersistedLogs = () => {
+  const lines = readPersistedLogs();
+  if (!lines.length || !logBox) return;
+  logBox.textContent = `${lines.join('\n')}\n`;
+  logBox.scrollTop = logBox.scrollHeight;
+};
+
 const show = (m, type = '') => {
   status.className = `notice ${type}`;
   status.textContent = m;
+  if (type === 'error') log(`UI ERROR: ${m}`, 'error');
 };
 
-const log = (line) => {
-  if (!logBox) return;
-  const ts = new Date().toLocaleTimeString('tr-TR');
-  logBox.textContent += `[${ts}] ${line}\n`;
-  logBox.scrollTop = logBox.scrollHeight;
+const log = (line, level = 'info') => {
+  const ts = new Date();
+  const iso = ts.toISOString();
+  const visibleTs = ts.toLocaleTimeString('tr-TR');
+  const entry = `[${visibleTs}] [${level.toUpperCase()}] ${line}`;
+  appendLogLine(entry);
+  const logs = readPersistedLogs();
+  logs.push(`${iso} ${entry}`);
+  persistLogs(logs);
 };
 
 const safeDate = (value, fallback) => {
@@ -141,7 +183,7 @@ async function importSeedArticles({ force = false } = {}) {
 
   seedBtn.disabled = true;
   if (seedForceBtn) seedForceBtn.disabled = true;
-  logBox.textContent = '';
+  log('--- Yeni seed işlemi başlatıldı ---');
 
   const summary = {
     created: 0,
@@ -486,6 +528,34 @@ async function restorePendingToPublished() {
   }
 }
 
+function clearPersistedLogs() {
+  if (!window.confirm('Kayıtlı admin logları temizlensin mi?')) return;
+  localStorage.removeItem(LOG_STORAGE_KEY);
+  if (logBox) logBox.textContent = '';
+  show('Admin log kayıtları temizlendi.', 'ok');
+}
+
+function downloadLogs() {
+  const lines = readPersistedLogs();
+  if (!lines.length) {
+    show('İndirilecek log kaydı bulunamadı.', 'error');
+    return;
+  }
+  const blob = new Blob([`${lines.join('\n')}\n`], { type: 'text/plain;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  const stamp = new Date().toISOString().replace(/[:.]/g, '-');
+  a.href = url;
+  a.download = `nebchat-admin-log-${stamp}.txt`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+  show('Log dosyası indirildi.', 'ok');
+}
+
+bootstrapPersistedLogs();
+
 onAuthStateChanged(auth, async (user) => {
   const allowed = Boolean(user?.email) && user.email.toLowerCase() === ADMIN_EMAIL;
   isAdmin = allowed;
@@ -518,6 +588,8 @@ seedBtn.addEventListener('click', () => importSeedArticles({ force: false }));
 
 sendPublishedToReviewBtn?.addEventListener('click', sendAllPublishedToReview);
 restorePublishedBtn?.addEventListener('click', restorePendingToPublished);
+clearLogBtn?.addEventListener('click', clearPersistedLogs);
+downloadLogBtn?.addEventListener('click', downloadLogs);
 
 seedForceBtn?.addEventListener('click', async () => {
   const confirmed = window.confirm('Bu işlem mevcut seed içeriklerini zorla günceller. Emin misiniz?');
