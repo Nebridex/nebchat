@@ -1,10 +1,21 @@
 import { auth } from './firebase.js';
 import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js';
 import { addComment, fetchArticleBySlug, fetchArticles, fetchComments, getLastPublicArticleError, incrementView } from './data.js';
-import { escapeHtml, formatDate, injectHeaderFooter, initAuthNav, setCanonical, setJSONLD, setRobots, setSEO } from './common.js';
+import {
+  escapeHtml,
+  formatDate,
+  injectHeaderFooter,
+  initAuthNav,
+  setCanonical,
+  setJSONLD,
+  setOrganizationSchema,
+  setRobots,
+  setSEO
+} from './common.js';
 
 injectHeaderFooter();
 initAuthNav();
+setOrganizationSchema();
 
 const slug = new URLSearchParams(location.search).get('slug') || '';
 const wrap = document.getElementById('articleWrap');
@@ -80,19 +91,39 @@ async function init() {
   currentArticle = article;
 
   const articleUrl = `https://nebchat.online/article.html?slug=${encodeURIComponent(article.slug)}`;
+  const articleDescription = article.seoDescription || article.excerpt || 'NebChat teknik siber güvenlik analizi.';
   setRobots('index,follow');
-  setSEO({ title: `${article.seoTitle || article.title} | NebChat`, description: article.seoDescription || article.excerpt, url: articleUrl, type: 'article' });
+  setSEO({
+    title: `${article.seoTitle || article.title} | NebChat`,
+    description: articleDescription,
+    url: articleUrl,
+    type: 'article',
+    image: article.coverImageUrl || ''
+  });
   setCanonical(articleUrl);
   setJSONLD({
     '@context': 'https://schema.org',
-    '@type': 'Article',
+    '@type': 'BlogPosting',
     headline: article.title,
-    description: article.seoDescription || article.excerpt || '',
+    description: articleDescription,
     datePublished: article.publishedAtDate ? article.publishedAtDate.toISOString() : undefined,
-    dateModified: article.updatedAtDate ? article.updatedAtDate.toISOString() : undefined,
-    author: { '@type': 'Person', name: article.authorName || 'NebChat Editör', url: `https://nebchat.online/author.html?slug=${encodeURIComponent(article.authorSlug || 'nebchat-editor')}` },
-    mainEntityOfPage: articleUrl,
-    publisher: { '@type': 'Organization', name: 'NebChat' }
+    dateModified: article.updatedAtDate ? article.updatedAtDate.toISOString() : (article.publishedAtDate ? article.publishedAtDate.toISOString() : undefined),
+    author: {
+      '@type': 'Person',
+      name: article.authorName || 'NebChat Editör',
+      url: `https://nebchat.online/author.html?slug=${encodeURIComponent(article.authorSlug || 'nebchat-editor')}`
+    },
+    mainEntityOfPage: {
+      '@type': 'WebPage',
+      '@id': articleUrl
+    },
+    image: article.coverImageUrl || undefined,
+    articleSection: article.category || undefined,
+    publisher: {
+      '@type': 'Organization',
+      name: 'NebChat',
+      url: 'https://nebchat.online/'
+    }
   }, 'articleSchema');
   setJSONLD({
     '@context': 'https://schema.org',
@@ -114,18 +145,22 @@ async function init() {
   });
 
   wrap.innerHTML = `<article class="article-body">
+    <p class="muted" style="margin:0 0 .6rem;"><a href="archive.html">Arşiv</a> / <a href="category.html?slug=${encodeURIComponent(article.category)}">${escapeHtml(article.category)}</a></p>
     <span class="badge">${escapeHtml(article.category)}</span>
     <h1>${escapeHtml(article.title)}</h1>
-    <div class="meta"><span><a href="author.html?slug=${encodeURIComponent(article.authorSlug || 'nebchat-editor')}">${escapeHtml(article.authorName || 'NebChat Editör')}</a></span><span>${article.publishedAtDate ? formatDate(article.publishedAtDate) : '—'}</span><span>${article.readingTime || 5} dk okuma</span></div>
+    <p class="lead">${escapeHtml(article.excerpt || 'Bu analiz, NebChat editoryal standardında hazırlanmıştır.')}</p>
+    <div class="meta"><span><a href="author.html?slug=${encodeURIComponent(article.authorSlug || 'nebchat-editor')}">${escapeHtml(article.authorName || 'NebChat Editör')}</a></span><span>Yayın: ${article.publishedAtDate ? formatDate(article.publishedAtDate) : '—'}</span><span>Güncelleme: ${article.updatedAtDate ? formatDate(article.updatedAtDate) : (article.publishedAtDate ? formatDate(article.publishedAtDate) : '—')}</span><span>${article.readingTime || 5} dk okuma</span></div>
     ${article.coverImageUrl ? `<img class="cover" src="${escapeHtml(article.coverImageUrl)}" alt="${escapeHtml(article.title)}">` : ''}
     <div class="article-content">${article.html}</div>
     <div class="panel" style="margin-top:1rem;"><strong>Yazar Hakkında</strong><p class="muted">${escapeHtml(article.authorName || 'NebChat Editör')} tarafından hazırlanan bu analiz, NebChat editoryal standartlarına göre yayınlanmıştır.</p><a class="btn ghost" href="author.html?slug=${encodeURIComponent(article.authorSlug || 'nebchat-editor')}">Yazarın diğer yazıları</a></div>
+    <div class="panel" style="margin-top:1rem;"><strong>Sıradaki adım</strong><p class="muted">Bu makaleyi ekip içinde paylaşın ve aynı kategori için arşiv akışından benzer vakaları inceleyin.</p><a class="btn primary" href="archive.html?category=${encodeURIComponent(article.category)}">${escapeHtml(article.category)} arşivine git</a></div>
     <div class="hero-actions">
       <button id="copyLinkBtn" class="btn ghost" type="button">Bağlantıyı kopyala</button>
       <button id="saveArticleBtn" class="btn ghost" type="button">Kaydet</button>
       <button id="readLaterBtn" class="btn ghost" type="button">Sonra oku</button>
       <a class="btn ghost" href="archive.html?category=${encodeURIComponent(article.category)}">Bu kategorideki yazılar</a>
     </div>
+    <div id="articlePager" class="hero-actions" style="margin-top:1rem;"></div>
   </article>`;
 
   document.getElementById('copyLinkBtn').onclick = async () => {
@@ -140,6 +175,19 @@ async function init() {
     .slice(0, 4);
 
   relatedWrap.innerHTML = related.map((a) => `<a class="card" href="article.html?slug=${encodeURIComponent(a.slug)}"><span class="badge">${escapeHtml(a.category)}</span><strong>${escapeHtml(a.title)}</strong><p class="muted">${escapeHtml(relatedExcerpt(a.excerpt))}</p><div class="meta"><span>${a.publishedAtDate ? formatDate(a.publishedAtDate) : '—'}</span><span>${a.readingTime || 5} dk</span></div></a>`).join('') || '<div class="card muted">Bu makale için aynı kategoride ek içerik henüz listelenmedi.</div>';
+
+  const sorted = (await fetchArticles({ max: 120 })).sort((a, b) => {
+    const ta = a.publishedAtDate ? a.publishedAtDate.getTime() : 0;
+    const tb = b.publishedAtDate ? b.publishedAtDate.getTime() : 0;
+    return tb - ta;
+  });
+  const idx = sorted.findIndex((a) => a.slug === article.slug);
+  const prev = idx >= 0 ? sorted[idx + 1] : null;
+  const next = idx > 0 ? sorted[idx - 1] : null;
+  const pager = document.getElementById('articlePager');
+  if (pager) {
+    pager.innerHTML = `${prev ? `<a class="btn ghost" href="article.html?slug=${encodeURIComponent(prev.slug)}">Önceki: ${escapeHtml(prev.title)}</a>` : ''}${next ? `<a class="btn ghost" href="article.html?slug=${encodeURIComponent(next.slug)}">Sonraki: ${escapeHtml(next.title)}</a>` : ''}`;
+  }
 
   await loadComments();
 }

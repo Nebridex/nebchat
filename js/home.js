@@ -1,9 +1,35 @@
 import { fetchArticles, fetchCategories, getLastPublicArticleError } from './data.js';
 import { TOPIC_HUBS, TRENDING_TOPICS } from './content.js';
-import { escapeHtml, formatDate, injectHeaderFooter, initAuthNav } from './common.js';
+import {
+  escapeHtml,
+  formatDate,
+  injectHeaderFooter,
+  initAuthNav,
+  setCanonical,
+  setJSONLD,
+  setOrganizationSchema,
+  setRobots,
+  setSEO
+} from './common.js';
 
 injectHeaderFooter();
 initAuthNav();
+setOrganizationSchema();
+
+setSEO({
+  title: 'NebChat | Türkiye Siber Güvenlik Blogu',
+  description: 'Threat intelligence, olay müdahale, ransomware ve bulut güvenliği alanlarında NebChat teknik analizleri.',
+  url: 'https://nebchat.online/',
+  type: 'website'
+});
+setCanonical('https://nebchat.online/');
+setRobots('index,follow');
+setJSONLD({
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: 'NebChat',
+  url: 'https://nebchat.online/'
+}, 'websiteSchema');
 
 const featuredWrap = document.getElementById('featuredArticle');
 const latestWrap = document.getElementById('latestArticles');

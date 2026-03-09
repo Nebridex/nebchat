@@ -1,9 +1,10 @@
 import { fetchArticles, getLastPublicArticleError } from './data.js';
 import { TOPIC_HUBS } from './content.js';
-import { escapeHtml, formatDate, injectHeaderFooter, initAuthNav, setCanonical, setJSONLD, setRobots, setSEO } from './common.js';
+import { escapeHtml, formatDate, injectHeaderFooter, initAuthNav, setCanonical, setJSONLD, setRobots, setSEO, setOrganizationSchema } from './common.js';
 
 injectHeaderFooter();
 initAuthNav();
+setOrganizationSchema();
 
 const requestedSlug = new URLSearchParams(location.search).get('slug') || 'ai-security';
 const hub = TOPIC_HUBS.find((h) => h.slug === requestedSlug) || TOPIC_HUBS[0];

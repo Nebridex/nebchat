@@ -1,8 +1,9 @@
 import { fetchArticles, fetchCategories, getLastPublicArticleError } from './data.js';
-import { escapeHtml, formatDate, injectHeaderFooter, initAuthNav, setCanonical, setJSONLD, setRobots, setSEO } from './common.js';
+import { escapeHtml, formatDate, injectHeaderFooter, initAuthNav, setCanonical, setJSONLD, setRobots, setSEO, setOrganizationSchema } from './common.js';
 
 injectHeaderFooter();
 initAuthNav();
+setOrganizationSchema();
 
 const slug = new URLSearchParams(location.search).get('slug') || '';
 const categories = await fetchCategories();

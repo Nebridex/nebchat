@@ -87,7 +87,7 @@ export function setJSONLD(schema, id = 'pageSchema') {
   script.textContent = JSON.stringify(schema);
 }
 
-export function setSEO({ title, description, url, type = 'website' }) {
+export function setSEO({ title, description, url, type = 'website', image = '' }) {
   if (title) {
     document.title = title;
     ensureMeta('meta[property="og:title"]', { property: 'og:title' }).setAttribute('content', title);
@@ -99,11 +99,26 @@ export function setSEO({ title, description, url, type = 'website' }) {
     ensureMeta('meta[name="twitter:description"]', { name: 'twitter:description' }).setAttribute('content', description);
   }
   ensureMeta('meta[property="og:type"]', { property: 'og:type' }).setAttribute('content', type);
-  ensureMeta('meta[name="twitter:card"]', { name: 'twitter:card' }).setAttribute('content', 'summary_large_image');
+  ensureMeta('meta[property="og:site_name"]', { property: 'og:site_name' }).setAttribute('content', 'NebChat');
+  ensureMeta('meta[name="twitter:card"]', { name: 'twitter:card' }).setAttribute('content', image ? 'summary_large_image' : 'summary');
+  if (image) {
+    ensureMeta('meta[property="og:image"]', { property: 'og:image' }).setAttribute('content', image);
+    ensureMeta('meta[name="twitter:image"]', { name: 'twitter:image' }).setAttribute('content', image);
+  }
   if (url) {
     ensureMeta('meta[property="og:url"]', { property: 'og:url' }).setAttribute('content', url);
     setCanonical(url);
   }
+}
+
+export function setOrganizationSchema() {
+  setJSONLD({
+    '@context': 'https://schema.org',
+    '@type': 'Organization',
+    name: 'NebChat',
+    url: 'https://nebchat.online/',
+    description: 'Türkiye odaklı siber güvenlik yayını.'
+  }, 'organizationSchema');
 }
 
 export const formatDate = (d) => new Intl.DateTimeFormat('tr-TR', { day: '2-digit', month: 'long', year: 'numeric' }).format(d);
